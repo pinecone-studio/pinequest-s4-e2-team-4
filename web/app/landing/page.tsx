@@ -1,6 +1,7 @@
 import Header from "./Header";
 import Hero from "./Hero";
 import About from "./About";
+import Features from "./Features";
 
 export default function LandingPage() {
   return (
@@ -8,6 +9,7 @@ export default function LandingPage() {
       <Header />
       <Hero />
       <About />
+            <Features />
     </main>
   );
 }
