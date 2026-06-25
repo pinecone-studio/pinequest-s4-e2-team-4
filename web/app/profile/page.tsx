@@ -1,0 +1,150 @@
+// import React from "react";
+// import { User } from "lucide-react";
+
+// const page = () => {
+//   return (
+//     <div className="flex items-center justify-center min-h-screen bg-gray-200">
+//       <div className="relative w-[480px] h-[800px] rounded-[60px] bg-black p-[12px] shadow-2xl overflow-hidden">
+//         {/* iPhone screen */}
+//         <div className="relative w-full h-full rounded-[50px] bg-white overflow-hidden">
+//           {/* Dynamic Island */}
+//           <div className="absolute top-5 left-1/2 -translate-x-1/2 w-[140px] h-[38px] rounded-full bg-black z-10"></div>
+//           {/*HEADER*/}
+// <div>
+//   <div className="flex justify-between">
+//     <div>
+//       <img
+//         src="Burged.jfif"
+//         alt=""
+//         className="w-10 h-10 rounded-full relative left-4 top-4"
+//       />
+//       <span className="relative left-15 bottom-5 font-semibold text-2xl">
+//         MonTrip
+//       </span>
+//     </div>
+//     <div>
+//       <User className="border rounded-full p-1 w-10 h-10 mt-4 mr-4 " />
+//     </div>
+//   </div>
+// </div>
+
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default page;
+
+import React from "react";
+import {
+  User,
+  Bookmark,
+  MapPin,
+  Settings,
+  LogOut,
+  Heart,
+  Clock,
+  MessageCircle,
+  Home,
+} from "lucide-react";
+import { Footer } from "@/app/components/Footer";
+import { Header } from "@/app/components/Header";
+
+const page = () => {
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-200">
+      <div className="relative w-[450px] h-[800px] rounded-[60px] bg-black p-[12px] shadow-2xl overflow-hidden">
+        {/* iPhone screen */}
+        <div className="relative w-full h-full rounded-[50px] bg-white overflow-hidden">
+          {/* Dynamic Island */}
+          <div className="absolute top-5 left-1/2 -translate-x-1/2 w-[140px] h-[38px] rounded-full bg-black z-10"></div>
+          {/*HEADER*/}
+          <div className="">
+            <Header />
+          </div>
+          <div className="flex flex-col justify-between h-[90%] ">
+            {/* Profile Content */}
+            <div className="flex-1 overflow-y-auto bg-gray-100">
+              {/* Profile Section */}
+              <div className="bg-white flex flex-col items-center py-6 px-4 ">
+                <div className="relative mb-3">
+                  <div className="w-20 h-20 rounded-full overflow-hidden bg-green-200">
+                    <img
+                      src="Burged.jfif"
+                      alt="profile"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="absolute bottom-0 right-0 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                    <svg className="w-3 h-3 fill-white" viewBox="0 0 24 24">
+                      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                    </svg>
+                  </div>
+                </div>
+                <h2 className="text-xl font-bold text-gray-900">Bold</h2>
+                <p className="text-sm text-gray-400 mb-4">
+                  bold.traveler@email.com
+                </p>
+                <div className="flex gap-8">
+                  <div className="flex flex-col items-center">
+                    <Clock className="w-4 h-4 text-gray-400 mb-1" />
+                    <span className="text-xl font-bold text-gray-900">12</span>
+                    <span className="text-xs text-gray-400">Аялсан</span>
+                  </div>
+                  <div className="flex flex-col items-center">
+                    <Heart className="w-4 h-4 text-red-500 mb-1 fill-red-500" />
+                    <span className="text-xl font-bold text-red-500">48</span>
+                    <span className="text-xs text-gray-400">Хадгалсан</span>
+                  </div>
+                </div>
+              </div>
+              {/* Menu Items */}
+              <div className="bg-white mx-3 mt-3 rounded-2xl overflow-hidden">
+                {[
+                  {
+                    icon: <Bookmark className="w-5 h-5 text-blue-500" />,
+                    label: "Хадгалсан аяллууд",
+                  },
+                  {
+                    icon: <MapPin className="w-5 h-5 text-amber-500" />,
+                    label: "Өмнөх маршрутууд",
+                  },
+                  {
+                    icon: <Settings className="w-5 h-5 text-purple-500" />,
+                    label: "Тохиргоо",
+                  },
+                ].map((item, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center px-4 py-3.5 border-b border-gray-100 hover:cursor-pointer transition-colours duration-400 hover:bg-gray-200 last:border-0"
+                  >
+                    <div className="w-8 h-8 flex items-center justify-center mr-3">
+                      {item.icon}
+                    </div>
+                    <span className="flex-1 text-sm font-medium text-gray-800">
+                      {item.label}
+                    </span>
+                    <span className="text-gray-300 text-lg">›</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Logout Button */}
+              <div className="mx-3 mt-30">
+                <button className="w-full bg-white rounded-2xl py-3.5 flex hover:cursor-pointer transition-colours duration-400 hover:bg-gray-200  items-center justify-center gap-2 text-red-500 font-semibold text-sm">
+                  <LogOut className="w-4 h-4" />
+                  Гарах
+                </button>
+              </div>
+            </div>
+
+            <Footer />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default page;
