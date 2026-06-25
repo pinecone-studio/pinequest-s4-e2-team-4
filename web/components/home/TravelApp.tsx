@@ -1,22 +1,50 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import HomeBackdrop from "./HomeBackdrop";
 import Logo from "./Logo";
 import PhoneFrame from "./PhoneFrame";
 import HomeFooter from "./Footer";
-
+import WeatherIcon from "./WeatherIcon";
 
 type AppScreen = "intro" | "zooming" | "home";
+type WeatherType = "sun" | "cloud" | "rain" | "wind";
 
+function getWeatherType(code: number): WeatherType {
+  if (code === 0) return "sun";
+  if (code === 1 || code === 2 || code === 3) return "cloud";
+  if (code >= 45 && code <= 48) return "cloud";
+  if (code >= 51 && code <= 67) return "rain";
+  if (code >= 71 && code <= 86) return "rain";
+  if (code >= 80 && code <= 82) return "rain";
+  if (code === 95 || code === 96 || code === 99) return "wind";
+  return "sun";
+}
 export default function TravelApp() {
   const [screen, setScreen] = useState<AppScreen>("intro");
   const startTrip = () => {
     setScreen("zooming");
     window.setTimeout(() => setScreen("home"), 1450);
   };
+const [forecast, setForecast] = useState<any>(null);
 
+useEffect(() => {
+  navigator.geolocation.getCurrentPosition(
+    async (position) => {
+      const { latitude, longitude } = position.coords;
+
+     const res = await fetch(
+  `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`
+);
+
+      const data = await res.json();
+      setForecast(data);
+    },
+    (error) => console.log(error)
+  );
+}, []);
   return (
     <main className="relative grid min-h-screen place-items-center overflow-hidden px-4 py-8 text-slate-950">
       <HomeBackdrop active={screen !== "intro"} />
@@ -74,13 +102,65 @@ export default function TravelApp() {
                 </button>
               </div>
             </div>
-            <section>
-              <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-lg font-bold">Цаг агаар</h2>
-                <span className="text-sm font-semibold text-[#0b7f71]">7 хоног →</span>
-              </div>
-           
-            </section>
+          <section>
+  <div className="mb-4 flex items-center justify-between">
+    <h2 className="text-lg font-bold">
+      Цаг агаар
+    </h2>
+  </div>
+
+  <div className="rounded-3xl bg-[#ebeaea] p-5 shadow-lg">
+    <div className="flex items-center gap-9">
+<WeatherIcon
+  type={getWeatherType(forecast?.daily?.weathercode?.[0] ?? 0)}
+/>
+
+      <div>
+        <p className="text-sm text-slate-500">
+          Өнөөдөр
+        </p>
+
+        <p className="text-3xl font-black">
+          {forecast?.daily?.temperature_2m_max?.[0]}°
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+<section className="rounded-3xl bg-[#0b7f71] p-5 text-white shadow-xl">
+  <h2 className="mb-4 text-lg font-bold">
+    7 хоногийн төлөв
+  </h2>
+
+  <div className="flex gap-2 overflow-x-auto pb-2">
+    {forecast?.daily?.time?.map(
+      (date: string, index: number) => (
+        <div
+          key={date}
+          className="flex-shrink-0 w-16 rounded-2xl bg-white/14 px-2 py-3 text-center"
+        >
+          <p className="text-xs font-bold">
+            {new Date(date).toLocaleDateString(
+              "mn-MN",
+              { weekday: "short" }
+            )}
+          </p>
+
+          <div className="my-3 flex justify-center">
+            <WeatherIcon type={getWeatherType(forecast.daily.weathercode[index])} />
+          </div>
+
+          <p className="text-sm font-black">
+            {Math.round(
+              forecast.daily.temperature_2m_max[index]
+            )}
+            °
+          </p>
+        </div>
+      )
+    )}
+  </div>
+</section>
             
           </div>
           <HomeFooter />
