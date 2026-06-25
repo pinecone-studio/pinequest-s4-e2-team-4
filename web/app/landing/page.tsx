@@ -3,6 +3,7 @@ import Hero from "./Hero";
 import About from "./About";
 import Features from "./Features";
 import DestinationGallery from "./DestinationGrid";
+import CTASection from "./CTASection";
 
 export default function LandingPage() {
   return (
@@ -12,6 +13,7 @@ export default function LandingPage() {
       <About />
             <Features />
                <DestinationGallery />
+               <CTASection />
     </main>
   );
 }
