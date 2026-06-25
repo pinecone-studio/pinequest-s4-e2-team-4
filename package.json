@@ -1,0 +1,11 @@
+{
+  "name": "montrip",
+  "private": true,
+  "scripts": {
+    "build": "cd web && npm run build",
+    "postinstall": "cd web && npm install"
+  },
+  "dependencies": {
+    "next": "16.2.9"
+  }
+}
