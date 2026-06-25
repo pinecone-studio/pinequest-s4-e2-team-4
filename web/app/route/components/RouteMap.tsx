@@ -20,7 +20,7 @@ export default function RouteMap() {
 
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: "mapbox://styles/mapbox/standart",
+      style: "mapbox://styles/mapbox/standard",
       center: startPoint,
       zoom: 14,
       pitch: 30,
