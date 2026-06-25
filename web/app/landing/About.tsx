@@ -1,4 +1,3 @@
-About.tsx
 export default function About() {
   return (
     <section className="mx-auto max-w-7xl px-8 py-28">

@@ -18,7 +18,7 @@ import HomeBackdrop from "@/components/home/HomeBackdrop";
 import { LinkProps } from "next/link";
 import { useRouter } from "next/navigation";
 
-export const page = () => {
+export const Page = () => {
   const router = useRouter();
   return (
     <div className="relative min-h-screen flex items-center justify-center">
@@ -114,4 +114,4 @@ export const page = () => {
   );
 };
 
-export default page;
+export default Page;

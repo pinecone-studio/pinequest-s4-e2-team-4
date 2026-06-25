@@ -11,6 +11,14 @@ import WeatherIcon from "./WeatherIcon";
 
 type AppScreen = "intro" | "zooming" | "home";
 type WeatherType = "sun" | "cloud" | "rain" | "wind";
+type Forecast = {
+  daily?: {
+    time?: string[];
+    weathercode?: number[];
+    temperature_2m_max?: number[];
+    temperature_2m_min?: number[];
+  };
+};
 
 function getWeatherType(code: number): WeatherType {
   if (code === 0) return "sun";
@@ -28,7 +36,7 @@ export default function TravelApp() {
     setScreen("zooming");
     window.setTimeout(() => setScreen("home"), 1450);
   };
-const [forecast, setForecast] = useState<any>(null);
+const [forecast, setForecast] = useState<Forecast | null>(null);
 
 useEffect(() => {
   navigator.geolocation.getCurrentPosition(
@@ -39,7 +47,7 @@ useEffect(() => {
   `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto`
 );
 
-      const data = await res.json();
+      const data = (await res.json()) as Forecast;
       setForecast(data);
     },
     (error) => console.log(error)
@@ -147,12 +155,12 @@ useEffect(() => {
           </p>
 
           <div className="my-3 flex justify-center">
-            <WeatherIcon type={getWeatherType(forecast.daily.weathercode[index])} />
+            <WeatherIcon type={getWeatherType(forecast?.daily?.weathercode?.[index] ?? 0)} />
           </div>
 
           <p className="text-sm font-black">
             {Math.round(
-              forecast.daily.temperature_2m_max[index]
+              forecast?.daily?.temperature_2m_max?.[index] ?? 0
             )}
             °
           </p>

@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { put } from "@vercel/blob";
 import { NextResponse } from "next/server";
 
-const prisma = new PrismaClient();
+const getPrisma = () => new PrismaClient({});
 
 export async function POST(request: Request) {
   try {
@@ -17,14 +17,15 @@ export async function POST(request: Request) {
     const blob = await put(file.name, file, { access: "public" });
 
     if (userId) {
-      await prisma.user.update({
+      await getPrisma().user.update({
         where: { id: userId },
         data: { profileImage: blob.url },
       });
     }
 
     return NextResponse.json({ success: true, url: blob.url });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Upload failed";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
