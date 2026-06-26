@@ -7,6 +7,7 @@ import { fetchDrivingRoute, fetchNearbyGasStations } from "./routeMapApi";
 import {
   clearGasStationRoute,
   drawNearestGasStationRoute,
+  getRenderedGasStations,
   updateLiveLocation,
 } from "./routeMapLayers";
 import type { Coordinate } from "./routeMap.types";
@@ -90,7 +91,18 @@ export default function RouteMap() {
     setGasStationStatus("Searching nearby gas stations...");
 
     try {
-      const gasStations = await fetchNearbyGasStations(origin);
+      const apiGasStations = await fetchNearbyGasStations(origin, 7000, accessToken);
+      const renderedGasStations = getRenderedGasStations(map, origin);
+      const gasStations = [...renderedGasStations, ...apiGasStations]
+        .filter(
+          (station, index, stations) =>
+            stations.findIndex(
+              (candidate) =>
+                Math.abs(candidate.center[0] - station.center[0]) < 0.0007 &&
+                Math.abs(candidate.center[1] - station.center[1]) < 0.0007,
+            ) === index,
+        )
+        .sort((first, second) => first.distanceMeters - second.distanceMeters);
 
       clearGasStationRoute(map, gasMarkersRef.current);
       gasMarkersRef.current = [];
@@ -100,10 +112,21 @@ export default function RouteMap() {
         return;
       }
 
-      const nearestStation = gasStations.sort(
-        (first, second) => first.distanceMeters - second.distanceMeters,
+      setGasStationStatus(`${gasStations.length} gas station candidates found. Checking routes...`);
+
+      const routeCandidates = await Promise.all(
+        gasStations.slice(0, 15).map(async (station) => ({
+          station,
+          route: await fetchDrivingRoute(origin, station.center, accessToken),
+        })),
+      );
+      const nearestCandidate = routeCandidates.sort(
+        (first, second) =>
+          (first.route?.distance ?? first.station.distanceMeters) -
+          (second.route?.distance ?? second.station.distanceMeters),
       )[0];
-      const route = await fetchDrivingRoute(origin, nearestStation.center, accessToken);
+      const nearestStation = nearestCandidate.station;
+      const route = nearestCandidate.route;
       const routeGeometry =
         route?.geometry ??
         ({

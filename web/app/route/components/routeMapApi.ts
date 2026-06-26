@@ -1,9 +1,55 @@
-import type { Coordinate, DirectionsRoute, GasStation, OverpassElement } from "./routeMap.types";
+import type {
+  Coordinate,
+  DirectionsRoute,
+  GasStation,
+  MapboxPlaceFeature,
+  MapboxTilequeryFeature,
+  OverpassElement,
+} from "./routeMap.types";
 import { getDistanceMeters } from "./routeMapUtils";
 
 export const fetchNearbyGasStations = async (
-  [longitude, latitude]: Coordinate,
+  origin: Coordinate,
   radiusMeters = 7000,
+  accessToken?: string,
+) => {
+  const [overpassStations, mapboxStations, mapboxTileStations] = await Promise.all([
+    fetchOverpassGasStations(origin, radiusMeters).catch(() => []),
+    accessToken ? fetchMapboxGasStations(origin, accessToken).catch(() => []) : [],
+    accessToken ? fetchMapboxTilequeryGasStations(origin, radiusMeters, accessToken).catch(() => []) : [],
+  ]);
+
+  return dedupeGasStations([...mapboxTileStations, ...overpassStations, ...mapboxStations]).sort(
+    (first, second) => first.distanceMeters - second.distanceMeters,
+  );
+};
+
+export const fetchDrivingRoute = async (
+  origin: Coordinate,
+  destination: Coordinate,
+  accessToken: string,
+) => {
+  const params = new URLSearchParams({
+    access_token: accessToken,
+    geometries: "geojson",
+    overview: "full",
+    steps: "false",
+  });
+  const response = await fetch(
+    `https://api.mapbox.com/directions/v5/mapbox/driving/${origin[0]},${origin[1]};${destination[0]},${destination[1]}?${params.toString()}`,
+  );
+
+  if (!response.ok) {
+    return null;
+  }
+
+  const data = (await response.json()) as { routes?: DirectionsRoute[] };
+  return data.routes?.[0] ?? null;
+};
+
+const fetchOverpassGasStations = async (
+  [longitude, latitude]: Coordinate,
+  radiusMeters: number,
 ) => {
   const query = `
     [out:json][timeout:25];
@@ -31,27 +77,67 @@ export const fetchNearbyGasStations = async (
   );
 };
 
-export const fetchDrivingRoute = async (
+const fetchMapboxGasStations = async (
   origin: Coordinate,
-  destination: Coordinate,
   accessToken: string,
 ) => {
+  const [longitude, latitude] = origin;
+  const queries = ["gas station", "petrol station", "fuel station"];
+  const responses = await Promise.all(
+    queries.map((query) => {
+      const params = new URLSearchParams({
+        access_token: accessToken,
+        proximity: `${longitude},${latitude}`,
+        types: "poi",
+        limit: "10",
+        language: "en",
+      });
+
+      return fetch(
+        `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?${params.toString()}`,
+      );
+    }),
+  );
+  const payloads = await Promise.all(
+    responses.filter((response) => response.ok).map((response) => response.json()),
+  );
+  const features = payloads.flatMap(
+    (payload: { features?: MapboxPlaceFeature[] }) => payload.features ?? [],
+  );
+
+  return features
+    .map((feature) => toMapboxGasStation(feature, origin))
+    .filter((station): station is GasStation => station !== null);
+};
+
+const fetchMapboxTilequeryGasStations = async (
+  origin: Coordinate,
+  radiusMeters: number,
+  accessToken: string,
+) => {
+  const [longitude, latitude] = origin;
   const params = new URLSearchParams({
     access_token: accessToken,
-    geometries: "geojson",
-    overview: "full",
-    steps: "false",
+    layers: "poi_label",
+    radius: String(Math.min(radiusMeters, 10000)),
+    limit: "50",
   });
   const response = await fetch(
-    `https://api.mapbox.com/directions/v5/mapbox/driving/${origin[0]},${origin[1]};${destination[0]},${destination[1]}?${params.toString()}`,
+    `https://api.mapbox.com/v4/mapbox.mapbox-streets-v8/tilequery/${longitude},${latitude}.json?${params.toString()}`,
   );
 
   if (!response.ok) {
-    return null;
+    return [];
   }
 
-  const data = (await response.json()) as { routes?: DirectionsRoute[] };
-  return data.routes?.[0] ?? null;
+  const data = (await response.json()) as { features?: MapboxTilequeryFeature[] };
+
+  return (
+    data.features
+      ?.filter(isFuelTilequeryFeature)
+      .map((feature) => toTilequeryGasStation(feature, origin))
+      .filter((station): station is GasStation => station !== null) ?? []
+  );
 };
 
 const toGasStation = (element: OverpassElement, origin: Coordinate): GasStation | null => {
@@ -63,10 +149,82 @@ const toGasStation = (element: OverpassElement, origin: Coordinate): GasStation 
   }
 
   return {
-    id: element.id,
+    id: `osm-${element.id}`,
     name: element.tags?.name ?? element.tags?.brand ?? element.tags?.operator ?? "Gas station",
     address: element.tags?.["addr:street"],
     center: [lon, lat],
     distanceMeters: getDistanceMeters(origin, [lon, lat]),
   };
+};
+
+const toMapboxGasStation = (
+  feature: MapboxPlaceFeature,
+  origin: Coordinate,
+): GasStation | null => {
+  if (!feature.center) {
+    return null;
+  }
+
+  return {
+    id: `mapbox-${feature.id}`,
+    name: feature.text ?? "Gas station",
+    address: feature.place_name,
+    center: feature.center,
+    distanceMeters: getDistanceMeters(origin, feature.center),
+  };
+};
+
+const toTilequeryGasStation = (
+  feature: MapboxTilequeryFeature,
+  origin: Coordinate,
+): GasStation | null => {
+  const center = feature.geometry?.coordinates;
+
+  if (!center) {
+    return null;
+  }
+
+  return {
+    id: `tile-${feature.id ?? center.join(",")}`,
+    name: feature.properties?.name ?? "Gas station",
+    center,
+    distanceMeters: getDistanceMeters(origin, center),
+  };
+};
+
+const isFuelTilequeryFeature = (feature: MapboxTilequeryFeature) => {
+  const properties = feature.properties;
+  const label = [
+    properties?.name,
+    properties?.maki,
+    properties?.class,
+    properties?.type,
+    properties?.category_en,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return (
+    properties?.maki === "fuel" ||
+    label.includes("fuel") ||
+    label.includes("gas") ||
+    label.includes("petrol")
+  );
+};
+
+const dedupeGasStations = (stations: GasStation[]) => {
+  const uniqueStations: GasStation[] = [];
+
+  stations.forEach((station) => {
+    const duplicate = uniqueStations.some(
+      (existingStation) => getDistanceMeters(existingStation.center, station.center) < 80,
+    );
+
+    if (!duplicate) {
+      uniqueStations.push(station);
+    }
+  });
+
+  return uniqueStations;
 };

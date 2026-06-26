@@ -1,9 +1,23 @@
 import mapboxgl from "mapbox-gl";
 import type { Coordinate, GasStation, RouteLineGeometry } from "./routeMap.types";
-import { gasRouteLayerId, gasRouteSourceId, locationAccuracySourceId } from "./routeMapUtils";
+import {
+  gasRouteLayerId,
+  gasRouteSourceId,
+  getDistanceMeters,
+  locationAccuracySourceId,
+} from "./routeMapUtils";
 
 type MarkerRef = {
   current: mapboxgl.Marker | null;
+};
+
+type RenderedFeature = {
+  id?: string | number;
+  geometry?: {
+    type?: string;
+    coordinates?: unknown;
+  };
+  properties?: Record<string, unknown> | null;
 };
 
 export const updateLiveLocation = (
@@ -76,6 +90,28 @@ export const drawNearestGasStationRoute = (
   return marker;
 };
 
+export const getRenderedGasStations = (map: mapboxgl.Map, origin: Coordinate) => {
+  const features = map.queryRenderedFeatures();
+
+  return features
+    .map((feature, index) => {
+      const renderedFeature = feature as RenderedFeature;
+      const coordinates = getPointCoordinates(renderedFeature.geometry);
+
+      if (!coordinates || !isFuelFeature(renderedFeature.properties)) {
+        return null;
+      }
+
+      return {
+        id: `rendered-${renderedFeature.id ?? index}`,
+        name: getFeatureName(renderedFeature.properties),
+        center: coordinates,
+        distanceMeters: getDistanceMeters(origin, coordinates),
+      };
+    })
+    .filter((station): station is GasStation => station !== null);
+};
+
 const upsertAccuracyCircle = (map: mapboxgl.Map, point: Coordinate, accuracy: number) => {
   const accuracyData = {
     type: "Feature" as const,
@@ -124,4 +160,59 @@ const fitGeometry = (map: mapboxgl.Map, origin: Coordinate, geometry: RouteLineG
     maxZoom: 16,
     duration: 900,
   });
+};
+
+const getPointCoordinates = (geometry: RenderedFeature["geometry"]) => {
+  if (geometry?.type !== "Point" || !Array.isArray(geometry.coordinates)) {
+    return null;
+  }
+
+  const coordinates = geometry.coordinates;
+
+  if (typeof coordinates[0] !== "number" || typeof coordinates[1] !== "number") {
+    return null;
+  }
+
+  return [coordinates[0], coordinates[1]] as Coordinate;
+};
+
+const getFeatureName = (properties: RenderedFeature["properties"]) => {
+  return (
+    getProperty(properties, "name") ??
+    getProperty(properties, "name_en") ??
+    getProperty(properties, "brand") ??
+    "Gas station"
+  );
+};
+
+const isFuelFeature = (properties: RenderedFeature["properties"]) => {
+  const label = [
+    "maki",
+    "class",
+    "type",
+    "category",
+    "category_en",
+    "name",
+    "name_en",
+    "brand",
+  ]
+    .map((key) => getProperty(properties, key))
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  return (
+    label.includes("fuel") ||
+    label.includes("gas") ||
+    label.includes("petrol") ||
+    label.includes("benz")
+  );
+};
+
+const getProperty = (
+  properties: RenderedFeature["properties"],
+  key: string,
+) => {
+  const value = properties?.[key];
+  return typeof value === "string" || typeof value === "number" ? String(value) : undefined;
 };
