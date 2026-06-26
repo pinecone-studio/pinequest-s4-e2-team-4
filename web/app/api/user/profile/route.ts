@@ -1,23 +1,55 @@
 import { prisma } from "@/lib/prisma";
+import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
 
 export async function PUT(request: Request) {
   try {
-    const { userId, phone, name, profileImage } = await request.json();
+    const authHeader = request.headers.get("authorization");
+    const token = authHeader?.split(" ")[1];
 
-    if (!userId) {
+    if (!token) {
       return NextResponse.json(
-        { error: "Хэрэглэгчийн ID шаардлагатай" },
+        { error: "Нэвтрэх токен олдсонгүй" },
+        { status: 401 },
+      );
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
+      userId: string;
+    };
+    const userId = decoded.userId;
+
+    const { phone, name, profileImage } = await request.json();
+
+    const currentUser = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!currentUser) {
+      return NextResponse.json(
+        { error: "Хэрэглэгч олдсонгүй" },
+        { status: 404 },
+      );
+    }
+
+    const isNameSame = !name || name === currentUser.name;
+    const isPhoneSame = !phone || phone === currentUser.phone;
+    const isProfileImageSame =
+      !profileImage || profileImage === currentUser.profileImage;
+
+    if (isNameSame && isPhoneSame && isProfileImageSame) {
+      return NextResponse.json(
+        { error: "Өөрчлөгдсөн мэдээлэл олдсонгүй (Ижил мэдээлэл байна)" },
         { status: 400 },
       );
     }
 
-    if (phone) {
+    if (phone && phone !== currentUser.phone) {
       const existingUserWithPhone = await prisma.user.findUnique({
         where: { phone },
       });
 
-      if (existingUserWithPhone && existingUserWithPhone.id !== userId) {
+      if (existingUserWithPhone) {
         return NextResponse.json(
           {
             error: "Энэ утасны дугаар аль хэдийн өөр бүртгэлд холбогдсон байна",
