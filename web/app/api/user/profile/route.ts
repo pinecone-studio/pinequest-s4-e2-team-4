@@ -1,11 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import jwt from "jsonwebtoken";
-import { NextResponse } from "next/server";
-
-export async function PUT(request: Request) {
+import { NextRequest, NextResponse } from "next/server";
+export async function PUT(request: NextRequest) {
   try {
-    const authHeader = request.headers.get("authorization");
-    const token = authHeader?.split(" ")[1];
+    const token = request.cookies.get("token")?.value;
 
     if (!token) {
       return NextResponse.json(

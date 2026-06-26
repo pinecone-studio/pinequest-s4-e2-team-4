@@ -1,0 +1,82 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  username     String   @unique
+  password     String
+  name         String?
+  phone        String?  @unique
+  profileImage String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  trips        Trip[]
+  chatSessions ChatSession[]
+}
+
+model Trip {
+  id        String    @id @default(uuid())
+  title     String
+  startDate DateTime?
+  endDate   DateTime?
+  createdAt DateTime  @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  destinations Destination[]
+}
+
+model Destination {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  tripId String
+  trip   Trip   @relation(fields: [tripId], references: [id], onDelete: Cascade)
+}
+
+model ChatSession {
+  id        String   @id @default(uuid())
+  title     String   @default("Шинэ чат")
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  messages Message[]
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  role      String
+  content   String
+  createdAt DateTime @default(now())
+
+  sessionId String
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+}
+
+model VerificationCode {
+  id        String   @id @default(uuid())
+  target    String
+  code      String
+  type      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}

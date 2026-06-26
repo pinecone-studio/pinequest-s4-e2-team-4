@@ -1,12 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import { put } from "@vercel/blob";
 import jwt from "jsonwebtoken";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const authHeader = request.headers.get("authorization");
-    const token = authHeader?.split(" ")[1];
+    const token = request.cookies.get("token")?.value;
 
     if (!token) {
       return NextResponse.json(
@@ -40,8 +39,11 @@ export async function POST(request: Request) {
       success: true,
       url: blob.url,
     });
-  } catch (error: any) {
-    console.error(error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error) {
+    console.error("Upload error:", error);
+    return NextResponse.json(
+      { error: "Серверийн алдаа гарлаа" },
+      { status: 500 },
+    );
   }
 }

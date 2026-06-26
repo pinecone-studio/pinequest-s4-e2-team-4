@@ -8,7 +8,7 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../generated/prisma"
 }
 
@@ -70,4 +70,12 @@ model Message {
 
   sessionId String
   session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+}
+model VerificationCode {
+  id        String   @id @default(uuid())
+  target    String   
+  code      String   
+  type      String   
+  expiresAt DateTime 
+  createdAt DateTime @default(now())
 }
