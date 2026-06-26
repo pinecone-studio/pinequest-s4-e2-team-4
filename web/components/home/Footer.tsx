@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { Home, MessageCircle, Map, User } from "lucide-react";
 
 const footerItems = [
-  { label: "Нүүр", icon: Home, href: "/" },
+  { label: "Нүүр", icon: Home, href: "/home" },
   { label: "AI Chat", icon: MessageCircle, href: "/chat" },
   { label: "Маршрут", icon: Map, href: "/route" },
   { label: "Профайл", icon: User, href: "/profile" },
