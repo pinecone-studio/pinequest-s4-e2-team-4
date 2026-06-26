@@ -17,11 +17,36 @@ export type OverpassElement = {
 };
 
 export type GasStation = {
-  id: number;
+  id: string;
   name: string;
   address?: string;
   center: Coordinate;
   distanceMeters: number;
+};
+
+export type MapboxPlaceFeature = {
+  id: string;
+  text?: string;
+  place_name?: string;
+  center?: Coordinate;
+  properties?: {
+    category?: string;
+  };
+};
+
+export type MapboxTilequeryFeature = {
+  id?: string | number;
+  geometry?: {
+    type?: string;
+    coordinates?: Coordinate;
+  };
+  properties?: {
+    name?: string;
+    maki?: string;
+    class?: string;
+    type?: string;
+    category_en?: string;
+  };
 };
 
 export type RouteLineGeometry = {
