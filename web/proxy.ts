@@ -17,9 +17,30 @@ export default function proxy(request: NextRequest) {
     }
   }
 
+  const protectedRoutes = ["/chat", "/profile", "/settings"];
+  if (protectedRoutes.some((route) => pathname.startsWith(route))) {
+    if (!token) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+  }
+
+  const authRoutes = ["/login", "/register"];
+  if (authRoutes.some((route) => pathname.startsWith(route))) {
+    if (token) {
+      return NextResponse.redirect(new URL("/chat", request.url));
+    }
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/api/user/:path*"],
+  matcher: [
+    "/api/user/:path*",
+    "/chat/:path*",
+    "/profile/:path*",
+    "/settings/:path*",
+    "/login",
+    "/register",
+  ],
 };
