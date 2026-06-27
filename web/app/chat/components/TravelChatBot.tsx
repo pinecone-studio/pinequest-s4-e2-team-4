@@ -196,3 +196,58 @@ export const TravelChatbot = () => {
   );
 };
 export default TravelChatbot;
+
+// "use client";
+// import React, { useState } from "react";
+
+// const TravelChatBot = () => {
+//   const [messages, setMessages] = useState<any[]>([]);
+//   const [input, setInput] = useState("");
+//   const [sessionId, setSessionId] = useState<string | null>(null);
+
+//   const sendMessage = async () => {
+//     if (!input.trim()) return;
+
+//     const userMessage = {
+//       role: "user",
+//       content: input,
+//     };
+
+//     setMessages((prev) => [...prev, userMessage]);
+
+//     const currentInput = input;
+//     setInput("");
+
+//     const res = await fetch("/api/chat", {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({
+//         sessionId,
+//         message: currentInput,
+//       }),
+//     });
+
+//     const data = await res.json();
+
+//     if (!res.ok) {
+//       console.log(data.error);
+//       return;
+//     }
+
+//     setSessionId(data.sessionId);
+
+//     setMessages((prev) => [
+//       ...prev,
+//       {
+//         role: "model",
+//         content: data.response,
+//       },
+//     ]);
+//   };
+
+//   return <div></div>;
+// };
+
+// export default TravelChatBot;

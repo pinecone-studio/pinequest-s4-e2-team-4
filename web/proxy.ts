@@ -20,7 +20,7 @@ export default function proxy(request: NextRequest) {
   const protectedRoutes = ["/chat", "/profile", "/settings"];
   if (protectedRoutes.some((route) => pathname.startsWith(route))) {
     if (!token) {
-      return NextResponse.redirect(new URL("/login", request.url));
+      return NextResponse.redirect(new URL("/signin", request.url));
     }
   }
 
