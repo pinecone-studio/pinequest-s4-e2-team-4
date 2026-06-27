@@ -26,7 +26,9 @@ export const chat = () => {
           <div className="h-full">
             <TravelChatbot />
           </div>
-          <Footer />
+          <div className="mt-47">
+            <Footer />
+          </div>
         </PhoneFrame>
       </div>
     </div>
