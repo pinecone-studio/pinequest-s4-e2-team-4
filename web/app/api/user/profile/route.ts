@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import jwt from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
+
 export async function PUT(request: NextRequest) {
   try {
     const token = request.cookies.get("token")?.value;
@@ -17,7 +18,7 @@ export async function PUT(request: NextRequest) {
     };
     const userId = decoded.userId;
 
-    const { phone, name, profileImage } = await request.json();
+    const { phone, name } = await request.json();
 
     const currentUser = await prisma.user.findUnique({
       where: { id: userId },
@@ -30,21 +31,33 @@ export async function PUT(request: NextRequest) {
       );
     }
 
-    const isNameSame = !name || name === currentUser.name;
-    const isPhoneSame = !phone || phone === currentUser.phone;
-    const isProfileImageSame =
-      !profileImage || profileImage === currentUser.profileImage;
+    const updateData: Record<string, any> = {};
 
-    if (isNameSame && isPhoneSame && isProfileImageSame) {
-      return NextResponse.json(
-        { error: "Өөрчлөгдсөн мэдээлэл олдсонгүй (Ижил мэдээлэл байна)" },
-        { status: 400 },
-      );
+    if (name !== undefined && name !== currentUser.name) {
+      updateData.name = name;
+    }
+    if (phone !== undefined && phone !== currentUser.phone) {
+      updateData.phone = phone;
     }
 
-    if (phone && phone !== currentUser.phone) {
+    // Юу ч өөрчлөгдөөгүй бол шууд амжилттай буцаана
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({
+        message: "Хэрэглэгчийн мэдээлэл амжилттай шинэчлэгдлээ",
+        user: {
+          id: currentUser.id,
+          email: currentUser.email,
+          username: currentUser.username,
+          name: currentUser.name,
+          phone: currentUser.phone,
+          profileImage: currentUser.profileImage,
+        },
+      });
+    }
+
+    if (updateData.phone) {
       const existingUserWithPhone = await prisma.user.findUnique({
-        where: { phone },
+        where: { phone: updateData.phone },
       });
 
       if (existingUserWithPhone) {
@@ -59,11 +72,7 @@ export async function PUT(request: NextRequest) {
 
     const updatedUser = await prisma.user.update({
       where: { id: userId },
-      data: {
-        ...(phone && { phone }),
-        ...(name && { name }),
-        ...(profileImage && { profileImage }),
-      },
+      data: updateData,
     });
 
     return NextResponse.json({
