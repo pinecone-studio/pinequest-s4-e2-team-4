@@ -51,6 +51,45 @@ button {
   animation: home-enter 0.58s ease-out both;
 }
 
+.signin-wind {
+  animation: signin-wind-streak 1.35s ease-in-out infinite;
+  background: linear-gradient(90deg, transparent, rgba(132, 186, 54, 0.88), transparent);
+  border-radius: 999px;
+  height: 3px;
+  opacity: 0;
+  pointer-events: none;
+  position: absolute;
+  z-index: 3;
+}
+
+.signin-wind-one {
+  animation-delay: 0s;
+  left: 25%;
+  top: 27%;
+  width: 20%;
+}
+
+.signin-wind-two {
+  animation-delay: 0.22s;
+  left: 23%;
+  top: 33%;
+  width: 14%;
+}
+
+.signin-wind-three {
+  animation-delay: 0.42s;
+  left: 67%;
+  top: 29%;
+  width: 16%;
+}
+
+.signin-wind-four {
+  animation-delay: 0.65s;
+  left: 63%;
+  top: 37%;
+  width: 22%;
+}
+
 .weather-sun,
 .weather-cloud,
 .weather-rain,
@@ -195,5 +234,19 @@ button {
   to {
     opacity: 1;
     transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes signin-wind-streak {
+  0% {
+    opacity: 0;
+    transform: translate3d(18px, 0, 0) scaleX(0.35);
+  }
+  35% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-26px, 0, 0) scaleX(1);
   }
 }
