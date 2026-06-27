@@ -1,37 +1,42 @@
-
 import FeatureCard from "./FeaturesCard";
 
 export default function Features() {
   const features = [
     {
-      title: "AI-Powered Planning",
+      title: "Хиймэл оюунтай маршрут төлөвлөлт",
       description:
-        "Generate routes and personalized trips instantly.",
+        "Таны зорчих чиглэл, хугацаа, сонирхолд тулгуурлан аяллын маршрутыг автоматаар үүсгэнэ.",
     },
     {
-      title: "Cost Estimation",
+      title: "Зардлын ухаалаг тооцоолуур",
       description:
-        "Calculate fuel, hotel, and food costs automatically.",
+        "Түлш, байр, хоолны зардлыг урьдчилан тооцоолж аяллыг илүү хялбар болгоно.",
     },
     {
-      title: "Easy Navigation",
+      title: "Хялбар навигаци",
       description:
-        "Interactive route maps and travel guidance.",
+        "Интерактив газрын зураг ашиглан замаа хянаж, аяллаа зөв удирдана.",
     },
   ];
 
   return (
     <section className="mx-auto max-w-7xl px-8 py-24">
+
+      {/* header */}
       <div className="mb-16 text-center">
-        <h2 className="text-5xl text-gray-600 font-bold">
-          Engineered for the Modern Nomad
+        <h2 className="text-4xl md:text-5xl font-bold text-gray-700 leading-tight">
+          Орчин үеийн аялагчдад зориулсан
+          <br />
+          ухаалаг систем
         </h2>
 
-        <p className="mt-4  text-gray-600">
-          Smart planning tools for modern travelers.
+        <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
+          MonTrip нь таны аяллыг төлөвлөх, удирдах, зардлыг тооцоолох
+          бүх процессыг нэг дор хялбарчилна.
         </p>
       </div>
 
+      {/* features grid */}
       <div className="grid gap-8 text-gray-600 md:grid-cols-3">
         {features.map((feature) => (
           <FeatureCard
@@ -41,6 +46,7 @@ export default function Features() {
           />
         ))}
       </div>
+
     </section>
   );
 }

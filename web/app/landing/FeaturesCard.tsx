@@ -1,4 +1,3 @@
-
 interface FeatureCardProps {
   title: string;
   description: string;
@@ -9,14 +8,21 @@ export default function FeatureCard({
   description,
 }: FeatureCardProps) {
   return (
-    <div className="rounded-3xl bg-white p-8 shadow-md transition hover:-translate-y-1 hover:shadow-xl">
-      <h3 className="mb-4 text-xl font-semibold">
+    <div className="group rounded-3xl bg-white p-8 shadow-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl">
+
+      {/* small glow effect */}
+      <div className="mb-5 h-1 w-12 rounded-full bg-teal-500 transition-all group-hover:w-20" />
+
+      {/* title */}
+      <h3 className="mb-3 text-xl font-semibold text-gray-800 group-hover:text-teal-700 transition">
         {title}
       </h3>
 
-      <p className="text-gray-600">
+      {/* description */}
+      <p className="text-gray-600 leading-relaxed">
         {description}
       </p>
+
     </div>
   );
 }
