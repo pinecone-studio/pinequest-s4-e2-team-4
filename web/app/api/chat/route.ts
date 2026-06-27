@@ -1,12 +1,26 @@
 import { prisma } from "@/lib/prisma";
 import { GoogleGenAI } from "@google/genai";
+import jwt from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 export async function POST(request: NextRequest) {
   try {
-    const { sessionId, message, userId, tripId } = await request.json();
+    const token = request.cookies.get("token")?.value;
+    if (!token) {
+      return NextResponse.json(
+        { error: "Нэвтрэх токен олдсонгүй" },
+        { status: 401 },
+      );
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
+      userId: string;
+    };
+    const userId = decoded.userId;
+
+    const { sessionId, message, tripId } = await request.json();
 
     if (!message) {
       return NextResponse.json(
@@ -18,16 +32,6 @@ export async function POST(request: NextRequest) {
     let currentSessionId = sessionId;
 
     if (!currentSessionId) {
-      if (!userId) {
-        return NextResponse.json(
-          {
-            error:
-              "Шинэ чат үүсгэхийн тулд хэрэглэгчийн userId заавал шаардлагатай",
-          },
-          { status: 400 },
-        );
-      }
-
       const userExists = await prisma.user.findUnique({
         where: { id: userId },
       });
@@ -201,6 +205,12 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Chat API Error:", error);
+    if (error instanceof jwt.JsonWebTokenError) {
+      return NextResponse.json(
+        { error: "Хүчингүй токен байна" },
+        { status: 401 },
+      );
+    }
     return NextResponse.json(
       { error: "Сервер дээр алдаа гарлаа" },
       { status: 500 },
