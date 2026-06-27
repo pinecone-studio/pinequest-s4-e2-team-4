@@ -167,11 +167,11 @@ exports.Prisma.MessageScalarFieldEnum = {
 
 exports.Prisma.VerificationCodeScalarFieldEnum = {
   id: 'id',
-  target: 'target',
   code: 'code',
   type: 'type',
   expiresAt: 'expiresAt',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  userId: 'userId'
 };
 
 exports.Prisma.SortOrder = {

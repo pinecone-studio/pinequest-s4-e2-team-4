@@ -15,10 +15,12 @@ export async function POST(request: Request) {
 
     const validCode = await prisma.verificationCode.findFirst({
       where: {
-        target: email,
         code,
         type: "RESET_PASSWORD",
         expiresAt: { gte: new Date() },
+        user: {
+          email: email,
+        },
       },
     });
 

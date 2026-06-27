@@ -25,6 +25,8 @@ model User {
 
   trips        Trip[]
   chatSessions ChatSession[]
+
+  verificationCodes VerificationCode[]
 }
 
 model Trip {
@@ -74,9 +76,11 @@ model Message {
 
 model VerificationCode {
   id        String   @id @default(uuid())
-  target    String
   code      String
   type      String
   expiresAt DateTime
   createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

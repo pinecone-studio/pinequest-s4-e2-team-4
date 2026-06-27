@@ -1323,11 +1323,13 @@ export namespace Prisma {
   export type UserCountOutputType = {
     trips: number
     chatSessions: number
+    verificationCodes: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     trips?: boolean | UserCountOutputTypeCountTripsArgs
     chatSessions?: boolean | UserCountOutputTypeCountChatSessionsArgs
+    verificationCodes?: boolean | UserCountOutputTypeCountVerificationCodesArgs
   }
 
   // Custom InputTypes
@@ -1353,6 +1355,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountChatSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ChatSessionWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountVerificationCodesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: VerificationCodeWhereInput
   }
 
 
@@ -1620,6 +1629,7 @@ export namespace Prisma {
     updatedAt?: boolean
     trips?: boolean | User$tripsArgs<ExtArgs>
     chatSessions?: boolean | User$chatSessionsArgs<ExtArgs>
+    verificationCodes?: boolean | User$verificationCodesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -1663,6 +1673,7 @@ export namespace Prisma {
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     trips?: boolean | User$tripsArgs<ExtArgs>
     chatSessions?: boolean | User$chatSessionsArgs<ExtArgs>
+    verificationCodes?: boolean | User$verificationCodesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -1673,6 +1684,7 @@ export namespace Prisma {
     objects: {
       trips: Prisma.$TripPayload<ExtArgs>[]
       chatSessions: Prisma.$ChatSessionPayload<ExtArgs>[]
+      verificationCodes: Prisma.$VerificationCodePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2080,6 +2092,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     trips<T extends User$tripsArgs<ExtArgs> = {}>(args?: Subset<T, User$tripsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TripPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     chatSessions<T extends User$chatSessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$chatSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ChatSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    verificationCodes<T extends User$verificationCodesArgs<ExtArgs> = {}>(args?: Subset<T, User$verificationCodesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$VerificationCodePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2556,6 +2569,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ChatSessionScalarFieldEnum | ChatSessionScalarFieldEnum[]
+  }
+
+  /**
+   * User.verificationCodes
+   */
+  export type User$verificationCodesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the VerificationCode
+     */
+    select?: VerificationCodeSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the VerificationCode
+     */
+    omit?: VerificationCodeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationCodeInclude<ExtArgs> | null
+    where?: VerificationCodeWhereInput
+    orderBy?: VerificationCodeOrderByWithRelationInput | VerificationCodeOrderByWithRelationInput[]
+    cursor?: VerificationCodeWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: VerificationCodeScalarFieldEnum | VerificationCodeScalarFieldEnum[]
   }
 
   /**
@@ -6948,58 +6985,58 @@ export namespace Prisma {
 
   export type VerificationCodeMinAggregateOutputType = {
     id: string | null
-    target: string | null
     code: string | null
     type: string | null
     expiresAt: Date | null
     createdAt: Date | null
+    userId: string | null
   }
 
   export type VerificationCodeMaxAggregateOutputType = {
     id: string | null
-    target: string | null
     code: string | null
     type: string | null
     expiresAt: Date | null
     createdAt: Date | null
+    userId: string | null
   }
 
   export type VerificationCodeCountAggregateOutputType = {
     id: number
-    target: number
     code: number
     type: number
     expiresAt: number
     createdAt: number
+    userId: number
     _all: number
   }
 
 
   export type VerificationCodeMinAggregateInputType = {
     id?: true
-    target?: true
     code?: true
     type?: true
     expiresAt?: true
     createdAt?: true
+    userId?: true
   }
 
   export type VerificationCodeMaxAggregateInputType = {
     id?: true
-    target?: true
     code?: true
     type?: true
     expiresAt?: true
     createdAt?: true
+    userId?: true
   }
 
   export type VerificationCodeCountAggregateInputType = {
     id?: true
-    target?: true
     code?: true
     type?: true
     expiresAt?: true
     createdAt?: true
+    userId?: true
     _all?: true
   }
 
@@ -7077,11 +7114,11 @@ export namespace Prisma {
 
   export type VerificationCodeGroupByOutputType = {
     id: string
-    target: string
     code: string
     type: string
     expiresAt: Date
     createdAt: Date
+    userId: string
     _count: VerificationCodeCountAggregateOutputType | null
     _min: VerificationCodeMinAggregateOutputType | null
     _max: VerificationCodeMaxAggregateOutputType | null
@@ -7103,52 +7140,66 @@ export namespace Prisma {
 
   export type VerificationCodeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    target?: boolean
     code?: boolean
     type?: boolean
     expiresAt?: boolean
     createdAt?: boolean
+    userId?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["verificationCode"]>
 
   export type VerificationCodeSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    target?: boolean
     code?: boolean
     type?: boolean
     expiresAt?: boolean
     createdAt?: boolean
+    userId?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["verificationCode"]>
 
   export type VerificationCodeSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
-    target?: boolean
     code?: boolean
     type?: boolean
     expiresAt?: boolean
     createdAt?: boolean
+    userId?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["verificationCode"]>
 
   export type VerificationCodeSelectScalar = {
     id?: boolean
-    target?: boolean
     code?: boolean
     type?: boolean
     expiresAt?: boolean
     createdAt?: boolean
+    userId?: boolean
   }
 
-  export type VerificationCodeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "target" | "code" | "type" | "expiresAt" | "createdAt", ExtArgs["result"]["verificationCode"]>
+  export type VerificationCodeOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "code" | "type" | "expiresAt" | "createdAt" | "userId", ExtArgs["result"]["verificationCode"]>
+  export type VerificationCodeInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type VerificationCodeIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type VerificationCodeIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
 
   export type $VerificationCodePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "VerificationCode"
-    objects: {}
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: string
-      target: string
       code: string
       type: string
       expiresAt: Date
       createdAt: Date
+      userId: string
     }, ExtArgs["result"]["verificationCode"]>
     composites: {}
   }
@@ -7543,6 +7594,7 @@ export namespace Prisma {
    */
   export interface Prisma__VerificationCodeClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7573,11 +7625,11 @@ export namespace Prisma {
    */
   interface VerificationCodeFieldRefs {
     readonly id: FieldRef<"VerificationCode", 'String'>
-    readonly target: FieldRef<"VerificationCode", 'String'>
     readonly code: FieldRef<"VerificationCode", 'String'>
     readonly type: FieldRef<"VerificationCode", 'String'>
     readonly expiresAt: FieldRef<"VerificationCode", 'DateTime'>
     readonly createdAt: FieldRef<"VerificationCode", 'DateTime'>
+    readonly userId: FieldRef<"VerificationCode", 'String'>
   }
     
 
@@ -7594,6 +7646,10 @@ export namespace Prisma {
      * Omit specific fields from the VerificationCode
      */
     omit?: VerificationCodeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationCodeInclude<ExtArgs> | null
     /**
      * Filter, which VerificationCode to fetch.
      */
@@ -7613,6 +7669,10 @@ export namespace Prisma {
      */
     omit?: VerificationCodeOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationCodeInclude<ExtArgs> | null
+    /**
      * Filter, which VerificationCode to fetch.
      */
     where: VerificationCodeWhereUniqueInput
@@ -7630,6 +7690,10 @@ export namespace Prisma {
      * Omit specific fields from the VerificationCode
      */
     omit?: VerificationCodeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationCodeInclude<ExtArgs> | null
     /**
      * Filter, which VerificationCode to fetch.
      */
@@ -7679,6 +7743,10 @@ export namespace Prisma {
      */
     omit?: VerificationCodeOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationCodeInclude<ExtArgs> | null
+    /**
      * Filter, which VerificationCode to fetch.
      */
     where?: VerificationCodeWhereInput
@@ -7726,6 +7794,10 @@ export namespace Prisma {
      * Omit specific fields from the VerificationCode
      */
     omit?: VerificationCodeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationCodeInclude<ExtArgs> | null
     /**
      * Filter, which VerificationCodes to fetch.
      */
@@ -7775,6 +7847,10 @@ export namespace Prisma {
      */
     omit?: VerificationCodeOmit<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationCodeInclude<ExtArgs> | null
+    /**
      * The data needed to create a VerificationCode.
      */
     data: XOR<VerificationCodeCreateInput, VerificationCodeUncheckedCreateInput>
@@ -7808,6 +7884,10 @@ export namespace Prisma {
      */
     data: VerificationCodeCreateManyInput | VerificationCodeCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationCodeIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -7822,6 +7902,10 @@ export namespace Prisma {
      * Omit specific fields from the VerificationCode
      */
     omit?: VerificationCodeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationCodeInclude<ExtArgs> | null
     /**
      * The data needed to update a VerificationCode.
      */
@@ -7874,6 +7958,10 @@ export namespace Prisma {
      * Limit how many VerificationCodes to update.
      */
     limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationCodeIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -7888,6 +7976,10 @@ export namespace Prisma {
      * Omit specific fields from the VerificationCode
      */
     omit?: VerificationCodeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationCodeInclude<ExtArgs> | null
     /**
      * The filter to search for the VerificationCode to update in case it exists.
      */
@@ -7914,6 +8006,10 @@ export namespace Prisma {
      * Omit specific fields from the VerificationCode
      */
     omit?: VerificationCodeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationCodeInclude<ExtArgs> | null
     /**
      * Filter which VerificationCode to delete.
      */
@@ -7946,6 +8042,10 @@ export namespace Prisma {
      * Omit specific fields from the VerificationCode
      */
     omit?: VerificationCodeOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: VerificationCodeInclude<ExtArgs> | null
   }
 
 
@@ -8025,11 +8125,11 @@ export namespace Prisma {
 
   export const VerificationCodeScalarFieldEnum: {
     id: 'id',
-    target: 'target',
     code: 'code',
     type: 'type',
     expiresAt: 'expiresAt',
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    userId: 'userId'
   };
 
   export type VerificationCodeScalarFieldEnum = (typeof VerificationCodeScalarFieldEnum)[keyof typeof VerificationCodeScalarFieldEnum]
@@ -8138,6 +8238,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"User"> | Date | string
     trips?: TripListRelationFilter
     chatSessions?: ChatSessionListRelationFilter
+    verificationCodes?: VerificationCodeListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -8152,6 +8253,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     trips?: TripOrderByRelationAggregateInput
     chatSessions?: ChatSessionOrderByRelationAggregateInput
+    verificationCodes?: VerificationCodeOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -8169,6 +8271,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"User"> | Date | string
     trips?: TripListRelationFilter
     chatSessions?: ChatSessionListRelationFilter
+    verificationCodes?: VerificationCodeListRelationFilter
   }, "id" | "email" | "username" | "phone">
 
   export type UserOrderByWithAggregationInput = {
@@ -8439,20 +8542,22 @@ export namespace Prisma {
     OR?: VerificationCodeWhereInput[]
     NOT?: VerificationCodeWhereInput | VerificationCodeWhereInput[]
     id?: StringFilter<"VerificationCode"> | string
-    target?: StringFilter<"VerificationCode"> | string
     code?: StringFilter<"VerificationCode"> | string
     type?: StringFilter<"VerificationCode"> | string
     expiresAt?: DateTimeFilter<"VerificationCode"> | Date | string
     createdAt?: DateTimeFilter<"VerificationCode"> | Date | string
+    userId?: StringFilter<"VerificationCode"> | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
 
   export type VerificationCodeOrderByWithRelationInput = {
     id?: SortOrder
-    target?: SortOrder
     code?: SortOrder
     type?: SortOrder
     expiresAt?: SortOrder
     createdAt?: SortOrder
+    userId?: SortOrder
+    user?: UserOrderByWithRelationInput
   }
 
   export type VerificationCodeWhereUniqueInput = Prisma.AtLeast<{
@@ -8460,20 +8565,21 @@ export namespace Prisma {
     AND?: VerificationCodeWhereInput | VerificationCodeWhereInput[]
     OR?: VerificationCodeWhereInput[]
     NOT?: VerificationCodeWhereInput | VerificationCodeWhereInput[]
-    target?: StringFilter<"VerificationCode"> | string
     code?: StringFilter<"VerificationCode"> | string
     type?: StringFilter<"VerificationCode"> | string
     expiresAt?: DateTimeFilter<"VerificationCode"> | Date | string
     createdAt?: DateTimeFilter<"VerificationCode"> | Date | string
+    userId?: StringFilter<"VerificationCode"> | string
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
 
   export type VerificationCodeOrderByWithAggregationInput = {
     id?: SortOrder
-    target?: SortOrder
     code?: SortOrder
     type?: SortOrder
     expiresAt?: SortOrder
     createdAt?: SortOrder
+    userId?: SortOrder
     _count?: VerificationCodeCountOrderByAggregateInput
     _max?: VerificationCodeMaxOrderByAggregateInput
     _min?: VerificationCodeMinOrderByAggregateInput
@@ -8484,11 +8590,11 @@ export namespace Prisma {
     OR?: VerificationCodeScalarWhereWithAggregatesInput[]
     NOT?: VerificationCodeScalarWhereWithAggregatesInput | VerificationCodeScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"VerificationCode"> | string
-    target?: StringWithAggregatesFilter<"VerificationCode"> | string
     code?: StringWithAggregatesFilter<"VerificationCode"> | string
     type?: StringWithAggregatesFilter<"VerificationCode"> | string
     expiresAt?: DateTimeWithAggregatesFilter<"VerificationCode"> | Date | string
     createdAt?: DateTimeWithAggregatesFilter<"VerificationCode"> | Date | string
+    userId?: StringWithAggregatesFilter<"VerificationCode"> | string
   }
 
   export type UserCreateInput = {
@@ -8503,6 +8609,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     trips?: TripCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+    verificationCodes?: VerificationCodeCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -8517,6 +8624,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     trips?: TripUncheckedCreateNestedManyWithoutUserInput
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+    verificationCodes?: VerificationCodeUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -8531,6 +8639,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     trips?: TripUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+    verificationCodes?: VerificationCodeUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -8545,6 +8654,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     trips?: TripUncheckedUpdateManyWithoutUserNestedInput
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+    verificationCodes?: VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -8820,52 +8930,51 @@ export namespace Prisma {
 
   export type VerificationCodeCreateInput = {
     id?: string
-    target: string
     code: string
     type: string
     expiresAt: Date | string
     createdAt?: Date | string
+    user: UserCreateNestedOneWithoutVerificationCodesInput
   }
 
   export type VerificationCodeUncheckedCreateInput = {
     id?: string
-    target: string
     code: string
     type: string
     expiresAt: Date | string
     createdAt?: Date | string
+    userId: string
   }
 
   export type VerificationCodeUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    target?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutVerificationCodesNestedInput
   }
 
   export type VerificationCodeUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
-    target?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type VerificationCodeCreateManyInput = {
     id?: string
-    target: string
     code: string
     type: string
     expiresAt: Date | string
     createdAt?: Date | string
+    userId: string
   }
 
   export type VerificationCodeUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
-    target?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8874,11 +8983,11 @@ export namespace Prisma {
 
   export type VerificationCodeUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
-    target?: StringFieldUpdateOperationsInput | string
     code?: StringFieldUpdateOperationsInput | string
     type?: StringFieldUpdateOperationsInput | string
     expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    userId?: StringFieldUpdateOperationsInput | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -8934,6 +9043,12 @@ export namespace Prisma {
     none?: ChatSessionWhereInput
   }
 
+  export type VerificationCodeListRelationFilter = {
+    every?: VerificationCodeWhereInput
+    some?: VerificationCodeWhereInput
+    none?: VerificationCodeWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -8944,6 +9059,10 @@ export namespace Prisma {
   }
 
   export type ChatSessionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type VerificationCodeOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -9229,29 +9348,29 @@ export namespace Prisma {
 
   export type VerificationCodeCountOrderByAggregateInput = {
     id?: SortOrder
-    target?: SortOrder
     code?: SortOrder
     type?: SortOrder
     expiresAt?: SortOrder
     createdAt?: SortOrder
+    userId?: SortOrder
   }
 
   export type VerificationCodeMaxOrderByAggregateInput = {
     id?: SortOrder
-    target?: SortOrder
     code?: SortOrder
     type?: SortOrder
     expiresAt?: SortOrder
     createdAt?: SortOrder
+    userId?: SortOrder
   }
 
   export type VerificationCodeMinOrderByAggregateInput = {
     id?: SortOrder
-    target?: SortOrder
     code?: SortOrder
     type?: SortOrder
     expiresAt?: SortOrder
     createdAt?: SortOrder
+    userId?: SortOrder
   }
 
   export type TripCreateNestedManyWithoutUserInput = {
@@ -9268,6 +9387,13 @@ export namespace Prisma {
     connect?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
   }
 
+  export type VerificationCodeCreateNestedManyWithoutUserInput = {
+    create?: XOR<VerificationCodeCreateWithoutUserInput, VerificationCodeUncheckedCreateWithoutUserInput> | VerificationCodeCreateWithoutUserInput[] | VerificationCodeUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: VerificationCodeCreateOrConnectWithoutUserInput | VerificationCodeCreateOrConnectWithoutUserInput[]
+    createMany?: VerificationCodeCreateManyUserInputEnvelope
+    connect?: VerificationCodeWhereUniqueInput | VerificationCodeWhereUniqueInput[]
+  }
+
   export type TripUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<TripCreateWithoutUserInput, TripUncheckedCreateWithoutUserInput> | TripCreateWithoutUserInput[] | TripUncheckedCreateWithoutUserInput[]
     connectOrCreate?: TripCreateOrConnectWithoutUserInput | TripCreateOrConnectWithoutUserInput[]
@@ -9280,6 +9406,13 @@ export namespace Prisma {
     connectOrCreate?: ChatSessionCreateOrConnectWithoutUserInput | ChatSessionCreateOrConnectWithoutUserInput[]
     createMany?: ChatSessionCreateManyUserInputEnvelope
     connect?: ChatSessionWhereUniqueInput | ChatSessionWhereUniqueInput[]
+  }
+
+  export type VerificationCodeUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<VerificationCodeCreateWithoutUserInput, VerificationCodeUncheckedCreateWithoutUserInput> | VerificationCodeCreateWithoutUserInput[] | VerificationCodeUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: VerificationCodeCreateOrConnectWithoutUserInput | VerificationCodeCreateOrConnectWithoutUserInput[]
+    createMany?: VerificationCodeCreateManyUserInputEnvelope
+    connect?: VerificationCodeWhereUniqueInput | VerificationCodeWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -9322,6 +9455,20 @@ export namespace Prisma {
     deleteMany?: ChatSessionScalarWhereInput | ChatSessionScalarWhereInput[]
   }
 
+  export type VerificationCodeUpdateManyWithoutUserNestedInput = {
+    create?: XOR<VerificationCodeCreateWithoutUserInput, VerificationCodeUncheckedCreateWithoutUserInput> | VerificationCodeCreateWithoutUserInput[] | VerificationCodeUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: VerificationCodeCreateOrConnectWithoutUserInput | VerificationCodeCreateOrConnectWithoutUserInput[]
+    upsert?: VerificationCodeUpsertWithWhereUniqueWithoutUserInput | VerificationCodeUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: VerificationCodeCreateManyUserInputEnvelope
+    set?: VerificationCodeWhereUniqueInput | VerificationCodeWhereUniqueInput[]
+    disconnect?: VerificationCodeWhereUniqueInput | VerificationCodeWhereUniqueInput[]
+    delete?: VerificationCodeWhereUniqueInput | VerificationCodeWhereUniqueInput[]
+    connect?: VerificationCodeWhereUniqueInput | VerificationCodeWhereUniqueInput[]
+    update?: VerificationCodeUpdateWithWhereUniqueWithoutUserInput | VerificationCodeUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: VerificationCodeUpdateManyWithWhereWithoutUserInput | VerificationCodeUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: VerificationCodeScalarWhereInput | VerificationCodeScalarWhereInput[]
+  }
+
   export type TripUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<TripCreateWithoutUserInput, TripUncheckedCreateWithoutUserInput> | TripCreateWithoutUserInput[] | TripUncheckedCreateWithoutUserInput[]
     connectOrCreate?: TripCreateOrConnectWithoutUserInput | TripCreateOrConnectWithoutUserInput[]
@@ -9348,6 +9495,20 @@ export namespace Prisma {
     update?: ChatSessionUpdateWithWhereUniqueWithoutUserInput | ChatSessionUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: ChatSessionUpdateManyWithWhereWithoutUserInput | ChatSessionUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: ChatSessionScalarWhereInput | ChatSessionScalarWhereInput[]
+  }
+
+  export type VerificationCodeUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<VerificationCodeCreateWithoutUserInput, VerificationCodeUncheckedCreateWithoutUserInput> | VerificationCodeCreateWithoutUserInput[] | VerificationCodeUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: VerificationCodeCreateOrConnectWithoutUserInput | VerificationCodeCreateOrConnectWithoutUserInput[]
+    upsert?: VerificationCodeUpsertWithWhereUniqueWithoutUserInput | VerificationCodeUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: VerificationCodeCreateManyUserInputEnvelope
+    set?: VerificationCodeWhereUniqueInput | VerificationCodeWhereUniqueInput[]
+    disconnect?: VerificationCodeWhereUniqueInput | VerificationCodeWhereUniqueInput[]
+    delete?: VerificationCodeWhereUniqueInput | VerificationCodeWhereUniqueInput[]
+    connect?: VerificationCodeWhereUniqueInput | VerificationCodeWhereUniqueInput[]
+    update?: VerificationCodeUpdateWithWhereUniqueWithoutUserInput | VerificationCodeUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: VerificationCodeUpdateManyWithWhereWithoutUserInput | VerificationCodeUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: VerificationCodeScalarWhereInput | VerificationCodeScalarWhereInput[]
   }
 
   export type UserCreateNestedOneWithoutTripsInput = {
@@ -9500,6 +9661,20 @@ export namespace Prisma {
     upsert?: ChatSessionUpsertWithoutMessagesInput
     connect?: ChatSessionWhereUniqueInput
     update?: XOR<XOR<ChatSessionUpdateToOneWithWhereWithoutMessagesInput, ChatSessionUpdateWithoutMessagesInput>, ChatSessionUncheckedUpdateWithoutMessagesInput>
+  }
+
+  export type UserCreateNestedOneWithoutVerificationCodesInput = {
+    create?: XOR<UserCreateWithoutVerificationCodesInput, UserUncheckedCreateWithoutVerificationCodesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutVerificationCodesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutVerificationCodesNestedInput = {
+    create?: XOR<UserCreateWithoutVerificationCodesInput, UserUncheckedCreateWithoutVerificationCodesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutVerificationCodesInput
+    upsert?: UserUpsertWithoutVerificationCodesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutVerificationCodesInput, UserUpdateWithoutVerificationCodesInput>, UserUncheckedUpdateWithoutVerificationCodesInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -9715,6 +9890,32 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type VerificationCodeCreateWithoutUserInput = {
+    id?: string
+    code: string
+    type: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+  }
+
+  export type VerificationCodeUncheckedCreateWithoutUserInput = {
+    id?: string
+    code: string
+    type: string
+    expiresAt: Date | string
+    createdAt?: Date | string
+  }
+
+  export type VerificationCodeCreateOrConnectWithoutUserInput = {
+    where: VerificationCodeWhereUniqueInput
+    create: XOR<VerificationCodeCreateWithoutUserInput, VerificationCodeUncheckedCreateWithoutUserInput>
+  }
+
+  export type VerificationCodeCreateManyUserInputEnvelope = {
+    data: VerificationCodeCreateManyUserInput | VerificationCodeCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type TripUpsertWithWhereUniqueWithoutUserInput = {
     where: TripWhereUniqueInput
     update: XOR<TripUpdateWithoutUserInput, TripUncheckedUpdateWithoutUserInput>
@@ -9769,6 +9970,34 @@ export namespace Prisma {
     userId?: StringFilter<"ChatSession"> | string
   }
 
+  export type VerificationCodeUpsertWithWhereUniqueWithoutUserInput = {
+    where: VerificationCodeWhereUniqueInput
+    update: XOR<VerificationCodeUpdateWithoutUserInput, VerificationCodeUncheckedUpdateWithoutUserInput>
+    create: XOR<VerificationCodeCreateWithoutUserInput, VerificationCodeUncheckedCreateWithoutUserInput>
+  }
+
+  export type VerificationCodeUpdateWithWhereUniqueWithoutUserInput = {
+    where: VerificationCodeWhereUniqueInput
+    data: XOR<VerificationCodeUpdateWithoutUserInput, VerificationCodeUncheckedUpdateWithoutUserInput>
+  }
+
+  export type VerificationCodeUpdateManyWithWhereWithoutUserInput = {
+    where: VerificationCodeScalarWhereInput
+    data: XOR<VerificationCodeUpdateManyMutationInput, VerificationCodeUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type VerificationCodeScalarWhereInput = {
+    AND?: VerificationCodeScalarWhereInput | VerificationCodeScalarWhereInput[]
+    OR?: VerificationCodeScalarWhereInput[]
+    NOT?: VerificationCodeScalarWhereInput | VerificationCodeScalarWhereInput[]
+    id?: StringFilter<"VerificationCode"> | string
+    code?: StringFilter<"VerificationCode"> | string
+    type?: StringFilter<"VerificationCode"> | string
+    expiresAt?: DateTimeFilter<"VerificationCode"> | Date | string
+    createdAt?: DateTimeFilter<"VerificationCode"> | Date | string
+    userId?: StringFilter<"VerificationCode"> | string
+  }
+
   export type UserCreateWithoutTripsInput = {
     id?: string
     email: string
@@ -9780,6 +10009,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+    verificationCodes?: VerificationCodeCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutTripsInput = {
@@ -9793,6 +10023,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+    verificationCodes?: VerificationCodeUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutTripsInput = {
@@ -9848,6 +10079,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+    verificationCodes?: VerificationCodeUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutTripsInput = {
@@ -9861,6 +10093,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+    verificationCodes?: VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type DestinationUpsertWithWhereUniqueWithoutTripInput = {
@@ -9954,6 +10187,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     trips?: TripCreateNestedManyWithoutUserInput
+    verificationCodes?: VerificationCodeCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutChatSessionsInput = {
@@ -9967,6 +10201,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     trips?: TripUncheckedCreateNestedManyWithoutUserInput
+    verificationCodes?: VerificationCodeUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutChatSessionsInput = {
@@ -10020,6 +10255,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     trips?: TripUpdateManyWithoutUserNestedInput
+    verificationCodes?: VerificationCodeUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutChatSessionsInput = {
@@ -10033,6 +10269,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     trips?: TripUncheckedUpdateManyWithoutUserNestedInput
+    verificationCodes?: VerificationCodeUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type MessageUpsertWithWhereUniqueWithoutSessionInput = {
@@ -10106,6 +10343,78 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
   }
 
+  export type UserCreateWithoutVerificationCodesInput = {
+    id?: string
+    email: string
+    username: string
+    password: string
+    name?: string | null
+    phone?: string | null
+    profileImage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    trips?: TripCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutVerificationCodesInput = {
+    id?: string
+    email: string
+    username: string
+    password: string
+    name?: string | null
+    phone?: string | null
+    profileImage?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    trips?: TripUncheckedCreateNestedManyWithoutUserInput
+    chatSessions?: ChatSessionUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutVerificationCodesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutVerificationCodesInput, UserUncheckedCreateWithoutVerificationCodesInput>
+  }
+
+  export type UserUpsertWithoutVerificationCodesInput = {
+    update: XOR<UserUpdateWithoutVerificationCodesInput, UserUncheckedUpdateWithoutVerificationCodesInput>
+    create: XOR<UserCreateWithoutVerificationCodesInput, UserUncheckedCreateWithoutVerificationCodesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutVerificationCodesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutVerificationCodesInput, UserUncheckedUpdateWithoutVerificationCodesInput>
+  }
+
+  export type UserUpdateWithoutVerificationCodesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    trips?: TripUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutVerificationCodesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    name?: NullableStringFieldUpdateOperationsInput | string | null
+    phone?: NullableStringFieldUpdateOperationsInput | string | null
+    profileImage?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    trips?: TripUncheckedUpdateManyWithoutUserNestedInput
+    chatSessions?: ChatSessionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
   export type TripCreateManyUserInput = {
     id?: string
     title: string
@@ -10117,6 +10426,14 @@ export namespace Prisma {
   export type ChatSessionCreateManyUserInput = {
     id?: string
     title?: string
+    createdAt?: Date | string
+  }
+
+  export type VerificationCodeCreateManyUserInput = {
+    id?: string
+    code: string
+    type: string
+    expiresAt: Date | string
     createdAt?: Date | string
   }
 
@@ -10163,6 +10480,30 @@ export namespace Prisma {
   export type ChatSessionUncheckedUpdateManyWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     title?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VerificationCodeUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VerificationCodeUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type VerificationCodeUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    code?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    expiresAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
