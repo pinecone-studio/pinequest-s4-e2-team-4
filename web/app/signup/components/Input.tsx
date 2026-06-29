@@ -1,8 +1,8 @@
 "use client";
 
+import { Eye, EyeOff, Lock, Mail, Phone, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff, Lock, Mail, Phone, User } from "lucide-react";
 import type { MouseEvent, ReactNode } from "react";
 import { useState } from "react";
 
@@ -51,12 +51,10 @@ export default function Input() {
       </svg>
 
       <div className="relative z-10 mb-3 flex items-center gap-4">
-     
         <div>
           <h2 className="text-[22px] font-black leading-tight text-zinc-950">
             Бүртгүүлээрэй!
           </h2>
-    
         </div>
       </div>
 
@@ -166,7 +164,6 @@ export default function Input() {
         type="submit"
       >
         <span className="flex-1 text-center">Бүртгүүлэх</span>
-       
       </button>
 
       <p className="relative z-10 mt-3 text-center text-[15px] font-medium text-zinc-500">

@@ -6,7 +6,7 @@ import { PasswordField } from "./PasswordField";
 import { SignupLink } from "./SignupLink";
 import { WaveDivider } from "./WaveDivider";
 
-export default function Input() {
+export default function LoginForm() {
   const {
     email,
     password,
