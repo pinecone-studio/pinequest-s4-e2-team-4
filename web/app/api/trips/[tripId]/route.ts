@@ -42,7 +42,7 @@ export async function GET(
     const userId = decoded.userId;
     const { tripId } = params;
 
-    // 1. Датабаазаас очих цэгүүдийг авна
+    
     const destinations = await prisma.destination.findMany({
       where: { 
         tripId: tripId,
@@ -58,7 +58,7 @@ export async function GET(
       );
     }
 
-    // 2. Цэг болгоны нэрийг Mapbox ашиглан координат руу хөрвүүлнэ
+   
     const marshrutWithCoordinates = await Promise.all(
       destinations.map(async (dest) => {
         const coords = await getCoordinates(dest.name);
@@ -72,7 +72,7 @@ export async function GET(
       })
     );
 
-    // 3. Координаттай болсон цэвэрхэн датаг фронт руу буцаана
+
     return NextResponse.json({
       success: true,
       tripId,
