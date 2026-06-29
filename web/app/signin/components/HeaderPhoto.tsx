@@ -6,7 +6,7 @@ const HeaderPhoto = () => {
     <div className="absolute inset-x-0 top-0 z-10 h-[430px] overflow-hidden">
       <div className="relative h-full">
         <Image
-          src="/bus.png"
+          src="/hero-bus.png"
           alt="Header Photo"
           fill
           priority

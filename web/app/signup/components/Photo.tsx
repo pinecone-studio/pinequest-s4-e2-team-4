@@ -6,7 +6,7 @@ const Photo = () => {
     <div className="absolute inset-x-0 top-0 z-10 h-[374px] overflow-hidden">
       <div className="relative -top-11 h-[418px]">
         <Image
-          src="/bus2.png"
+          src="/signup-hero-bus.png"
           alt="MonTrip signup scenery"
           fill
           priority
