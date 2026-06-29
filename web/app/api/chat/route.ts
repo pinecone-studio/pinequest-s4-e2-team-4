@@ -95,6 +95,7 @@ export async function POST(request: NextRequest) {
           { "name": "Очих цэг 1", "description": "Тайлбар 1", "order": 1 }
         ]
       }
+
       ===JSON_DATA_END===
 
       Хэрэв шинээр үүсгэх жагсаалт эсвэл очих газар байхгүй бол ===JSON_DATA_START=== хэсгийг огт БИТГИЙ хавсарга.
