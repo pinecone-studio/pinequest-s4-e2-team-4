@@ -1,42 +1,45 @@
 "use client";
 
+import { useSignupForm } from "@/hooks/useSignUpForm";
 import { Eye, EyeOff, Lock, Mail, Phone, User } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import type { MouseEvent, ReactNode } from "react";
 import { useState } from "react";
-
-function FieldIcon({ children }: { children: ReactNode }) {
-  return (
-    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[13px] bg-lime-50">
-      {children}
-    </span>
-  );
-}
+import { FieldIcon } from "./FIeldIcon";
+import { SigninLink } from "./SignInLinks";
 
 export default function Input() {
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isSigninTransitioning, setIsSigninTransitioning] = useState(false);
   const PasswordIcon = showPassword ? Eye : EyeOff;
   const ConfirmPasswordIcon = showConfirmPassword ? Eye : EyeOff;
 
-  const handleSigninClick = (event: MouseEvent<HTMLAnchorElement>) => {
-    event.preventDefault();
-
-    if (isSigninTransitioning) {
-      return;
-    }
-
-    setIsSigninTransitioning(true);
-    window.setTimeout(() => router.push("/signin"), 420);
-  };
+  const {
+    name,
+    setName,
+    username,
+    setUsername,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    isLoading,
+    error,
+    isNameError,
+    isUsernameError,
+    isEmailError,
+    isPasswordError,
+    isConfirmPasswordError,
+    isGeneralError,
+    clearErrorOnChange,
+    handleSubmit,
+  } = useSignupForm();
 
   return (
     <form
-      className="absolute inset-x-0 bottom-0 top-[318px] z-20 overflow-visible bg-white px-6 pb-4 pt-5 shadow-2xl shadow-lime-950/10"
-      onSubmit={(event) => event.preventDefault()}
+      className="absolute inset-x-0 bottom-0 top-79.5 z-20 overflow-visible bg-white px-6 pb-4 pt-5 shadow-2xl shadow-lime-950/10"
+      onSubmit={handleSubmit}
     >
       <svg
         aria-hidden="true"
@@ -60,7 +63,7 @@ export default function Input() {
 
       <div className="relative z-10 space-y-2">
         <label className="block">
-          <span className="flex h-[40px] items-center gap-3 rounded-[14px] border border-zinc-200 px-2.5">
+          <span className="flex h-10 items-center gap-3 rounded-[14px] border border-zinc-200 px-2.5">
             <FieldIcon>
               <User className="h-5 w-5 text-lime-600" />
             </FieldIcon>
@@ -68,12 +71,23 @@ export default function Input() {
               className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-zinc-700 outline-none placeholder:text-zinc-400"
               placeholder="Нэр"
               type="text"
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value);
+                clearErrorOnChange();
+              }}
+              disabled={isLoading}
             />
           </span>
+          {isNameError && (
+            <p className="mt-1 text-[11px] font-medium text-red-500 pl-1">
+              {error}
+            </p>
+          )}
         </label>
 
         <label className="block">
-          <span className="flex h-[40px] items-center gap-3 rounded-[14px] border border-zinc-200 px-2.5">
+          <span className="flex h-10 items-center gap-3 rounded-[14px] border border-zinc-200 px-2.5">
             <FieldIcon>
               <Phone className="h-5 w-5 text-lime-600" />
             </FieldIcon>
@@ -81,12 +95,23 @@ export default function Input() {
               className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-zinc-700 outline-none placeholder:text-zinc-400"
               placeholder="Утас"
               type="tel"
+              value={username}
+              onChange={(e) => {
+                setUsername(e.target.value);
+                clearErrorOnChange();
+              }}
+              disabled={isLoading}
             />
           </span>
+          {isUsernameError && (
+            <p className="mt-1 text-[11px] font-medium text-red-500 pl-1">
+              {error}
+            </p>
+          )}
         </label>
 
         <label className="block">
-          <span className="flex h-[40px] items-center gap-3 rounded-[14px] border border-zinc-200 px-2.5">
+          <span className="flex h-10 items-center gap-3 rounded-[14px] border border-zinc-200 px-2.5">
             <FieldIcon>
               <Mail className="h-5 w-5 text-lime-600" />
             </FieldIcon>
@@ -94,12 +119,23 @@ export default function Input() {
               className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-zinc-700 outline-none placeholder:text-zinc-400"
               placeholder="Таны имэйл хаяг"
               type="email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                clearErrorOnChange();
+              }}
+              disabled={isLoading}
             />
           </span>
+          {isEmailError && (
+            <p className="mt-1 text-[11px] font-medium text-red-500 pl-1">
+              {error}
+            </p>
+          )}
         </label>
 
         <label className="block">
-          <span className="flex h-[40px] items-center gap-3 rounded-[14px] border border-zinc-200 px-2.5">
+          <span className="flex h-10 items-center gap-3 rounded-[14px] border border-zinc-200 px-2.5">
             <FieldIcon>
               <Lock className="h-5 w-5 text-lime-600" />
             </FieldIcon>
@@ -107,6 +143,12 @@ export default function Input() {
               className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-zinc-700 outline-none placeholder:text-zinc-400"
               placeholder="Нууц үг"
               type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                clearErrorOnChange();
+              }}
+              disabled={isLoading}
             />
             <button
               aria-label="Нууц үг харах"
@@ -117,10 +159,15 @@ export default function Input() {
               <PasswordIcon className="h-5 w-5" />
             </button>
           </span>
+          {isPasswordError && (
+            <p className="mt-1 text-[11px] font-medium text-red-500 pl-1">
+              {error}
+            </p>
+          )}
         </label>
 
         <label className="block">
-          <span className="flex h-[40px] items-center gap-3 rounded-[14px] border border-zinc-200 px-2.5">
+          <span className="flex h-10 items-center gap-3 rounded-[14px] border border-zinc-200 px-2.5">
             <FieldIcon>
               <Lock className="h-5 w-5 text-lime-600" />
             </FieldIcon>
@@ -128,6 +175,12 @@ export default function Input() {
               className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-zinc-700 outline-none placeholder:text-zinc-400"
               placeholder="Нууц үг давтах"
               type={showConfirmPassword ? "text" : "password"}
+              value={confirmPassword}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                clearErrorOnChange();
+              }}
+              disabled={isLoading}
             />
             <button
               aria-label="Нууц үг давтах харах"
@@ -138,6 +191,11 @@ export default function Input() {
               <ConfirmPasswordIcon className="h-5 w-5" />
             </button>
           </span>
+          {isConfirmPasswordError && (
+            <p className="mt-1 text-[11px] font-medium text-red-500 pl-1">
+              {error}
+            </p>
+          )}
         </label>
       </div>
 
@@ -145,6 +203,7 @@ export default function Input() {
         <input
           className="mt-1 h-5 w-5 shrink-0 rounded border-zinc-300 accent-lime-600"
           type="checkbox"
+          required
         />
         <span>
           Үйлчилгээний{" "}
@@ -159,31 +218,23 @@ export default function Input() {
         </span>
       </label>
 
+      {isGeneralError && (
+        <p className="relative z-10 mt-2 text-left text-[11px] font-semibold text-red-500 pl-1">
+          {error}
+        </p>
+      )}
+
       <button
-        className="relative z-10 mt-3 flex h-[48px] w-full items-center justify-center rounded-[17px] bg-lime-600 text-[20px] font-bold text-white shadow-lg shadow-lime-600/25"
+        className="relative z-10 mt-3 flex h-12 w-full items-center justify-center rounded-[17px] bg-lime-600 text-[20px] font-bold text-white shadow-lg shadow-lime-600/25 disabled:bg-zinc-400 disabled:shadow-none"
         type="submit"
+        disabled={isLoading}
       >
-        <span className="flex-1 text-center">Бүртгүүлэх</span>
+        <span className="flex-1 text-center">
+          {isLoading ? "Уншиж байна..." : "Бүртгүүлэх"}
+        </span>
       </button>
 
-      <p className="relative z-10 mt-3 text-center text-[15px] font-medium text-zinc-500">
-        Бүртгэлтэй юу?{" "}
-        <Link
-          aria-disabled={isSigninTransitioning}
-          className={`relative inline-flex overflow-hidden rounded-full px-1 font-bold text-lime-600 transition-colors duration-300 ${
-            isSigninTransitioning ? "pointer-events-none text-white" : ""
-          }`}
-          href="/signin"
-          onClick={handleSigninClick}
-        >
-          <span
-            className={`absolute inset-0 -z-10 rounded-full bg-lime-600 transition-transform duration-300 ${
-              isSigninTransitioning ? "scale-x-100" : "scale-x-0"
-            } origin-left`}
-          />
-          <span className="relative">Нэвтрэх</span>
-        </Link>
-      </p>
+      <SigninLink />
     </form>
   );
 }

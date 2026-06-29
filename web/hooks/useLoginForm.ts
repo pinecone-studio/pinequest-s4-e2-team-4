@@ -1,11 +1,11 @@
 "use client";
 
-import { validateLoginForm } from "@/lib/validator";
+import { validateLoginForm } from "@/utils/validator";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import type { MouseEvent } from "react";
 import { useState } from "react";
-import type { ErrorFlags } from "./types";
+import { ErrorFlags } from "../utils/types";
 
 export function useLoginForm() {
   const router = useRouter();

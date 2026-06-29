@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const token = request.cookies.get("token")?.value;
@@ -16,7 +16,8 @@ export async function PATCH(
     }
 
     jwt.verify(token, process.env.JWT_SECRET!);
-    const itemId = params.id;
+
+    const { id: itemId } = await params;
 
     const { isCompleted, title } = await request.json();
 
@@ -40,7 +41,7 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const token = request.cookies.get("token")?.value;
@@ -52,7 +53,8 @@ export async function DELETE(
     }
 
     jwt.verify(token, process.env.JWT_SECRET!);
-    const itemId = params.id;
+
+    const { id: itemId } = await params;
 
     await prisma.checklist.delete({
       where: { id: itemId },

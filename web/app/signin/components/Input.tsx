@@ -1,6 +1,6 @@
 "use client";
 
-import { useLoginForm } from "../useLoginForm";
+import { useLoginForm } from "../../../hooks/useLoginForm";
 import { EmailField } from "./EmailField";
 import { PasswordField } from "./PasswordField";
 import { SignupLink } from "./SignupLink";
