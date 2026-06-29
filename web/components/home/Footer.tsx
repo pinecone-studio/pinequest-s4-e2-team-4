@@ -15,7 +15,7 @@ export default function HomeFooter() {
   const pathname = usePathname();
 
   return (
-    <footer className="border-t border-slate-100 bg-white/95 px-4 pb-4 pt-2 backdrop-blur-md">
+    <footer className="border-t border-slate-100 bg-white/95 px-4 pb-4 pt-2 backdrop-blur-md rounded-2xl shadow-lg shadow-slate-950/5 sm:px-6">
       <nav className="grid grid-cols-4 gap-2">
         {footerItems.map((item) => {
           const Icon = item.icon;

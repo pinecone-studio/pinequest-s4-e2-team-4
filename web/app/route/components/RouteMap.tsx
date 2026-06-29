@@ -88,7 +88,7 @@ export default function RouteMap() {
     const origin = currentPointRef.current;
 
     setIsFindingGasStation(true);
-    setGasStationStatus("Searching nearby gas stations...");
+    setGasStationStatus("Таны ойролцоох шатахуун түгээх станцуудыг хайж байна...");
 
     try {
       const apiGasStations = await fetchNearbyGasStations(origin, 7000, accessToken);
@@ -108,11 +108,11 @@ export default function RouteMap() {
       gasMarkersRef.current = [];
 
       if (gasStations.length === 0) {
-        setGasStationStatus("No gas stations found within 7 km.");
+        setGasStationStatus("7 км-ийн хүрээнд шатахуун түгээх станц олдсонгүй.");
         return;
       }
 
-      setGasStationStatus(`${gasStations.length} gas station candidates found. Checking routes...`);
+      setGasStationStatus(`${gasStations.length} шатахуун түгээх станц олдлоо. Замуудыг шалгаж байна...`);
 
       const routeCandidates = await Promise.all(
         gasStations.slice(0, 15).map(async (station) => ({
@@ -142,7 +142,7 @@ export default function RouteMap() {
         `Тантай хамгийн ойр шатахуун түгээх станц ${formatDistance(routeDistance)} зайд байна.`,
       );
     } catch {
-      setGasStationStatus("Could not load nearby gas stations.");
+      setGasStationStatus("Таны ойролцоох шатахуун түгээх станцуудыг олж чадсангүй.");
     } finally {
       setIsFindingGasStation(false);
     }

@@ -15,14 +15,14 @@ export default function RouteMapControls({
   onRecenterLocation,
 }: RouteMapControlsProps) {
   return (
-    <>
-      <Link
+    <div className="">
+      {/* <Link
         href="/"
         aria-label="Back to home"
-        className="absolute left-6 top-7 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-slate-900 shadow-lg backdrop-blur transition hover:bg-white active:scale-95"
+        className="absolute left-6 top-12 z-20  flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-slate-900 shadow-lg backdrop-blur transition hover:bg-white active:scale-95"
       >
         <ArrowLeft className="h-5 w-5" strokeWidth={2.4} />
-      </Link>
+      </Link> */}
 
       <button
         type="button"
@@ -30,7 +30,7 @@ export default function RouteMapControls({
         title="Show gas stations"
         onClick={onFindGasStation}
         disabled={isFindingGasStation}
-        className="absolute left-6 top-20 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-orange-600 shadow-lg backdrop-blur transition hover:bg-white active:scale-95 disabled:cursor-wait disabled:opacity-75"
+        className="absolute left-6 top-12 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-orange-600 shadow-lg backdrop-blur transition hover:bg-white active:scale-95 disabled:cursor-wait disabled:opacity-75"
       >
         <Fuel className="h-5 w-5" strokeWidth={2.4} />
       </button>
@@ -40,7 +40,7 @@ export default function RouteMapControls({
         aria-label="Go to my location"
         title="Go to my location"
         onClick={onRecenterLocation}
-        className="absolute left-6 top-[8.25rem] z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-blue-600 shadow-lg backdrop-blur transition hover:bg-white active:scale-95"
+        className="absolute left-6 top-25 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-blue-600 shadow-lg backdrop-blur transition hover:bg-white active:scale-95"
       >
         <Crosshair className="h-5 w-5" strokeWidth={2.4} />
       </button>
@@ -50,6 +50,6 @@ export default function RouteMapControls({
           {gasStationStatus}
         </div>
       )}
-    </>
+    </div>
   );
 }
