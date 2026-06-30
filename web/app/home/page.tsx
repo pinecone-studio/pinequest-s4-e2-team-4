@@ -10,7 +10,7 @@ import HeroWeatherPanel from "./components/HeroWeatherPanel";
 import HeroSearchSection from "./components/HeroSearchSection"; 
 import { useHeroForecast } from "./components/useHeroForecast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell } from "@fortawesome/free-solid-svg-icons"; 
+import { faBell } from "@fortawesome/free-solid-svg-icons";
 
 type HeroPageShellProps = {
   children: ReactNode;
@@ -26,7 +26,7 @@ type HeroScrollAreaProps = {
 
 function HeroPageShell({ children }: HeroPageShellProps) {
   return (
-    <main className="relative grid min-h-screen place-items-center overflow-hidden px-4 py-8 text-slate-950">
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden text-slate-950">
       <HomeBackdrop active={true} />
       <div className="relative z-10">{children}</div>
     </main>
@@ -36,7 +36,7 @@ function HeroPageShell({ children }: HeroPageShellProps) {
 function HeroPhoneLayout({ children }: HeroPhoneLayoutProps) {
   return (
     <PhoneFrame>
-      <section className="home-enter flex h-full flex-col bg-[#fbfbff]">
+      <section className="flex h-full flex-col bg-[#fbfbff]">
         {children}
       </section>
     </PhoneFrame>
@@ -49,10 +49,15 @@ function HeroHeader() {
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
-    const count = localStorage.getItem("montrip-unread-checklist");
-    if (count) {
-      setUnreadCount(parseInt(count, 10));
-    }
+    const timer = window.setTimeout(() => {
+      const count = localStorage.getItem("montrip-unread-checklist");
+
+      if (count) {
+        setUnreadCount(parseInt(count, 10));
+      }
+    }, 0);
+
+    return () => window.clearTimeout(timer);
   }, []);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
