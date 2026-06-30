@@ -31,16 +31,6 @@ export const Page = () => {
       bg: "bg-blue-50",
     },
     {
-      icon: <Package className="w-5 h-5 text-green-500" />,
-      label: "My Orders",
-      bg: "bg-green-50",
-    },
-    {
-      icon: <RefreshCw className="w-5 h-5 text-purple-500" />,
-      label: "Refund",
-      bg: "bg-purple-50",
-    },
-    {
       icon: <Lock className="w-5 h-5 text-orange-400" />,
       label: "Change Password",
       bg: "bg-orange-50",
