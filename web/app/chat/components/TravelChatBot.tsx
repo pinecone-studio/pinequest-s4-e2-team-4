@@ -70,7 +70,7 @@ const TravelChatBot = () => {
     e.stopPropagation();
     setDeletingId(chatId);
     try {
-      const res = await fetch("/api/chat/delete", {
+      const res = await fetch("/api/chat/history/delete", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

@@ -7,8 +7,8 @@ export const Header = () => {
       <div className="flex justify-between border-b border-gray-200 ">
         <div>
           <img
-            src="Burged.jfif"
-            alt=""
+            src="montrip.png"
+            alt="MonTrip Logo"
             className="w-10 h-10 rounded-full relative left-4 top-4"
           />
           <span className="relative left-15 bottom-[18px] font-semibold text-[20px]">
