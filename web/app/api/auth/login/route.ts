@@ -34,7 +34,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
+    const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET!, {
       expiresIn: "7d",
     });
 
@@ -53,6 +53,7 @@ export async function POST(request: Request) {
     response.cookies.set("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
       maxAge: 60 * 60 * 24 * 7,
       path: "/",
     });

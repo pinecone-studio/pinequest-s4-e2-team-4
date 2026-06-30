@@ -15,8 +15,10 @@ export async function POST(request: Request) {
       );
     }
 
+    const cleanEmail = email.toLowerCase().trim();
+
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { email: cleanEmail },
     });
 
     if (!user) {
@@ -47,7 +49,7 @@ export async function POST(request: Request) {
 
     await resend.emails.send({
       from: "TravelApp <onboarding@resend.dev>",
-      to: email,
+      to: cleanEmail,
       subject: "🔒 Нууц үг сэргээх код",
       html: `
         <div style="font-family: sans-serif; max-width: 450px; margin: 0 auto; padding: 20px; border: 1px solid #e1e1e1; border-radius: 10px; text-align: center;">

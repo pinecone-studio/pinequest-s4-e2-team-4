@@ -13,13 +13,15 @@ export async function POST(request: Request) {
       );
     }
 
+    const cleanEmail = email.toLowerCase().trim();
+
     const validCode = await prisma.verificationCode.findFirst({
       where: {
         code,
         type: "RESET_PASSWORD",
         expiresAt: { gte: new Date() },
         user: {
-          email: email,
+          email: cleanEmail,
         },
       },
     });
@@ -34,10 +36,9 @@ export async function POST(request: Request) {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     await prisma.user.update({
-      where: { email },
+      where: { email: cleanEmail },
       data: { password: hashedPassword },
     });
-
     await prisma.verificationCode.delete({
       where: { id: validCode.id },
     });
