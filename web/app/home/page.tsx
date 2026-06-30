@@ -12,6 +12,7 @@ import HeroSearchSection from "./components/HeroSearchSection";
 import { useHeroForecast } from "./components/useHeroForecast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
+import Image from "next/image";
 
 type HeroPageShellProps = {
   children: ReactNode;
@@ -45,8 +46,6 @@ function HeroPhoneLayout({ children }: HeroPhoneLayoutProps) {
 }
 
 function HeroHeader() {
-  const [currentLang, setCurrentLang] = useState("MN");
-  const [isOpen, setIsOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
@@ -61,50 +60,20 @@ function HeroHeader() {
     return () => window.clearTimeout(timer);
   }, []);
 
-  const toggleDropdown = () => setIsOpen(!isOpen);
-  const selectLanguage = (lang: string) => {
-    setCurrentLang(lang);
-    setIsOpen(false);
-  };
-
   return (
-    <header className="relative flex items-center justify-between px-5 pb-2 pt-12">
-      <div className="relative z-50 w-16 text-left">
-        <button 
-          onClick={toggleDropdown}
-          className="flex items-center gap-1.5 rounded-full border border-gray-100 bg-white px-2.5 py-1.5 text-xs font-bold text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
-        >
-          <span className="text-base select-none">{currentLang === "MN" ? "🇲🇳" : "🇬🇧"}</span>
-          <span>{currentLang}</span>
-        </button>
-
-        {isOpen && (
-          <div className="absolute left-0 mt-1.5 w-24 rounded-xl border border-gray-100 bg-white p-1 shadow-lg">
-            <button
-              onClick={() => selectLanguage("MN")}
-              className={`flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs font-semibold ${
-                currentLang === "MN" ? "bg-[#0A4429]/10 text-[#0A4429]" : "text-gray-700 hover:bg-gray-50"
-              }`}
-            >
-              <span className="text-base">🇲🇳</span>
-              <span>MN</span>
-            </button>
-            <button
-              onClick={() => selectLanguage("EN")}
-              className={`flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-xs font-semibold ${
-                currentLang === "EN" ? "bg-[#0A4429]/10 text-[#0A4429]" : "text-gray-700 hover:bg-gray-50"
-              }`}
-            >
-              <span className="text-base">🇬🇧</span>
-              <span>EN</span>
-            </button>
-          </div>
-        )}
+    <header className="relative flex items-center  px-5 pb-2 pt-12">
+      <div className="flex  gap-1">
+        <Image
+          src="/montrip.png"
+          alt="montrip logo"
+          width={45}
+          height={45}
+          className="rounded-2xl"
+        />
+        <Logo />
       </div>
 
-      <Logo />
-
-      <div className="w-16 text-right flex justify-end">
+      <div className="absolute right-5 top-14 flex justify-end">
         <button className="relative flex h-9 w-9 items-center justify-center rounded-full border border-gray-100 bg-white shadow-sm text-gray-600 hover:bg-gray-50 transition-colors">
           <FontAwesomeIcon icon={faBell} className="h-4 w-4" />
           
