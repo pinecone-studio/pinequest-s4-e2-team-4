@@ -49,6 +49,8 @@ model Destination {
   name        String
   description String?
   order       Int      @default(0)
+  latitude    Float?
+  longitude   Float?
   createdAt   DateTime @default(now())
 
   tripId String

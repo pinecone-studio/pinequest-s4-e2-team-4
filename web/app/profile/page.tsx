@@ -4,6 +4,7 @@ import Footer from "@/components/home/Footer";
 import HomeBackdrop from "@/components/home/HomeBackdrop";
 import PhoneFrame from "@/components/home/PhoneFrame";
 import { useProfile } from "@/hooks/useProfile";
+import { useRouter } from "next/navigation";
 import {
   ChevronRight,
   Languages,
@@ -18,20 +19,24 @@ const menuItems = [
     icon: <User className="w-5 h-5 text-blue-400" />,
     label: "My Profile",
     bg: "bg-blue-50",
+    href: "/my-profile",
   },
   {
     icon: <Lock className="w-5 h-5 text-orange-400" />,
     label: "Change Password",
     bg: "bg-orange-50",
+    href: null,
   },
   {
     icon: <Languages className="w-5 h-5 text-pink-500" />,
     label: "Change Language",
     bg: "bg-pink-50",
+    href: null,
   },
 ];
 
 export default function Page() {
+  const router = useRouter();
   const {
     user,
     loading,
@@ -124,6 +129,9 @@ export default function Page() {
                   {menuItems.map((item, i) => (
                     <button
                       key={i}
+                      onClick={() => {
+                        if (item.href) router.push(item.href);
+                      }}
                       className="w-full flex items-center px-4 py-3.5 hover:bg-gray-50 transition-colors"
                     >
                       <div

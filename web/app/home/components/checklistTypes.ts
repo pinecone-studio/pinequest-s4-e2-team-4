@@ -4,11 +4,3 @@ export interface ChecklistItem {
   isCompleted: boolean;
   category: string;
 }
-
-export const defaultChecklistCategories: string[] = [
-  "Чухал",
-  "Ариун цэвэр",
-  "Эм бэлдмэл",
-  "Хувцас",
-  "Технологи",
-];

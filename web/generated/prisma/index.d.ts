@@ -3871,10 +3871,14 @@ export namespace Prisma {
 
   export type DestinationAvgAggregateOutputType = {
     order: number | null
+    latitude: number | null
+    longitude: number | null
   }
 
   export type DestinationSumAggregateOutputType = {
     order: number | null
+    latitude: number | null
+    longitude: number | null
   }
 
   export type DestinationMinAggregateOutputType = {
@@ -3882,6 +3886,8 @@ export namespace Prisma {
     name: string | null
     description: string | null
     order: number | null
+    latitude: number | null
+    longitude: number | null
     createdAt: Date | null
     tripId: string | null
   }
@@ -3891,6 +3897,8 @@ export namespace Prisma {
     name: string | null
     description: string | null
     order: number | null
+    latitude: number | null
+    longitude: number | null
     createdAt: Date | null
     tripId: string | null
   }
@@ -3900,6 +3908,8 @@ export namespace Prisma {
     name: number
     description: number
     order: number
+    latitude: number
+    longitude: number
     createdAt: number
     tripId: number
     _all: number
@@ -3908,10 +3918,14 @@ export namespace Prisma {
 
   export type DestinationAvgAggregateInputType = {
     order?: true
+    latitude?: true
+    longitude?: true
   }
 
   export type DestinationSumAggregateInputType = {
     order?: true
+    latitude?: true
+    longitude?: true
   }
 
   export type DestinationMinAggregateInputType = {
@@ -3919,6 +3933,8 @@ export namespace Prisma {
     name?: true
     description?: true
     order?: true
+    latitude?: true
+    longitude?: true
     createdAt?: true
     tripId?: true
   }
@@ -3928,6 +3944,8 @@ export namespace Prisma {
     name?: true
     description?: true
     order?: true
+    latitude?: true
+    longitude?: true
     createdAt?: true
     tripId?: true
   }
@@ -3937,6 +3955,8 @@ export namespace Prisma {
     name?: true
     description?: true
     order?: true
+    latitude?: true
+    longitude?: true
     createdAt?: true
     tripId?: true
     _all?: true
@@ -4033,6 +4053,8 @@ export namespace Prisma {
     name: string
     description: string | null
     order: number
+    latitude: number | null
+    longitude: number | null
     createdAt: Date
     tripId: string
     _count: DestinationCountAggregateOutputType | null
@@ -4061,6 +4083,8 @@ export namespace Prisma {
     name?: boolean
     description?: boolean
     order?: boolean
+    latitude?: boolean
+    longitude?: boolean
     createdAt?: boolean
     tripId?: boolean
     trip?: boolean | TripDefaultArgs<ExtArgs>
@@ -4071,6 +4095,8 @@ export namespace Prisma {
     name?: boolean
     description?: boolean
     order?: boolean
+    latitude?: boolean
+    longitude?: boolean
     createdAt?: boolean
     tripId?: boolean
     trip?: boolean | TripDefaultArgs<ExtArgs>
@@ -4081,6 +4107,8 @@ export namespace Prisma {
     name?: boolean
     description?: boolean
     order?: boolean
+    latitude?: boolean
+    longitude?: boolean
     createdAt?: boolean
     tripId?: boolean
     trip?: boolean | TripDefaultArgs<ExtArgs>
@@ -4091,11 +4119,13 @@ export namespace Prisma {
     name?: boolean
     description?: boolean
     order?: boolean
+    latitude?: boolean
+    longitude?: boolean
     createdAt?: boolean
     tripId?: boolean
   }
 
-  export type DestinationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "order" | "createdAt" | "tripId", ExtArgs["result"]["destination"]>
+  export type DestinationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "order" | "latitude" | "longitude" | "createdAt" | "tripId", ExtArgs["result"]["destination"]>
   export type DestinationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     trip?: boolean | TripDefaultArgs<ExtArgs>
   }
@@ -4116,6 +4146,8 @@ export namespace Prisma {
       name: string
       description: string | null
       order: number
+      latitude: number | null
+      longitude: number | null
       createdAt: Date
       tripId: string
     }, ExtArgs["result"]["destination"]>
@@ -4546,6 +4578,8 @@ export namespace Prisma {
     readonly name: FieldRef<"Destination", 'String'>
     readonly description: FieldRef<"Destination", 'String'>
     readonly order: FieldRef<"Destination", 'Int'>
+    readonly latitude: FieldRef<"Destination", 'Float'>
+    readonly longitude: FieldRef<"Destination", 'Float'>
     readonly createdAt: FieldRef<"Destination", 'DateTime'>
     readonly tripId: FieldRef<"Destination", 'String'>
   }
@@ -9389,6 +9423,8 @@ export namespace Prisma {
     name: 'name',
     description: 'description',
     order: 'order',
+    latitude: 'latitude',
+    longitude: 'longitude',
     createdAt: 'createdAt',
     tripId: 'tripId'
   };
@@ -9515,13 +9551,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'Boolean'
-   */
-  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
-    
-
-
-  /**
    * Reference to a field of type 'Float'
    */
   export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -9532,6 +9561,13 @@ export namespace Prisma {
    * Reference to a field of type 'Float[]'
    */
   export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
   /**
    * Deep Input Types
@@ -9693,6 +9729,8 @@ export namespace Prisma {
     name?: StringFilter<"Destination"> | string
     description?: StringNullableFilter<"Destination"> | string | null
     order?: IntFilter<"Destination"> | number
+    latitude?: FloatNullableFilter<"Destination"> | number | null
+    longitude?: FloatNullableFilter<"Destination"> | number | null
     createdAt?: DateTimeFilter<"Destination"> | Date | string
     tripId?: StringFilter<"Destination"> | string
     trip?: XOR<TripScalarRelationFilter, TripWhereInput>
@@ -9703,6 +9741,8 @@ export namespace Prisma {
     name?: SortOrder
     description?: SortOrderInput | SortOrder
     order?: SortOrder
+    latitude?: SortOrderInput | SortOrder
+    longitude?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     tripId?: SortOrder
     trip?: TripOrderByWithRelationInput
@@ -9716,6 +9756,8 @@ export namespace Prisma {
     name?: StringFilter<"Destination"> | string
     description?: StringNullableFilter<"Destination"> | string | null
     order?: IntFilter<"Destination"> | number
+    latitude?: FloatNullableFilter<"Destination"> | number | null
+    longitude?: FloatNullableFilter<"Destination"> | number | null
     createdAt?: DateTimeFilter<"Destination"> | Date | string
     tripId?: StringFilter<"Destination"> | string
     trip?: XOR<TripScalarRelationFilter, TripWhereInput>
@@ -9726,6 +9768,8 @@ export namespace Prisma {
     name?: SortOrder
     description?: SortOrderInput | SortOrder
     order?: SortOrder
+    latitude?: SortOrderInput | SortOrder
+    longitude?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     tripId?: SortOrder
     _count?: DestinationCountOrderByAggregateInput
@@ -9743,6 +9787,8 @@ export namespace Prisma {
     name?: StringWithAggregatesFilter<"Destination"> | string
     description?: StringNullableWithAggregatesFilter<"Destination"> | string | null
     order?: IntWithAggregatesFilter<"Destination"> | number
+    latitude?: FloatNullableWithAggregatesFilter<"Destination"> | number | null
+    longitude?: FloatNullableWithAggregatesFilter<"Destination"> | number | null
     createdAt?: DateTimeWithAggregatesFilter<"Destination"> | Date | string
     tripId?: StringWithAggregatesFilter<"Destination"> | string
   }
@@ -10162,6 +10208,8 @@ export namespace Prisma {
     name: string
     description?: string | null
     order?: number
+    latitude?: number | null
+    longitude?: number | null
     createdAt?: Date | string
     trip: TripCreateNestedOneWithoutDestinationsInput
   }
@@ -10171,6 +10219,8 @@ export namespace Prisma {
     name: string
     description?: string | null
     order?: number
+    latitude?: number | null
+    longitude?: number | null
     createdAt?: Date | string
     tripId: string
   }
@@ -10180,6 +10230,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     order?: IntFieldUpdateOperationsInput | number
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     trip?: TripUpdateOneRequiredWithoutDestinationsNestedInput
   }
@@ -10189,6 +10241,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     order?: IntFieldUpdateOperationsInput | number
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tripId?: StringFieldUpdateOperationsInput | string
   }
@@ -10198,6 +10252,8 @@ export namespace Prisma {
     name: string
     description?: string | null
     order?: number
+    latitude?: number | null
+    longitude?: number | null
     createdAt?: Date | string
     tripId: string
   }
@@ -10207,6 +10263,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     order?: IntFieldUpdateOperationsInput | number
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -10215,6 +10273,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     order?: IntFieldUpdateOperationsInput | number
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tripId?: StringFieldUpdateOperationsInput | string
   }
@@ -10717,6 +10777,17 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
+  export type FloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type TripScalarRelationFilter = {
     is?: TripWhereInput
     isNot?: TripWhereInput
@@ -10727,12 +10798,16 @@ export namespace Prisma {
     name?: SortOrder
     description?: SortOrder
     order?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
     createdAt?: SortOrder
     tripId?: SortOrder
   }
 
   export type DestinationAvgOrderByAggregateInput = {
     order?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
   }
 
   export type DestinationMaxOrderByAggregateInput = {
@@ -10740,6 +10815,8 @@ export namespace Prisma {
     name?: SortOrder
     description?: SortOrder
     order?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
     createdAt?: SortOrder
     tripId?: SortOrder
   }
@@ -10749,12 +10826,16 @@ export namespace Prisma {
     name?: SortOrder
     description?: SortOrder
     order?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
     createdAt?: SortOrder
     tripId?: SortOrder
   }
 
   export type DestinationSumOrderByAggregateInput = {
     order?: SortOrder
+    latitude?: SortOrder
+    longitude?: SortOrder
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -10771,6 +10852,22 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type MessageListRelationFilter = {
@@ -11165,6 +11262,14 @@ export namespace Prisma {
     divide?: number
   }
 
+  export type NullableFloatFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type TripUpdateOneRequiredWithoutDestinationsNestedInput = {
     create?: XOR<TripCreateWithoutDestinationsInput, TripUncheckedCreateWithoutDestinationsInput>
     connectOrCreate?: TripCreateOrConnectWithoutDestinationsInput
@@ -11467,6 +11572,17 @@ export namespace Prisma {
     _max?: NestedDateTimeNullableFilter<$PrismaModel>
   }
 
+  export type NestedFloatNullableFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableFilter<$PrismaModel> | number | null
+  }
+
   export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel>
     in?: number[] | ListIntFieldRefInput<$PrismaModel>
@@ -11492,6 +11608,22 @@ export namespace Prisma {
     gt?: number | FloatFieldRefInput<$PrismaModel>
     gte?: number | FloatFieldRefInput<$PrismaModel>
     not?: NestedFloatFilter<$PrismaModel> | number
+  }
+
+  export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | FloatFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListFloatFieldRefInput<$PrismaModel> | null
+    lt?: number | FloatFieldRefInput<$PrismaModel>
+    lte?: number | FloatFieldRefInput<$PrismaModel>
+    gt?: number | FloatFieldRefInput<$PrismaModel>
+    gte?: number | FloatFieldRefInput<$PrismaModel>
+    not?: NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedFloatNullableFilter<$PrismaModel>
+    _min?: NestedFloatNullableFilter<$PrismaModel>
+    _max?: NestedFloatNullableFilter<$PrismaModel>
   }
 
   export type NestedBoolFilter<$PrismaModel = never> = {
@@ -11709,6 +11841,8 @@ export namespace Prisma {
     name: string
     description?: string | null
     order?: number
+    latitude?: number | null
+    longitude?: number | null
     createdAt?: Date | string
   }
 
@@ -11717,6 +11851,8 @@ export namespace Prisma {
     name: string
     description?: string | null
     order?: number
+    latitude?: number | null
+    longitude?: number | null
     createdAt?: Date | string
   }
 
@@ -11823,6 +11959,8 @@ export namespace Prisma {
     name?: StringFilter<"Destination"> | string
     description?: StringNullableFilter<"Destination"> | string | null
     order?: IntFilter<"Destination"> | number
+    latitude?: FloatNullableFilter<"Destination"> | number | null
+    longitude?: FloatNullableFilter<"Destination"> | number | null
     createdAt?: DateTimeFilter<"Destination"> | Date | string
     tripId?: StringFilter<"Destination"> | string
   }
@@ -12407,6 +12545,8 @@ export namespace Prisma {
     name: string
     description?: string | null
     order?: number
+    latitude?: number | null
+    longitude?: number | null
     createdAt?: Date | string
   }
 
@@ -12425,6 +12565,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     order?: IntFieldUpdateOperationsInput | number
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -12433,6 +12575,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     order?: IntFieldUpdateOperationsInput | number
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -12441,6 +12585,8 @@ export namespace Prisma {
     name?: StringFieldUpdateOperationsInput | string
     description?: NullableStringFieldUpdateOperationsInput | string | null
     order?: IntFieldUpdateOperationsInput | number
+    latitude?: NullableFloatFieldUpdateOperationsInput | number | null
+    longitude?: NullableFloatFieldUpdateOperationsInput | number | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 

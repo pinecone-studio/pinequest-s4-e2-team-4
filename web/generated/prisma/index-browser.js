@@ -146,6 +146,8 @@ exports.Prisma.DestinationScalarFieldEnum = {
   name: 'name',
   description: 'description',
   order: 'order',
+  latitude: 'latitude',
+  longitude: 'longitude',
   createdAt: 'createdAt',
   tripId: 'tripId'
 };
