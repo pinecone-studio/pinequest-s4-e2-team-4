@@ -1,0 +1,39 @@
+
+"use client";
+
+import { Search } from "lucide-react";
+
+export default function HeroSearchSection() {
+  return (
+    <div className="w-full px-5 pt-4 pb-2 text-left">
+
+      <h1 className="text-2xl font-bold text-[#0F2942] leading-tight">
+        Сайн байна уу, <br />
+        <span className="text-[#0A4429] flex items-center gap-1">
+          Аялагч аа 
+        </span>
+      </h1>
+      
+      <p className="text-xs text-gray-500 mt-1 max-w-[240px]">
+        AI туслах тань аяллыг төлөвлөхөд бэлэн байна.
+      </p>
+
+
+      <div className="mt-5 flex items-center justify-between bg-[#F5F7FA] rounded-full pl-4 pr-1.5 py-1.5 border border-gray-100 shadow-sm focus-within:ring-2 focus-within:ring-[#0A4429]/20 transition-all">
+        <div className="flex items-center gap-2.5 w-full">
+          <Search className="h-4 w-4 text-gray-400 shrink-0" />
+          <input
+            type="text"
+            placeholder="Хаашаа аялах вэ?"
+            className="w-full bg-transparent text-sm text-gray-800 outline-none placeholder-gray-400"
+          />
+        </div>
+        
+
+        <button className="h-8 w-8 rounded-full bg-[#0A4429] flex items-center justify-center text-white shadow-md hover:bg-[#083520] transition-colors shrink-0">
+          <Search className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    </div>
+  );
+}

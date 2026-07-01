@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import HomeBackdrop from "@/components/home/HomeBackdrop";
 import PhoneFrame from "@/components/home/PhoneFrame";
 import MainIntroScreen from "./components/MainIntroScreen";
+
 import type { MainScreen } from "./components/mainTypes";
 
 export default function MainPage() {
