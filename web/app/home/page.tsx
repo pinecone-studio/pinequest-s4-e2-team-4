@@ -5,14 +5,12 @@ import HomeBackdrop from "@/components/home/HomeBackdrop";
 import HomeFooter from "@/components/home/Footer";
 import Logo from "@/components/home/Logo";
 import PhoneFrame from "@/components/home/PhoneFrame";
-// import HeroTripCard from "./components/HeroTripCard";
 import HeroChecklistCard from "./components/HeroChecklistCard";
 import HeroWeatherPanel from "./components/HeroWeatherPanel";
 import HeroSearchSection from "./components/HeroSearchSection"; 
 import { useHeroForecast } from "./components/useHeroForecast";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faBell, faGlobe } from "@fortawesome/free-solid-svg-icons"; 
+import { faBell } from "@fortawesome/free-solid-svg-icons"; 
 
 type HeroPageShellProps = {
   children: ReactNode;
@@ -30,7 +28,6 @@ function HeroPageShell({ children }: HeroPageShellProps) {
   return (
     <main className="relative grid min-h-screen place-items-center overflow-hidden px-4 py-8 text-slate-950">
       <HomeBackdrop active={true} />
-
       <div className="relative z-10">{children}</div>
     </main>
   );
@@ -50,7 +47,6 @@ function HeroHeader() {
   const [currentLang, setCurrentLang] = useState("MN");
   const [isOpen, setIsOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
-
 
   useEffect(() => {
     const count = localStorage.getItem("montrip-unread-checklist");
@@ -144,8 +140,8 @@ function HeroContent() {
       <HeroSearchSection />
 
       <HeroScrollArea>
-        <HeroChecklistCard />
         <HeroWeatherPanel forecast={forecast} />
+        <HeroChecklistCard />
       </HeroScrollArea>
 
       <HeroFooterBar />

@@ -1,13 +1,11 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { CheckSquare, Calendar, Clock } from "lucide-react";
+import { CheckSquare, ArrowRight, Clock } from "lucide-react";
 
 export default function HeroChecklistCard() {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, mins: 0 });
-
 
   const targetDate = new Date("2026-07-10T09:00:00"); 
 
@@ -29,30 +27,52 @@ export default function HeroChecklistCard() {
   }, []);
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-emerald-100 bg-gradient-to-br from-emerald-50 via-white to-emerald-50/30 p-5 shadow-sm">
-    
+    <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#f3faf7] via-white to-[#edf7f3] p-6 border border-emerald-50 shadow-lg shadow-emerald-950/5">
 
-      <div className="flex items-start gap-4">
+      <div className="absolute -right-8 -bottom-8 h-24 w-24 rounded-full bg-emerald-100/50 blur-2xl" />
+      <div className="absolute -left-6 -top-6 h-20 w-20 rounded-full bg-emerald-50/70 blur-xl" />
 
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#0A4429] text-white shadow-md shadow-emerald-900/10">
-          <CheckSquare className="h-6 w-6" />
+      <div className="relative flex flex-col gap-4">
+        
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#0A4429] text-white shadow-md shadow-emerald-900/20">
+              <CheckSquare className="h-5 w-5 stroke-[2.5]" />
+            </div>
+            <div>
+              <h3 className="font-black text-[#0F2942] text-base tracking-tight">
+                Аяллын бэлтгэл
+              </h3>
+              <p className="text-[11px] font-bold text-emerald-700/80 uppercase tracking-wider">
+                чемоданаа бэлдэх
+              </p>
+            </div>
+          </div>
+
+
+          {(timeLeft.days > 0 || timeLeft.hours > 0) && (
+            <div className="flex items-center gap-1 rounded-xl bg-emerald-950/5 px-2.5 py-1 text-[10px] font-black text-[#0A4429]">
+            </div>
+          )}
         </div>
 
 
-        <div className="flex-1 text-left">
-          <h3 className="font-bold text-[#0F2942] text-base">Аяллын бэлтгэл</h3>
-          <p className="mt-0.5 text-xs text-gray-500 leading-relaxed">
-            Замд гарахаас өмнө чемоданаа бэлдсэн үү? Авч явах зүйлсийн жагсаалтаа эндээс шалгаарай.
-          </p>
-          
+        <p className="text-xs font-medium text-slate-500 leading-relaxed pr-2">
+          Замд гарахаас өмнө чемоданаа бэлдсэн үү? Авч явах зүйлсийн жагсаалтаа эндээс шалгаарай.
+        </p>
 
+
+        <div className="pt-1">
           <Link
             href="/checklist"
-            className="mt-3.5 inline-flex h-9 items-center justify-center rounded-full bg-[#0A4429] px-5 text-xs font-bold text-white shadow-sm transition-all hover:bg-[#083520] hover:scale-[1.02]"
+            className="group inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-[#0A4429] px-6 text-xs font-black text-white shadow-md shadow-emerald-900/10 transition-all hover:bg-[#083520] hover:shadow-emerald-900/20 active:scale-95"
           >
-            Жагсаалт үзэх
+            <span>Жагсаалт үзэх</span>
+            <ArrowRight className="h-4 w-4 stroke-[2.5] transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
+
       </div>
     </div>
   );

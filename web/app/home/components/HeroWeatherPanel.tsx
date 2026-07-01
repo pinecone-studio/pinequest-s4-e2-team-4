@@ -11,29 +11,30 @@ export default function HeroWeatherPanel({ forecast }: HeroWeatherPanelProps) {
   const todayTemperature = forecast?.daily?.temperature_2m_max?.[0];
 
   return (
-    <>
-      <section className="overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-[#f0f9ff] via-[#e0f2fe]/50 to-white py-2.5 px-4 shadow-md shadow-sky-950/5">
-        <div className="flex items-center justify-between gap-2">
- 
-          <div className="flex items-center gap-3">
-            <div className="grid h-11 w-11 place-items-center rounded-[1rem] bg-white shadow-sm ring-1 ring-sky-100">
-              <WeatherIcon type={getWeatherType(todayCode)} />
-            </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#04530c] leading-none mb-0.5">
-                Цаг агаар
-              </p>
-              <h2 className="text-sm font-black text-slate-950 leading-none">Өнөөдөр</h2>
-            </div>
-          </div>
+    <section className="relative overflow-hidden rounded-[2rem] bg-[#0A4429] p-5 shadow-lg shadow-emerald-900/20 transition-all hover:shadow-emerald-900/30">
 
+      <div className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-emerald-700/50 blur-2xl" />
+      
+      <div className="relative flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="grid h-12 w-12 place-items-center rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10">
+            <WeatherIcon type={getWeatherType(todayCode)} />
+          </div>
           <div>
-            <p className="text-3xl font-black text-slate-950 tracking-tighter">
-              {todayTemperature === undefined ? "--" : Math.round(todayTemperature)}°
+            <p className="text-[10px] font-black uppercase tracking-widest text-emerald-200/80 mb-0.5">
+              Цаг агаар
             </p>
+            <h2 className="text-base font-black text-white">Өнөөдөр</h2>
           </div>
         </div>
-      </section>
-    </>
+
+        <div className="text-right">
+          <p className="text-3xl font-black text-white tracking-tighter">
+            {todayTemperature === undefined ? "--" : Math.round(todayTemperature)}°
+          </p>
+          <p className="text-[10px] text-emerald-200/60 font-bold">Ulaanbaatar</p>
+        </div>
+      </div>
+    </section>
   );
 }

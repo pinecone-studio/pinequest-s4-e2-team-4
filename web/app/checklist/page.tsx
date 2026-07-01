@@ -27,7 +27,8 @@ export default function ChecklistPage() {
   const audioIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    const savedItems = localStorage.getItem("montrip-checklist-v7");
+
+    const savedItems = localStorage.getItem("montrip-checklist-v11");
     const savedDate = localStorage.getItem("montrip-alarm-date");
     const savedTime = localStorage.getItem("montrip-alarm-time");
     const savedIsSet = localStorage.getItem("montrip-alarm-set");
@@ -36,8 +37,7 @@ export default function ChecklistPage() {
       setItems(JSON.parse(savedItems));
     } else {
       const defaultItems: ChecklistItem[] = [
-        { id: 1, text: "Иргэний үнэмлэх ", checked: false, category: "Чухал" },
-        { id: 2, text: "Бэлэн мөнгө / Банкны карт", checked: false, category: "Чухал" },
+
         { id: 3, text: "Машины бичиг баримт / Жолооны үнэмлэх", checked: false, category: "Чухал" },
         { id: 4, text: "Шүдний сойз, оо", checked: false, category: "Ариун цэвэр" },
         { id: 5, text: "Шампунь", checked: false, category: "Ариун цэвэр" },
@@ -51,7 +51,7 @@ export default function ChecklistPage() {
         { id: 20, text: "Чихэвч speaker", checked: false, category: "Технологи" },
       ];
       setItems(defaultItems);
-      localStorage.setItem("montrip-checklist-v7", JSON.stringify(defaultItems));
+      localStorage.setItem("montrip-checklist-v11", JSON.stringify(defaultItems));
     }
     
     if (savedDate) setAlarmDate(savedDate);
@@ -118,7 +118,7 @@ export default function ChecklistPage() {
   const toggleCheck = (id: number) => {
     const updated = items.map(item => item.id === id ? { ...item, checked: !item.checked } : item);
     setItems(updated);
-    localStorage.setItem("montrip-checklist-v7", JSON.stringify(updated));
+    localStorage.setItem("montrip-checklist-v11", JSON.stringify(updated));
   };
 
   const addItem = (e: React.FormEvent) => {
@@ -132,14 +132,14 @@ export default function ChecklistPage() {
     };
     const updated = [...items, newItem];
     setItems(updated);
-    localStorage.setItem("montrip-checklist-v7", JSON.stringify(updated));
+    localStorage.setItem("montrip-checklist-v11", JSON.stringify(updated));
     setInputValue("");
   };
 
   const deleteItem = (id: number) => {
     const updated = items.filter(item => item.id !== id);
     setItems(updated);
-    localStorage.setItem("montrip-checklist-v7", JSON.stringify(updated));
+    localStorage.setItem("montrip-checklist-v11", JSON.stringify(updated));
   };
 
   const categories: ChecklistItem["category"][] = ["Чухал", "Ариун цэвэр", "Эм бэлдмэл", "Хувцас", "Технологи"];
@@ -194,8 +194,7 @@ export default function ChecklistPage() {
               {isAlarmTriggered ? (
                 <div className="p-3 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-between animate-pulse shadow-sm">
                   <div className="flex items-center gap-2">
-                    <Bell className="h-4 w-4 text-rose-600 animate-bounce" />
-                    <span className="text-xs font-black text-rose-800 tracking-tight">⏰ ЦАГ БОЛЛОО: Юмаа бэлдээрэй!</span>
+                    <span className="text-xs font-black text-rose-800 tracking-tight"> ЦАГ БОЛЛОО: Юмаа бэлдээрэй!</span>
                   </div>
                   <button 
                     onClick={() => setIsAlarmTriggered(false)}
