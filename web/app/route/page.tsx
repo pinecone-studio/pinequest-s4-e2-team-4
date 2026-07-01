@@ -4,7 +4,14 @@ import RouteMap from '@/app/route/components/RouteMap'
 import React from 'react'
 import Footer from '@/components/home/Footer'
 
-export const page = () => {
+interface PageProps {
+  searchParams: Promise<{ tripId?: string }>;
+}
+
+export const page = async ({ searchParams }: PageProps) => {
+  
+  const { tripId } = await searchParams;
+
   return (
     <div className="relative flex min-h-screen items-center justify-center">
       <HomeBackdrop active={true} />
@@ -12,7 +19,8 @@ export const page = () => {
         <PhoneFrame>
           <div className="flex h-full flex-col">
             <div className="min-h-0 flex-1">
-              <RouteMap />
+           
+              <RouteMap tripId={tripId} />
             </div>
             <Footer />
           </div>

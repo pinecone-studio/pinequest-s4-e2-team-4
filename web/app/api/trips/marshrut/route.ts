@@ -80,30 +80,17 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
-async function getCoordinates(placeName: string, accessToken: string) {
-  try {
-    // Added country=mn so it always finds places inside Mongolia
-    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-      placeName
-    )}.json?access_token=${accessToken}&limit=1&country=mn`;
-
-    const res = await fetch(url);
-    const data = await res.json();
-
-    if (data.features && data.features.length > 0) {
-      const [lng, lat] = data.features[0].center;
-      return `${lng},${lat}`;
-    }
-    return null;
-  } catch (error) {
-    console.error(`Geocoding error for ${placeName}:`, error);
-    return null;
-  }
+// get chat api
+interface DestinationItem {
+  name: string;
+  latitude: number | null;
+  longitude: number | null;
+  order?: number;
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const { destinations } = await request.json();
+    const { destinations }: { destinations: DestinationItem[] } = await request.json();
 
     if (!destinations || !Array.isArray(destinations) || destinations.length === 0) {
       return NextResponse.json(
@@ -112,32 +99,31 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
-    if (!accessToken) {
-      return NextResponse.json(
-        { error: "Mapbox token тохируулагдаагүй байна." },
-        { status: 500 }
-      );
-    }
+    // order
+    const sortedDestinations = [...destinations].sort((a, b) => (a.order || 0) - (b.order || 0));
 
     const coordinatePairs: string[] = [];
-    for (const place of destinations) {
-      const coords = await getCoordinates(place, accessToken);
-      if (coords) {
-        coordinatePairs.push(coords);
+
+    for (const place of sortedDestinations) {
+      // Turn into mapbox
+      if (place.longitude !== null && place.latitude !== null) {
+        coordinatePairs.push(`${place.longitude},${place.latitude}`);
       }
     }
 
+    // Atleast 2 spot
     if (coordinatePairs.length < 2) {
       return NextResponse.json(
-        { error: "Маршрут үүсгэхийн тулд хамгийн багадаа 2 зөв цэг шаардлагатай." },
+        { error: "Маршрут үүсгэхийн тулд хамгийн багадаа 2 зөв координаттай цэг шаардлагатай." },
         { status: 400 }
       );
     }
 
-    // Upgraded to the official Mapbox Directions web app launcher layout
+    // Link
     const origin = coordinatePairs[0];
     const destination = coordinatePairs[coordinatePairs.length - 1];
+    
+    // (Waypoints)
     const waypoints = coordinatePairs.slice(1, -1).join(";");
     
     const mapboxRouteUrl = waypoints 
