@@ -64,15 +64,17 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Home, MessageCircle, Map, User } from "lucide-react";
+import { useLanguage } from "@/app/lib/language";
 
 const footerItems = [
-  { label: "Нүүр", icon: Home, href: "/home" },
-  { label: "AI Chat", icon: MessageCircle, href: "/chat" },
-  { label: "Маршрут", icon: Map, href: "/route" },
-  { label: "Профайл", icon: User, href: "/profile" },
+  { label: { mn: "Нүүр", en: "Home" }, icon: Home, href: "/home" },
+  { label: { mn: "AI Chat", en: "AI Chat" }, icon: MessageCircle, href: "/chat" },
+  { label: { mn: "Маршрут", en: "Route" }, icon: Map, href: "/route" },
+  { label: { mn: "Профайл", en: "Profile" }, icon: User, href: "/profile" },
 ] as const;
 
 export default function HomeFooter() {
+  const { language } = useLanguage();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -96,7 +98,7 @@ export default function HomeFooter() {
 
           return (
             <Link
-              key={item.label}
+              key={item.href}
               href={item.href}
               className={`flex h-14 flex-col items-center justify-center rounded-2xl text-[11px] font-bold transition-all duration-200 ${
                 active
@@ -110,7 +112,7 @@ export default function HomeFooter() {
                 className="transition-transform duration-500"
               />
               <span className="mt-1 font-medium tracking-tight">
-                {item.label}
+                {item.label[language]}
               </span>
             </Link>
           );

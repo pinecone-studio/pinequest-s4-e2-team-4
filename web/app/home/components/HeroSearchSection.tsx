@@ -4,8 +4,26 @@
 import { Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useLanguage } from "@/app/lib/language";
+
+const text = {
+  mn: {
+    greeting: "Сайн байна уу,",
+    traveler: "Аялагч аа",
+    intro: "AI туслах тань аяллыг төлөвлөхөд бэлэн байна.",
+    placeholder: "Хаашаа аялах вэ?",
+  },
+  en: {
+    greeting: "Hello,",
+    traveler: "Traveler",
+    intro: "Your AI assistant is ready to plan the trip.",
+    placeholder: "Where are you traveling?",
+  },
+} as const;
 
 export default function HeroSearchSection() {
+  const { language } = useLanguage();
+  const t = text[language];
   const router = useRouter();
   const [query, setQuery] = useState("");
 
@@ -25,14 +43,14 @@ export default function HeroSearchSection() {
     <div className="w-full px-5 pt-4 pb-2 text-left">
 
       <h1 className="text-2xl font-bold text-[#0F2942] leading-tight">
-        Сайн байна уу, <br />
+        {t.greeting} <br />
         <span className="text-[#0A4429] flex items-center gap-1">
-          Аялагч аа 
+          {t.traveler}
         </span>
       </h1>
       
       <p className="text-xs text-gray-500 mt-1 max-w-[240px]">
-        AI туслах тань аяллыг төлөвлөхөд бэлэн байна.
+        {t.intro}
       </p>
 
 
@@ -46,7 +64,7 @@ export default function HeroSearchSection() {
             type="text"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Хаашаа аялах вэ?"
+            placeholder={t.placeholder}
             className="w-full bg-transparent text-sm text-gray-800 outline-none placeholder-gray-400"
           />
         </div>

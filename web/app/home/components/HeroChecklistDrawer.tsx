@@ -3,6 +3,7 @@
 import { ArrowLeft } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import HeroChecklistDrawerContent from "./HeroChecklistDrawerContent";
+import { useLanguage } from "@/app/lib/language";
 
 type HeroChecklistDrawerProps = {
   onClose: () => void;
@@ -11,6 +12,11 @@ type HeroChecklistDrawerProps = {
 export default function HeroChecklistDrawer({
   onClose,
 }: HeroChecklistDrawerProps) {
+  const { language } = useLanguage();
+  const t =
+    language === "en"
+      ? { close: "Close checklist", title: "Travel items" }
+      : { close: "Жагсаалт хаах", title: "Авч явах зүйлс" };
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -36,7 +42,7 @@ export default function HeroChecklistDrawer({
     <div className="absolute inset-0 z-50 overflow-hidden">
       <button
         type="button"
-        aria-label="Жагсаалт хаах"
+        aria-label={t.close}
         onClick={closeDrawer}
         className={`absolute inset-0 bg-slate-950/20 transition-opacity duration-300 ${isVisible ? "opacity-100" : "opacity-0"}`}
       />
@@ -54,7 +60,7 @@ export default function HeroChecklistDrawer({
           >
             <ArrowLeft className="h-5 w-5" />
           </button>
-          <h1 className="text-base font-bold text-[#0F2942]">Авч явах зүйлс</h1>
+          <h1 className="text-base font-bold text-[#0F2942]">{t.title}</h1>
         </header>
 
         <HeroChecklistDrawerContent />

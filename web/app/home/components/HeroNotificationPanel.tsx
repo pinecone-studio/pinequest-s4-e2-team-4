@@ -3,6 +3,7 @@
 import { Bell, CheckCircle2, Trash2, X } from "lucide-react";
 import type { KeyboardEvent } from "react";
 import type { MonTripNotification } from "./heroNotificationTypes";
+import { useLanguage } from "@/app/lib/language";
 
 type HeroNotificationPanelProps = {
   notifications: MonTripNotification[];
@@ -17,6 +18,22 @@ export default function HeroNotificationPanel({
   onDeleteNotification,
   onOpenChecklist,
 }: HeroNotificationPanelProps) {
+  const { language } = useLanguage();
+  const t =
+    language === "en"
+      ? {
+          close: "Close notifications",
+          title: "Notifications",
+          empty: "You have no notifications",
+          delete: "Delete notification",
+        }
+      : {
+          close: "Notification хаах",
+          title: "Мэдэгдэл",
+          empty: "Танд мэдэгдэл ирээгүй байна",
+          delete: "Мэдэгдэл устгах",
+        };
+
   const handleCardKeyDown = (event: KeyboardEvent<HTMLElement>) => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
@@ -28,14 +45,14 @@ export default function HeroNotificationPanel({
     <div className="absolute inset-0 z-50 flex items-start justify-center bg-slate-950/25 px-5 pt-24 backdrop-blur-[2px]">
       <button
         type="button"
-        aria-label="Notification хаах"
+        aria-label={t.close}
         onClick={onClose}
         className="absolute inset-0"
       />
 
       <section className="relative z-10 w-full overflow-hidden rounded-[28px] border border-white/70 bg-white/95 shadow-2xl backdrop-blur-2xl">
         <header className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
-          <h2 className="text-lg font-black text-slate-900">Мэдэгдэл</h2>
+          <h2 className="text-lg font-black text-slate-900">{t.title}</h2>
           <button
             type="button"
             onClick={onClose}
@@ -50,7 +67,7 @@ export default function HeroNotificationPanel({
             <div className="flex min-h-40 flex-col items-center justify-center text-center">
               <CheckCircle2 className="mb-3 h-10 w-10 text-slate-300" />
               <p className="text-sm font-bold text-slate-600">
-                Танд мэдэгдэл ирээгүй байна
+                {t.empty}
               </p>
             </div>
           ) : (
@@ -90,7 +107,7 @@ export default function HeroNotificationPanel({
                     </div>
                     <button
                       type="button"
-                      aria-label="Мэдэгдэл устгах"
+                      aria-label={t.delete}
                       onClick={(event) => {
                         event.stopPropagation();
                         onDeleteNotification(notification.id);

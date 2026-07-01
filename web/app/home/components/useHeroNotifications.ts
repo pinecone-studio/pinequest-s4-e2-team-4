@@ -17,6 +17,8 @@ import {
   type MonTripNotification,
 } from "./heroNotificationTypes";
 import { playNotificationSound } from "./playNotificationSound";
+import { getStoredLanguage } from "@/app/lib/language";
+import { translateChecklistText } from "@/app/lib/checklistTranslations";
 
 export function useHeroNotifications() {
   const [notifications, setNotifications] = useState<MonTripNotification[]>([]);
@@ -59,12 +61,15 @@ export function useHeroNotifications() {
         return;
       }
 
+      const language = getStoredLanguage();
       const nextNotification: MonTripNotification = {
         id: notificationId,
-        title: "Аяллын checklist",
+        title: language === "en" ? "Trip checklist" : "Аяллын checklist",
         message,
         createdAt: new Date().toISOString(),
-        itemTitles: uncheckedItems.slice(0, 3).map((item) => item.title),
+        itemTitles: uncheckedItems
+          .slice(0, 3)
+          .map((item) => translateChecklistText(item.title, language)),
         read: false,
         sessionId,
       };
@@ -83,7 +88,10 @@ export function useHeroNotifications() {
 
     await createChecklistNotification({
       departureAt,
-      message: "Check хийгдээгүй зүйл үлдсэн байна. Гарахаас 12 цагийн өмнөх сануулга.",
+      message:
+        getStoredLanguage() === "en"
+          ? "Some items are still unchecked. This is your 12-hour reminder before departure."
+          : "Check хийгдээгүй зүйл үлдсэн байна. Гарахаас 12 цагийн өмнөх сануулга.",
       type: "reminder",
     });
   }, [createChecklistNotification]);
@@ -95,7 +103,10 @@ export function useHeroNotifications() {
     await createChecklistNotification({
       allowEmptyChecklist: true,
       departureAt: alarmAt,
-      message: "Цаг боллоо. Checklist-ээ шалгаад үлдсэн зүйлсээ бэлдээрэй.",
+      message:
+        getStoredLanguage() === "en"
+          ? "It is time. Check your checklist and pack the remaining items."
+          : "Цаг боллоо. Checklist-ээ шалгаад үлдсэн зүйлсээ бэлдээрэй.",
       type: "alarm",
     });
   }, [createChecklistNotification]);

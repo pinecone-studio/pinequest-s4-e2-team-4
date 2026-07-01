@@ -1,16 +1,21 @@
 import type { Coordinate } from "./routeMap.types";
+import type { AppLanguage } from "@/app/lib/language";
 
 export const fallbackPoint = [106.9176, 47.9188] as Coordinate;
 export const gasRouteSourceId = "nearest-gas-route";
 export const gasRouteLayerId = "nearest-gas-route";
 export const locationAccuracySourceId = "location-accuracy";
 
-export const formatDistance = (meters: number) => {
+export const formatDistance = (meters: number, language: AppLanguage = "mn") => {
   if (meters < 1000) {
-    return `${Math.round(meters)} метр`;
+    return language === "en"
+      ? `${Math.round(meters)} meters`
+      : `${Math.round(meters)} метр`;
   }
 
-  return `${(meters / 1000).toFixed(1)} км`;
+  return language === "en"
+    ? `${(meters / 1000).toFixed(1)} km`
+    : `${(meters / 1000).toFixed(1)} км`;
 };
 
 export const getDistanceMeters = (

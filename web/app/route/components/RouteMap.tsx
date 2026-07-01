@@ -13,6 +13,7 @@ import {
 } from "./routeMapSearchActions";
 import type { Coordinate } from "./routeMap.types";
 import { fallbackPoint } from "./routeMapUtils";
+import { useLanguage } from "@/app/lib/language";
 
 const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
@@ -20,7 +21,18 @@ interface RouteMapProps {
   tripId?: string;
 }
 
+type TripDestination = {
+  latitude: number;
+  longitude: number;
+  order?: number | null;
+};
+
+type TripResponse = {
+  destinations?: TripDestination[];
+};
+
 export default function RouteMap({ tripId }: RouteMapProps) {
+  const { language } = useLanguage();
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const locationMarkerRef = useRef<mapboxgl.Marker | null>(null);
@@ -41,15 +53,15 @@ export default function RouteMap({ tripId }: RouteMapProps) {
       try {
         if (!mapRef.current) return;
         
-        setGasStationStatus("Маршрут ачаалж байна...");
+        setGasStationStatus(language === "en" ? "Loading route..." : "Маршрут ачаалж байна...");
 
    
         const tripRes = await fetch(`/api/trips/${tripId}`);
-        if (!tripRes.ok) throw new Error("Аяллын дата олдсонгүй.");
-        const tripData = await tripRes.json();
+        if (!tripRes.ok) throw new Error(language === "en" ? "Trip data was not found." : "Аяллын дата олдсонгүй.");
+        const tripData = (await tripRes.json()) as TripResponse;
         
         if (!tripData.destinations || tripData.destinations.length === 0) {
-          throw new Error("Аялалд бүртгэгдсэн очих газар олдсонгүй.");
+          throw new Error(language === "en" ? "No destinations were registered for this trip." : "Аялалд бүртгэгдсэн очих газар олдсонгүй.");
         }
 
         const map = mapRef.current;
@@ -59,12 +71,12 @@ export default function RouteMap({ tripId }: RouteMapProps) {
         if (map.getSource("route-source")) map.removeSource("route-source");
 
        
-        const coordinates = tripData.destinations
-          .sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
-          .map((d: any) => [d.longitude, d.latitude]);
+        const coordinates: Coordinate[] = tripData.destinations
+          .sort((a, b) => (a.order || 0) - (b.order || 0))
+          .map((destination) => [destination.longitude, destination.latitude]);
 
         if (coordinates.length < 2) {
-          throw new Error("Маршрут зурахад хамгийн багадаа 2 цэг шаардлагатай.");
+          throw new Error(language === "en" ? "At least 2 points are required to draw a route." : "Маршрут зурахад хамгийн багадаа 2 цэг шаардлагатай.");
         }
 
       
@@ -101,11 +113,17 @@ export default function RouteMap({ tripId }: RouteMapProps) {
           essential: true,
         });
 
-        setGasStationStatus("Маршрут амжилттай зурагдлаа.");
+        setGasStationStatus(language === "en" ? "Route drawn successfully." : "Маршрут амжилттай зурагдлаа.");
 
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Маршрут зурахад алдаа гарлаа:", err);
-        setGasStationStatus(err.message || "Маршрут зурж чадсангүй.");
+        setGasStationStatus(
+          err instanceof Error
+            ? err.message
+            : language === "en"
+              ? "Could not draw the route."
+              : "Маршрут зурж чадсангүй.",
+        );
       }
     }
 
@@ -115,7 +133,7 @@ export default function RouteMap({ tripId }: RouteMapProps) {
       mapRef.current.on("style.load", drawTripRoute);
     }
 
-  }, [tripId]);
+  }, [tripId, language]);
 
  
   useEffect(() => {
@@ -185,7 +203,7 @@ export default function RouteMap({ tripId }: RouteMapProps) {
     try {
       await findNearestGasStation(getSearchContext());
     } catch {
-      setGasStationStatus("Таны ойролцоох шатахуун түгээх станцуудыг олж чадсангүй.");
+      setGasStationStatus(language === "en" ? "Could not find nearby gas stations." : "Таны ойролцоох шатахуун түгээх станцуудыг олж чадсангүй.");
     } finally {
       setIsFindingGasStation(false);
     }
@@ -201,7 +219,7 @@ export default function RouteMap({ tripId }: RouteMapProps) {
     try {
       await findNearestRestaurant(getSearchContext());
     } catch {
-      setGasStationStatus("Таны ойролцоох хоолны газруудыг олж чадсангүй.");
+      setGasStationStatus(language === "en" ? "Could not find nearby restaurants." : "Таны ойролцоох хоолны газруудыг олж чадсангүй.");
     } finally {
       setIsFindingRestaurant(false);
     }
@@ -217,7 +235,7 @@ export default function RouteMap({ tripId }: RouteMapProps) {
     try {
       await findNearestTireRepair(getSearchContext());
     } catch {
-      setGasStationStatus("Таны ойролцоох дугуй засварыг олж чадсангүй.");
+      setGasStationStatus(language === "en" ? "Could not find nearby tire repair shops." : "Таны ойролцоох дугуй засварыг олж чадсангүй.");
     } finally {
       setIsFindingTireRepair(false);
     }
@@ -233,6 +251,7 @@ export default function RouteMap({ tripId }: RouteMapProps) {
 
   const getSearchContext = () => ({
     accessToken: accessToken as string,
+    language,
     map: mapRef.current as mapboxgl.Map,
     markerRefs: {
       gas: gasMarkersRef,
@@ -255,6 +274,7 @@ export default function RouteMap({ tripId }: RouteMapProps) {
 
       <RouteMapControls
         gasStationStatus={gasStationStatus}
+        language={language}
         isFindingGasStation={isFindingGasStation}
         isFindingRestaurant={isFindingRestaurant}
         isFindingTireRepair={isFindingTireRepair}

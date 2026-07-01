@@ -2,6 +2,7 @@
 
 import { Bell } from "lucide-react";
 import type { MonTripNotification } from "./heroNotificationTypes";
+import { useLanguage } from "@/app/lib/language";
 
 type HeroNotificationToastProps = {
   notification: MonTripNotification;
@@ -12,6 +13,7 @@ export default function HeroNotificationToast({
   notification,
   onOpenChecklist,
 }: HeroNotificationToastProps) {
+  const { language } = useLanguage();
   return (
     <div className="absolute left-4 right-4 top-12 z-50">
       <button
@@ -28,7 +30,9 @@ export default function HeroNotificationToast({
               <p className="text-[11px] font-black uppercase tracking-wide text-slate-500">
                 MonTrip
               </p>
-              <span className="text-[10px] font-bold text-slate-400">одоо</span>
+              <span className="text-[10px] font-bold text-slate-400">
+                {language === "en" ? "now" : "одоо"}
+              </span>
             </div>
             <p className="mt-0.5 text-sm font-black text-slate-900">
               {notification.title}

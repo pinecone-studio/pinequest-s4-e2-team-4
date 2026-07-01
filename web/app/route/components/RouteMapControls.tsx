@@ -1,7 +1,9 @@
 import { CheckSquare, Crosshair, Fuel, Utensils, Wrench } from "lucide-react";
+import type { AppLanguage } from "@/app/lib/language";
 
 type RouteMapControlsProps = {
   gasStationStatus: string;
+  language: AppLanguage;
   isFindingGasStation: boolean;
   isFindingRestaurant: boolean;
   isFindingTireRepair: boolean;
@@ -14,6 +16,7 @@ type RouteMapControlsProps = {
 
 export default function RouteMapControls({
   gasStationStatus,
+  language,
   isFindingGasStation,
   isFindingRestaurant,
   isFindingTireRepair,
@@ -23,12 +26,29 @@ export default function RouteMapControls({
   onOpenChecklist,
   onRecenterLocation,
 }: RouteMapControlsProps) {
+  const t =
+    language === "en"
+      ? {
+          gas: "Show gas stations",
+          location: "Go to my location",
+          restaurants: "Show nearby restaurants",
+          tireRepair: "Show nearby tire repairs",
+          checklist: "Show checklist",
+        }
+      : {
+          gas: "Шатахуун түгээх станцуудыг харуулах",
+          location: "Өөрийн байршил руу очих",
+          restaurants: "Ойролцоох хоолны газруудыг харуулах",
+          tireRepair: "Ойролцоох дугуй засварын газруудыг харуулах",
+          checklist: "Авч явах зүйлсийн жагсаалт",
+        };
+
   return (
     <div className="">
       <button
         type="button"
-        aria-label="Show gas stations"
-        title="Шатахуун түгээх станцуудыг харуулах"
+        aria-label={t.gas}
+        title={t.gas}
         onClick={onFindGasStation}
         disabled={isFindingGasStation}
         className="absolute left-6 top-12 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-orange-600 shadow-lg backdrop-blur transition hover:bg-white active:scale-95 disabled:cursor-wait disabled:opacity-75"
@@ -38,8 +58,8 @@ export default function RouteMapControls({
 
       <button
         type="button"
-        aria-label="Go to my location"
-        title="Өөрийн байршил руу очих"
+        aria-label={t.location}
+        title={t.location}
         onClick={onRecenterLocation}
         className="absolute left-76 top-12 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-blue-600 shadow-lg backdrop-blur transition hover:bg-white active:scale-95"
       >
@@ -48,8 +68,8 @@ export default function RouteMapControls({
 
       <button
         type="button"
-        aria-label="Show nearby restaurants"
-        title="Ойролцоох хоолны газруудыг харуулах"
+        aria-label={t.restaurants}
+        title={t.restaurants}
         onClick={onFindRestaurant}
         disabled={isFindingRestaurant}
         className="absolute left-6 top-[100px] z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-amber-500 shadow-lg backdrop-blur transition hover:bg-white active:scale-95 disabled:cursor-wait disabled:opacity-75"
@@ -59,8 +79,8 @@ export default function RouteMapControls({
 
       <button
         type="button"
-        aria-label="Show nearby tire repairs"
-        title="Ойролцоох дугуй засварын газруудыг харуулах"
+        aria-label={t.tireRepair}
+        title={t.tireRepair}
         onClick={onFindTireRepair}
         disabled={isFindingTireRepair}
         className="absolute left-6 top-[152px] z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-violet-500 shadow-lg backdrop-blur transition hover:bg-white active:scale-95 disabled:cursor-wait disabled:opacity-75"
@@ -70,8 +90,8 @@ export default function RouteMapControls({
 
       <button
         type="button"
-        aria-label="Show checklist"
-        title="Авч явах зүйлсийн жагсаалт"
+        aria-label={t.checklist}
+        title={t.checklist}
         onClick={onOpenChecklist}
         className="absolute left-6 top-[204px] z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-emerald-700 shadow-lg backdrop-blur transition hover:bg-white active:scale-95"
       >

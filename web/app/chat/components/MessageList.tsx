@@ -1,8 +1,9 @@
 "use client";
 
 import React, { RefObject } from "react";
-import { Message, cx, QUICK_OPTIONS } from "@/app/chat/types";
+import { Message, cx } from "@/app/chat/types";
 import { Compass, User, Send, Sparkles } from "lucide-react";
+import { useLanguage } from "@/app/lib/language";
 
 interface MessageListProps {
   messages: Message[];
@@ -15,26 +16,71 @@ interface MessageListProps {
   onSend: (text: string) => void;
 }
 
-const SUGGESTIONS = [
-  {
-    title: "🌲 Хөвсгөл нуурын аялал",
-    desc: "3 өдрийн аяллын төлөвлөгөө гаргах",
-    prompt:
-      "Хөвсгөл нуур руу 3 өдөр аялах дэлгэрэнгүй төлөвлөгөө гаргаж өгнө үү.",
+const content = {
+  mn: {
+    title: "Аяллаа төлөвлөцгөөе",
+    intro:
+      "Хаашаа аялахыг хүсэж байна вэ? Доорх бэлэн асуултуудаас сонгох эсвэл чатаар асуугаарай.",
+    placeholder: "Аяллын талаар асуугаарай...",
+    send: "Илгээх",
+    suggestions: [
+      {
+        title: "Хөвсгөл нуурын аялал",
+        desc: "3 өдрийн аяллын төлөвлөгөө гаргах",
+        prompt:
+          "Хөвсгөл нуур руу 3 өдөр аялах дэлгэрэнгүй төлөвлөгөө гаргаж өгнө үү.",
+      },
+      {
+        title: "Говийн аялал",
+        desc: "Машинаар аялахад юу бэлдэх вэ?",
+        prompt:
+          "Говь руу машинаар аялахад анхаарах зүйлс болон бэлтгэл хангахад шаардлагатай зүйлсийг зөвлөнө үү.",
+      },
+      {
+        title: "Тэрэлжийн амралт",
+        desc: "Очих шилдэг амралтын газрууд",
+        prompt:
+          "Горхи Тэрэлжийн байгалийн цогцолбор газарт байрлах, амрахад тохиромжтой шилдэг амралтын газруудыг санал болгоорой.",
+      },
+    ],
+    quickOptions: [
+      { label: "Машинтай аялал", value: "Машинтай аялал" },
+      { label: "Явган аялал", value: "Явган аялал" },
+      { label: "Амралтын газар", value: "Амралтын газар" },
+    ],
   },
-  {
-    title: "🚗 Говийн аялал",
-    desc: "Машинаар аялахад юу бэлдэх вэ?",
-    prompt:
-      "Говь руу машинаар аялахад анхаарах зүйлс болон бэлтгэл хангахад шаардлагатай зүйлсийг зөвлөнө үү.",
+  en: {
+    title: "Let's plan your trip",
+    intro:
+      "Where do you want to travel? Pick a starter question below or ask in chat.",
+    placeholder: "Ask about your trip...",
+    send: "Send",
+    suggestions: [
+      {
+        title: "Khuvsgul Lake trip",
+        desc: "Create a 3-day travel plan",
+        prompt: "Create a detailed 3-day travel plan for Khuvsgul Lake.",
+      },
+      {
+        title: "Gobi road trip",
+        desc: "What should I pack for driving?",
+        prompt:
+          "Give me advice and a packing checklist for a road trip to the Gobi.",
+      },
+      {
+        title: "Terelj getaway",
+        desc: "Best places to stay",
+        prompt:
+          "Recommend the best comfortable resorts and stays in Gorkhi-Terelj National Park.",
+      },
+    ],
+    quickOptions: [
+      { label: "Road trip", value: "Road trip" },
+      { label: "Hiking", value: "Hiking" },
+      { label: "Resort stay", value: "Resort stay" },
+    ],
   },
-  {
-    title: "🏕️ Тэрэлжийн амралт",
-    desc: "Очих шилдэг амралтын газрууд",
-    prompt:
-      "Горхи Тэрэлжийн байгалийн цогцолбор газарт байрлах, амрахад тохиромжтой шилдэг амралтын газруудыг санал болгоорой.",
-  },
-];
+} as const;
 
 const MessageList = ({
   messages,
@@ -46,6 +92,8 @@ const MessageList = ({
   onKeyDown,
   onSend,
 }: MessageListProps) => {
+  const { language } = useLanguage();
+  const t = content[language];
   const autoResize = () => {
     const ta = textareaRef.current;
     if (!ta) return;
@@ -65,17 +113,16 @@ const MessageList = ({
                 <Compass className="h-7 w-7 animate-[spin_10s_linear_infinite]" />
               </div>
               <h2 className="text-lg font-bold text-slate-800 tracking-tight">
-                Аяллаа төлөвлөцгөөе
+                {t.title}
               </h2>
               <p className="max-w-[240px] text-xs font-medium text-slate-400 leading-normal">
-                Хаашаа аялахыг хүсэж байна вэ? Доорх бэлэн асуултуудаас сонгох
-                эсвэл чатаар асуугаарай.
+                {t.intro}
               </p>
             </div>
 
         
             <div className="space-y-2.5 px-1">
-              {SUGGESTIONS.map((s, idx) => (
+              {t.suggestions.map((s, idx) => (
                 <button
                   key={idx}
                   onClick={() => onSend(s.prompt)}
@@ -154,7 +201,7 @@ const MessageList = ({
         <div ref={messagesEndRef} />
       </div>
       <div className="flex flex-wrap gap-2 px-4 pb-3">
-        {QUICK_OPTIONS.map((opt) => (
+        {t.quickOptions.map((opt) => (
           <button
             key={opt.value}
             onClick={() => onSend(opt.value)}
@@ -172,7 +219,7 @@ const MessageList = ({
             value={input}
             rows={1}
             disabled={isLoading}
-            placeholder="Аяллын талаар асуугаарай..."
+            placeholder={t.placeholder}
             onChange={(e) => {
               onInputChange(e.target.value);
               autoResize();
@@ -183,7 +230,7 @@ const MessageList = ({
           <button
             onClick={() => onSend(input)}
             disabled={isLoading || !input.trim()}
-            aria-label="Илгээх"
+            aria-label={t.send}
             className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-[#0A4429] hover:bg-[#0A4429*:*:] text-white shadow-sm transition-all duration-200 hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 disabled:scale-100"
           >
             <Send className="h-4 w-4" />

@@ -4,6 +4,7 @@ import Footer from "@/components/home/Footer";
 import HomeBackdrop from "@/components/home/HomeBackdrop";
 import PhoneFrame from "@/components/home/PhoneFrame";
 import { useProfile } from "@/hooks/useProfile";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   ChevronRight,
@@ -13,29 +14,59 @@ import {
   MoreVertical,
   User,
 } from "lucide-react";
+import { AppLanguage, useLanguage } from "@/app/lib/language";
 
 const menuItems = [
   {
+    id: "my-profile",
     icon: <User className="w-5 h-5 text-blue-400" />,
-    label: "My Profile",
+    label: { mn: "Миний профайл", en: "My Profile" },
     bg: "bg-blue-50",
     href: "/my-profile",
+    action: "navigate",
   },
   {
+    id: "change-password",
     icon: <Lock className="w-5 h-5 text-orange-400" />,
-    label: "Change Password",
+    label: { mn: "Нууц үг солих", en: "Change Password" },
     bg: "bg-orange-50",
     href: "/change-password",
+    action: "navigate",
   },
   {
+    id: "change-language",
     icon: <Languages className="w-5 h-5 text-pink-500" />,
-    label: "Change Language",
+    label: { mn: "Хэл солих", en: "Change Language" },
     bg: "bg-pink-50",
     href: null,
+    action: "language",
   },
+] as const;
+
+const languageOptions: { label: string; value: AppLanguage }[] = [
+  { label: "MN", value: "mn" },
+  { label: "EN", value: "en" },
 ];
 
 export default function Page() {
+  const { language, setLanguage } = useLanguage();
+  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
+  const t =
+    language === "en"
+      ? {
+          title: "Profile",
+          overview: "Account Overview",
+          logout: "Log out",
+          languageTitle: "Choose language",
+          languageHint: "This changes the app language.",
+        }
+      : {
+          title: "Профайл",
+          overview: "Бүртгэлийн тойм",
+          logout: "Гарах",
+          languageTitle: "Хэл сонгох",
+          languageHint: "Аппын хэлийг эндээс солино.",
+        };
   const router = useRouter();
   const {
     user,
@@ -60,7 +91,7 @@ export default function Page() {
                   style={{ backgroundColor: "#1a3c2e" }}
                 >
                   <div className="w-full flex items-center justify-between mb-6 relative z-10">
-                    <h1 className="text-white text-xl font-bold">Profile</h1>
+                    <h1 className="text-white text-xl font-bold">{t.title}</h1>
                     <button className="w-9 h-9 rounded-full border border-white/30 flex items-center justify-center">
                       <MoreVertical className="w-4 h-4 text-white" />
                     </button>
@@ -122,28 +153,70 @@ export default function Page() {
                 <div className="bg-white mx-3 rounded-3xl overflow-hidden shadow-sm z-10 -mt-5 relative">
                   <div className="px-4 pt-5 pb-2">
                     <p className="text-sm font-bold text-gray-800 mb-3">
-                      Account Overview
+                      {t.overview}
                     </p>
                   </div>
 
-                  {menuItems.map((item, i) => (
-                    <button
-                      key={i}
-                      onClick={() => {
-                        if (item.href) router.push(item.href);
-                      }}
-                      className="w-full flex items-center px-4 py-3.5 hover:bg-gray-50 transition-colors"
-                    >
-                      <div
-                        className={`w-10 h-10 rounded-xl flex items-center justify-center mr-3 ${item.bg}`}
+                  {menuItems.map((item) => (
+                    <div key={item.id}>
+                      <button
+                        onClick={() => {
+                          if (item.action === "language") {
+                            setIsLanguageOpen((open) => !open);
+                            return;
+                          }
+
+                          if (item.href) router.push(item.href);
+                        }}
+                        className="w-full flex items-center px-4 py-3.5 hover:bg-gray-50 transition-colors"
                       >
-                        {item.icon}
-                      </div>
-                      <span className="flex-1 text-left text-sm font-medium text-gray-800">
-                        {item.label}
-                      </span>
-                      <ChevronRight className="w-4 h-4 text-gray-300" />
-                    </button>
+                        <div
+                          className={`w-10 h-10 rounded-xl flex items-center justify-center mr-3 ${item.bg}`}
+                        >
+                          {item.icon}
+                        </div>
+                        <span className="flex-1 text-left text-sm font-medium text-gray-800">
+                          {item.label[language]}
+                        </span>
+                        <ChevronRight
+                          className={`w-4 h-4 text-gray-300 transition-transform ${
+                            item.action === "language" && isLanguageOpen
+                              ? "rotate-90"
+                              : ""
+                          }`}
+                        />
+                      </button>
+
+                      {item.action === "language" && isLanguageOpen && (
+                        <div className="mx-4 mb-4 rounded-2xl bg-gray-50 p-3">
+                          <div className="mb-3">
+                            <p className="text-xs font-bold text-gray-800">
+                              {t.languageTitle}
+                            </p>
+                            <p className="mt-0.5 text-[11px] font-medium text-gray-400">
+                              {t.languageHint}
+                            </p>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-2">
+                            {languageOptions.map((option) => (
+                              <button
+                                key={option.value}
+                                type="button"
+                                onClick={() => setLanguage(option.value)}
+                                className={`h-10 rounded-xl text-xs font-black transition ${
+                                  language === option.value
+                                    ? "bg-[#0A4429] text-white shadow-sm"
+                                    : "bg-white text-gray-500 hover:bg-gray-100"
+                                }`}
+                              >
+                                {option.label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   ))}
                   <div className="pb-2" />
                 </div>
@@ -154,7 +227,7 @@ export default function Page() {
                     className="w-full bg-white rounded-2xl py-3.5 flex items-center justify-center gap-2 text-red-500 font-semibold text-sm hover:bg-red-50 transition-colors"
                   >
                     <LogOut className="w-4 h-4" />
-                    Гарах
+                    {t.logout}
                   </button>
                 </div>
               </div>

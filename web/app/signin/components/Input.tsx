@@ -5,8 +5,24 @@ import { EmailField } from "./EmailField";
 import { PasswordField } from "./PasswordField";
 import { SignupLink } from "./SignupLink";
 import { WaveDivider } from "./WaveDivider";
+import { useLanguage } from "@/app/lib/language";
+
+const text = {
+  mn: {
+    helper: "Нэвтрэхийн тулд мэдээллээ оруулна уу",
+    loading: "Уншиж байна...",
+    submit: "Нэвтрэх",
+  },
+  en: {
+    helper: "Enter your details to sign in",
+    loading: "Loading...",
+    submit: "Sign in",
+  },
+} as const;
 
 export default function Input() {
+  const { language } = useLanguage();
+  const t = text[language];
   const {
     email,
     password,
@@ -32,7 +48,7 @@ export default function Input() {
 
       <div className="relative z-10 mb-2.5 flex items-center gap-3">
         <p className="mt-0.5 text-[13px] font-medium leading-5 text-zinc-500">
-          Нэвтрэхийн тулд мэдээллээ оруулна уу
+          {t.helper}
         </p>
       </div>
 
@@ -70,7 +86,7 @@ export default function Input() {
         disabled={isLoading}
       >
         <span className="flex-1 text-center">
-          {isLoading ? "Уншиж байна..." : "Нэвтрэх"}
+          {isLoading ? t.loading : t.submit}
         </span>
       </button>
 
