@@ -39,7 +39,7 @@ export default function RouteMapControls({
         aria-label="Go to my location"
         title="Өөрийн байршил руу очих"
         onClick={onRecenterLocation}
-        className="absolute left-6 top-[100px] z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-blue-600 shadow-lg backdrop-blur transition hover:bg-white active:scale-95"
+        className="absolute left-76 top-12 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-blue-600 shadow-lg backdrop-blur transition hover:bg-white active:scale-95"
       >
         <Crosshair className="h-5 w-5" strokeWidth={2.4} />
       </button>
@@ -50,7 +50,7 @@ export default function RouteMapControls({
         title="Ойролцоох хоолны газруудыг харуулах"
         onClick={onFindRestaurant}
         disabled={isFindingRestaurant}
-        className="absolute left-6 top-[152px] z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-amber-500 shadow-lg backdrop-blur transition hover:bg-white active:scale-95 disabled:cursor-wait disabled:opacity-75"
+        className="absolute left-6 top-[100px] z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-amber-500 shadow-lg backdrop-blur transition hover:bg-white active:scale-95 disabled:cursor-wait disabled:opacity-75"
       >
         <Utensils className="h-5 w-5" strokeWidth={2.4} />
       </button>
@@ -61,7 +61,7 @@ export default function RouteMapControls({
         title="Ойролцоох дугуй засварын газруудыг харуулах"
         onClick={onFindTireRepair}
         disabled={isFindingTireRepair}
-        className="absolute left-6 top-[204px] z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-violet-500 shadow-lg backdrop-blur transition hover:bg-white active:scale-95 disabled:cursor-wait disabled:opacity-75"
+        className="absolute left-6 top-[152px] z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-violet-500 shadow-lg backdrop-blur transition hover:bg-white active:scale-95 disabled:cursor-wait disabled:opacity-75"
       >
         <Wrench className="h-5 w-5" strokeWidth={2.4} />
       </button>
