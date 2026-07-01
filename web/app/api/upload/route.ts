@@ -19,6 +19,13 @@ export async function POST(request: NextRequest) {
     };
     const userId = decoded.id;
 
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Хүчингүй токен байна" },
+        { status: 401 },
+      );
+    }
+
     const formData = await request.formData();
     const file = formData.get("file") as File;
 
@@ -41,6 +48,12 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Upload error:", error);
+    if (error instanceof jwt.JsonWebTokenError) {
+      return NextResponse.json(
+        { error: "Хүчингүй токен байна" },
+        { status: 401 },
+      );
+    }
     return NextResponse.json(
       { error: "Серверийн алдаа гарлаа" },
       { status: 500 },

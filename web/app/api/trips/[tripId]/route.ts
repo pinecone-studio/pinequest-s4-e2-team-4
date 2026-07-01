@@ -39,9 +39,16 @@ export async function GET(
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
-      userId: string;
+      id: string;
     };
-    const userId = decoded.userId;
+    const userId = decoded.id;
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Хүчингүй токен байна" },
+        { status: 401 },
+      );
+    }
 
     const { tripId } = await params;
 
