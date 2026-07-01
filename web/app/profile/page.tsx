@@ -1,46 +1,46 @@
 "use client";
-import React from "react";
-import {
-  Settings,
-  LogOut,
-  Heart,
-  Clock,
-  Home,
-  MessageCircle,
-  ShoppingCart,
-  User,
-  ChevronRight,
-  MoreVertical,
-  RefreshCw,
-  Lock,
-  Languages,
-  Package,
-} from "lucide-react";
+
 import Footer from "@/components/home/Footer";
-import PhoneFrame from "@/components/home/PhoneFrame";
 import HomeBackdrop from "@/components/home/HomeBackdrop";
-import { useRouter } from "next/navigation";
+import PhoneFrame from "@/components/home/PhoneFrame";
+import { useProfile } from "@/hooks/useProfile";
+import {
+  ChevronRight,
+  Languages,
+  Lock,
+  LogOut,
+  MoreVertical,
+  User,
+} from "lucide-react";
 
-export const Page = () => {
-  const router = useRouter();
+const menuItems = [
+  {
+    icon: <User className="w-5 h-5 text-blue-400" />,
+    label: "My Profile",
+    bg: "bg-blue-50",
+  },
+  {
+    icon: <Lock className="w-5 h-5 text-orange-400" />,
+    label: "Change Password",
+    bg: "bg-orange-50",
+  },
+  {
+    icon: <Languages className="w-5 h-5 text-pink-500" />,
+    label: "Change Language",
+    bg: "bg-pink-50",
+  },
+];
 
-  const menuItems = [
-    {
-      icon: <User className="w-5 h-5 text-blue-400" />,
-      label: "My Profile",
-      bg: "bg-blue-50",
-    },
-    {
-      icon: <Lock className="w-5 h-5 text-orange-400" />,
-      label: "Change Password",
-      bg: "bg-orange-50",
-    },
-    {
-      icon: <Languages className="w-5 h-5 text-pink-500" />,
-      label: "Change Language",
-      bg: "bg-pink-50",
-    },
-  ];
+export default function Page() {
+  const {
+    user,
+    loading,
+    isUploading,
+    fileInputRef,
+    handleAvatarClick,
+    handleFileChange,
+    handleLogout,
+  } = useProfile();
 
   return (
     <div className="relative min-h-screen flex items-center justify-center">
@@ -50,39 +50,10 @@ export const Page = () => {
           <div className="h-[95%] flex flex-col">
             <div className="flex flex-col justify-between h-full">
               <div className="flex-1 overflow-y-auto bg-gray-100">
-                {/* Dark green header with decorative shapes */}
                 <div
                   className="relative overflow-hidden flex flex-col items-center pb-10 pt-10 px-4"
                   style={{ backgroundColor: "#1a3c2e" }}
                 >
-                  {/* Decorative circles */}
-                  <div
-                    className="absolute top-[-30px] left-[-30px] w-24 h-24 rounded-full opacity-40"
-                    style={{ backgroundColor: "#2d5c42" }}
-                  />
-                  <div
-                    className="absolute top-[10px] right-[-10px] w-16 h-16 rounded-full opacity-30"
-                    style={{ backgroundColor: "#2d5c42" }}
-                  />
-                  <div
-                    className="absolute bottom-[20px] left-[10px] w-12 h-12 rounded-full opacity-30"
-                    style={{ backgroundColor: "#2d5c42" }}
-                  />
-                  <div
-                    className="absolute bottom-[-10px] right-[20px] w-20 h-20 rounded-full opacity-25"
-                    style={{ backgroundColor: "#2d5c42" }}
-                  />
-                  {/* Half-circle arcs for abstract shapes */}
-                  <div
-                    className="absolute top-[30px] right-[60px] w-14 h-7 rounded-t-full opacity-20"
-                    style={{ backgroundColor: "#4a9068" }}
-                  />
-                  <div
-                    className="absolute bottom-[30px] left-[50px] w-10 h-5 rounded-t-full opacity-20"
-                    style={{ backgroundColor: "#4a9068" }}
-                  />
-
-                  {/* Top bar: Profile title + 3-dot menu */}
                   <div className="w-full flex items-center justify-between mb-6 relative z-10">
                     <h1 className="text-white text-xl font-bold">Profile</h1>
                     <button className="w-9 h-9 rounded-full border border-white/30 flex items-center justify-center">
@@ -90,34 +61,60 @@ export const Page = () => {
                     </button>
                   </div>
 
-                  {/* Avatar */}
-                  <div className="relative mb-3 z-10">
-                    <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white bg-gray-200">
-                      <img
-                        src="montrip.png"
-                        alt="profile"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <button className="absolute bottom-0 right-0 w-7 h-7 rounded-full flex items-center justify-center bg-[#e8924a]">
-                      <svg
-                        className="w-3.5 h-3.5 fill-white"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                      </svg>
-                    </button>
-                  </div>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    className="hidden"
+                  />
 
-                  {/* Name & phone */}
-                  <h2 className="text-white text-lg font-bold z-10">Astra</h2>
-                  <p className="text-white/60 text-sm z-10">
-                    AstraTheDevelopers@gmail.com
-                  </p>
+                  {loading ? (
+                    <div className="animate-pulse flex flex-col items-center w-full">
+                      <div className="w-24 h-24 rounded-full bg-gray-400/30 mb-3" />
+                      <div className="h-5 w-32 bg-gray-400/30 rounded mb-2" />
+                    </div>
+                  ) : (
+                    <>
+                      <div
+                        onClick={handleAvatarClick}
+                        className="relative mb-3 z-10 cursor-pointer group"
+                      >
+                        <div
+                          className={`w-24 h-24 rounded-full overflow-hidden border-4 border-white bg-gray-200 transition-opacity ${isUploading ? "opacity-50" : "group-hover:opacity-90"}`}
+                        >
+                          <img
+                            src={user?.profileImage || "/montrip.png"}
+                            alt="profile"
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+
+                        <button className="absolute bottom-0 right-0 w-7 h-7 rounded-full flex items-center justify-center bg-[#e8924a] shadow-md">
+                          {isUploading ? (
+                            <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                          ) : (
+                            <svg
+                              className="w-3.5 h-3.5 fill-white"
+                              viewBox="0 0 24 24"
+                            >
+                              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
+
+                      <h2 className="text-white text-lg font-bold z-10">
+                        {user?.name || user?.username || "MnkhDlai"}
+                      </h2>
+                      <p className="text-white/60 text-sm z-10">
+                        {user?.email}
+                      </p>
+                    </>
+                  )}
                 </div>
 
-                {/* White card — Account Overview */}
-                <div className="bg-white mx-3 rounded-3xl overflow-hidden shadow-sm z-10 mt-[-20px] relative">
+                <div className="bg-white mx-3 rounded-3xl overflow-hidden shadow-sm z-10 -mt-5 relative">
                   <div className="px-4 pt-5 pb-2">
                     <p className="text-sm font-bold text-gray-800 mb-3">
                       Account Overview
@@ -140,20 +137,20 @@ export const Page = () => {
                       <ChevronRight className="w-4 h-4 text-gray-300" />
                     </button>
                   ))}
-
                   <div className="pb-2" />
                 </div>
 
-                {/* Logout */}
                 <div className="mx-3 mb-24 mt-4">
-                  <button className="w-full bg-white rounded-2xl py-3.5 flex items-center justify-center gap-2 text-red-500 font-semibold text-sm hover:bg-red-50 transition-colors">
+                  <button
+                    onClick={handleLogout}
+                    className="w-full bg-white rounded-2xl py-3.5 flex items-center justify-center gap-2 text-red-500 font-semibold text-sm hover:bg-red-50 transition-colors"
+                  >
                     <LogOut className="w-4 h-4" />
                     Гарах
                   </button>
                 </div>
               </div>
 
-              {/* Bottom nav */}
               <div className="absolute top-[90%] w-full">
                 <Footer />
               </div>
@@ -163,6 +160,4 @@ export const Page = () => {
       </div>
     </div>
   );
-};
-
-export default Page;
+}

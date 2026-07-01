@@ -15,9 +15,9 @@ export async function POST(request: NextRequest) {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
-      userId: string;
+      id: string;
     };
-    const userId = decoded.userId;
+    const userId = decoded.id;
 
     const formData = await request.formData();
     const file = formData.get("file") as File;

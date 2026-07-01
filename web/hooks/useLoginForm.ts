@@ -59,7 +59,7 @@ export function useLoginForm() {
         { withCredentials: true },
       );
       if (res.status === 200 || res.status === 201) {
-        router.push("/trips");
+        router.push("/home");
       }
     } catch (err: any) {
       setError(err.response?.data?.error || "Нэвтрэхэд алдаа гарлаа");
