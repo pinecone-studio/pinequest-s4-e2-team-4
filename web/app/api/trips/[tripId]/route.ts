@@ -29,7 +29,6 @@ export async function GET(
 
     const { tripId } = await params;
 
-    // Баазаас очих газруудыг авна
     const destinations = await prisma.destination.findMany({
       where: {
         tripId: tripId,
@@ -45,7 +44,6 @@ export async function GET(
       );
     }
 
-    // Баазад байгаа датаг цэвэрхэн массив болгож форматлана
     const formattedDestinations = destinations.map((d) => ({
       id: d.id,
       name: d.name,

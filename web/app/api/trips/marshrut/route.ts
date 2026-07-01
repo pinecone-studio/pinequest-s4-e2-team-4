@@ -26,17 +26,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Баазаас ирсэн дарааллаар нь эрэмбэлэх
+   
     const sortedDestinations = [...destinations].sort(
       (a, b) => (a.order || 0) - (b.order || 0)
     );
 
     const coordinatePairs: string[] = [];
 
-    // МАРШРУТЫН ЧУХАЛ ХЭСЭГ: Mapbox заавал эхлээд [Longitude, дараа нь Latitude] авах ёстой!
     for (const place of sortedDestinations) {
       if (place.longitude !== null && place.latitude !== null) {
-        // Энд дарааллыг баталгаажуулав: lng,lat
+
         const lng = Number(place.longitude);
         const lat = Number(place.latitude);
         
@@ -59,7 +58,6 @@ export async function POST(request: NextRequest) {
     const directionsRes = await fetch(directionsUrl);
     const directionsData = await directionsRes.json();
 
-    // Хэрэв Mapbox-оос алдаа ирвэл түүнийг консол дээр хэвлэнэ
     if (!directionsRes.ok || directionsData.code !== "Ok") {
       console.error("Mapbox API Алдаа буцаалаа:", directionsData);
       return NextResponse.json(
