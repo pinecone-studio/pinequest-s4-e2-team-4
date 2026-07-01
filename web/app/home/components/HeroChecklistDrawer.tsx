@@ -1,14 +1,16 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import HeroChecklistDrawerContent from "./HeroChecklistDrawerContent";
 
 type HeroChecklistDrawerProps = {
   onClose: () => void;
 };
 
-export default function HeroChecklistDrawer({ onClose }: HeroChecklistDrawerProps) {
+export default function HeroChecklistDrawer({
+  onClose,
+}: HeroChecklistDrawerProps) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {

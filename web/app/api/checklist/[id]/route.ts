@@ -15,11 +15,33 @@ export async function PATCH(
       );
     }
 
-    jwt.verify(token, process.env.JWT_SECRET!);
+    let userId: string;
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
+        id: string;
+      };
+      userId = decoded.id;
+    } catch (jwtError) {
+      return NextResponse.json(
+        { error: "Хүчингүй эсвэл хугацаа нь дууссан токен байна" },
+        { status: 401 },
+      );
+    }
 
     const { id: itemId } = await params;
-
     const { isCompleted, title } = await request.json();
+
+    const existingItem = await prisma.checklist.findUnique({
+      where: { id: itemId },
+      include: { trip: true },
+    });
+
+    if (!existingItem || existingItem.trip.userId !== userId) {
+      return NextResponse.json(
+        { error: "Checklist олдсонгүй эсвэл засах эрхгүй байна" },
+        { status: 403 },
+      );
+    }
 
     const updatedItem = await prisma.checklist.update({
       where: { id: itemId },
@@ -52,9 +74,33 @@ export async function DELETE(
       );
     }
 
-    jwt.verify(token, process.env.JWT_SECRET!);
+    let userId: string;
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
+        id: string;
+      };
+      userId = decoded.id;
+    } catch (jwtError) {
+      return NextResponse.json(
+        { error: "Хүчингүй эсвэл хугацаа нь дууссан токен байна" },
+        { status: 401 },
+      );
+    }
 
     const { id: itemId } = await params;
+
+    // Тухайн checklist item нь энэ хэрэглэгчийн trip-д хамаарах эсэхийг шалгах
+    const existingItem = await prisma.checklist.findUnique({
+      where: { id: itemId },
+      include: { trip: true },
+    });
+
+    if (!existingItem || existingItem.trip.userId !== userId) {
+      return NextResponse.json(
+        { error: "Checklist олдсонгүй эсвэл устгах эрхгүй байна" },
+        { status: 403 },
+      );
+    }
 
     await prisma.checklist.delete({
       where: { id: itemId },
