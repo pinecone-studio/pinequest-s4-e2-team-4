@@ -14,9 +14,16 @@ export async function PUT(request: NextRequest) {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
-      userId: string;
+      id: string;
     };
-    const userId = decoded.userId;
+    const userId = decoded.id;
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Хүчингүй токен байна" },
+        { status: 401 },
+      );
+    }
 
     const { phone, name } = await request.json();
 
@@ -87,6 +94,12 @@ export async function PUT(request: NextRequest) {
     });
   } catch (error) {
     console.error("Profile update error:", error);
+    if (error instanceof jwt.JsonWebTokenError) {
+      return NextResponse.json(
+        { error: "Хүчингүй токен байна" },
+        { status: 401 },
+      );
+    }
     return NextResponse.json(
       { error: "Серверийн алдаа гарлаа" },
       { status: 500 },
