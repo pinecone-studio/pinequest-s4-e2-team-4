@@ -38,7 +38,7 @@ const Sidebar = ({
       sidebarOpen ? "translate-x-0" : "-translate-x-full",
     )}
   >
-    {/* Header - padded for safety beneath device notch */}
+   
     <div className="flex items-center justify-between border-b border-slate-100 pb-4 pt-10 px-4">
       <div className="flex items-center gap-2">
         <Compass className="h-5 w-5 text-[#0A4429]" />
@@ -55,7 +55,7 @@ const Sidebar = ({
       </button>
     </div>
 
-    {/* Session list */}
+
     <div className="flex-1 space-y-1 overflow-y-auto p-3">
       <p className="px-2 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">
         Сүүлд хийсэн чатууд

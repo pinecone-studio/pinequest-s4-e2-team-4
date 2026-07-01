@@ -55,11 +55,11 @@ const MessageList = ({
 
   return (
     <>
-      {/* Messages Feed */}
+    
       <div className="flex-1 space-y-5 overflow-y-auto px-4 py-6 scrollbar-thin">
         {messages.length === 0 && (
           <div className="flex min-h-full flex-col justify-center py-4">
-            {/* Header section of empty state */}
+       
             <div className="flex flex-col items-center text-center gap-2 mb-8">
               <div className="flex h-14 w-14 items-center justify-center rounded-[20px] bg-[#0A4429]/10 text-[#0A4429] shadow-inner mb-2">
                 <Compass className="h-7 w-7 animate-[spin_10s_linear_infinite]" />
@@ -73,7 +73,7 @@ const MessageList = ({
               </p>
             </div>
 
-            {/* Suggestions cards */}
+        
             <div className="space-y-2.5 px-1">
               {SUGGESTIONS.map((s, idx) => (
                 <button
@@ -153,8 +153,6 @@ const MessageList = ({
 
         <div ref={messagesEndRef} />
       </div>
-
-      {/* Quick options */}
       <div className="flex flex-wrap gap-2 px-4 pb-3">
         {QUICK_OPTIONS.map((opt) => (
           <button
@@ -167,8 +165,6 @@ const MessageList = ({
           </button>
         ))}
       </div>
-
-      {/* Input bar */}
       <div className="flex-shrink-0 border-t border-slate-100 bg-white/95 backdrop-blur-md px-4 pb-6 pt-2">
         <div className="flex items-end gap-2 rounded-2xl border border-slate-200 bg-slate-50 pl-4 pr-2 py-2 transition-all focus-within:border-[#0A4429] focus-within:ring-2 focus-within:ring-[#0A4429]/10 focus-within:bg-white shadow-inner">
           <textarea

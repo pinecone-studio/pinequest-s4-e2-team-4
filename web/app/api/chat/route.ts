@@ -5,7 +5,27 @@ import { NextRequest, NextResponse } from "next/server";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
+type ExtractedChecklistItem = {
+  title: string;
+  category?: string | null;
+};
+
+type ExtractedDestination = {
+  name: string;
+  description?: string | null;
+  order?: number | null;
+  latitude?: number | null;
+  longitude?: number | null;
+};
+
+type ExtractedTravelData = {
+  checklistItems?: ExtractedChecklistItem[];
+  destinations?: ExtractedDestination[];
+};
+
 export async function POST(request: NextRequest) {
+  let currentSessionId: string | null = null;
+
   try {
     const token = request.cookies.get("token")?.value;
     if (!token) {
@@ -36,7 +56,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let currentSessionId = sessionId;
+    currentSessionId = sessionId;
 
     if (!currentSessionId) {
       const userExists = await prisma.user.findUnique({
@@ -130,8 +150,7 @@ export async function POST(request: NextRequest) {
     }
 
     let aiResponse = rawAiResponse;
-    let extractedData: { checklistItems?: any[]; destinations?: any[] } | null =
-      null;
+    let extractedData: ExtractedTravelData | null = null;
 
     if (
       rawAiResponse.includes("===JSON_DATA_START===") &&
@@ -142,7 +161,7 @@ export async function POST(request: NextRequest) {
 
       const jsonPart = parts[1].split("===JSON_DATA_END===")[0].trim();
       try {
-        extractedData = JSON.parse(jsonPart);
+        extractedData = JSON.parse(jsonPart) as ExtractedTravelData;
       } catch (e) {
         console.error("Gemini JSON Parsing Error:", e);
       }
@@ -176,7 +195,7 @@ export async function POST(request: NextRequest) {
           extractedData.checklistItems.length > 0
         ) {
           await prisma.checklist.createMany({
-            data: extractedData.checklistItems.map((item: any) => ({
+            data: extractedData.checklistItems.map((item) => ({
               title: item.title,
               category: item.category || "Бусад",
               tripId: targetTripId,
@@ -190,7 +209,7 @@ export async function POST(request: NextRequest) {
           extractedData.destinations.length > 0
         ) {
           await prisma.destination.createMany({
-            data: extractedData.destinations.map((dest: any) => ({
+            data: extractedData.destinations.map((dest) => ({
               name: dest.name,
               description: dest.description || "",
               order: dest.order || 0,
@@ -227,7 +246,7 @@ export async function POST(request: NextRequest) {
       );
     }
     return NextResponse.json(
-      { error: "Сервер дээр алдаа гарлаа" },
+      { error: "Сервер дээр алдаа гарлаа", sessionId: currentSessionId },
       { status: 500 },
     );
   }

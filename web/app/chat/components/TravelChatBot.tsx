@@ -20,6 +20,7 @@ const TravelChatBot = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const initialPromptHandledRef = useRef(false);
+  const isSendingRef = useRef(false);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -32,7 +33,7 @@ const TravelChatBot = () => {
       const data = await res.json();
       if (data.success) setSessions(data.sessions);
     } catch {
-      // silently fail
+    
     } finally {
       setHistoryLoading(false);
     }
@@ -65,7 +66,7 @@ const TravelChatBot = () => {
         setSidebarOpen(false);
       }
     } catch {
-      //FAIL
+      
     }
   };
 
@@ -88,7 +89,7 @@ const TravelChatBot = () => {
         }
       }
     } catch {
-      // FAIL
+    
     } finally {
       setDeletingId(null);
     }
@@ -100,10 +101,16 @@ const TravelChatBot = () => {
     setSidebarOpen(false);
   };
 
+  const openSidebar = useCallback(() => {
+    setSidebarOpen(true);
+    void fetchSessions();
+  }, [fetchSessions]);
+
   const sendMessage = useCallback(async (text: string, targetSessionId = sessionId) => {
     const trimmed = text.trim();
-    if (!trimmed || isLoading) return;
+    if (!trimmed || isSendingRef.current) return;
 
+    isSendingRef.current = true;
     setMessages((prev) => [...prev, { role: "user", content: trimmed }]);
     setInput("");
     if (textareaRef.current) textareaRef.current.style.height = "auto";
@@ -117,12 +124,14 @@ const TravelChatBot = () => {
         body: JSON.stringify({ message: trimmed, sessionId: targetSessionId }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Сервер алдаа гарлаа");
 
       if (data.sessionId) {
         setSessionId(data.sessionId);
-        fetchSessions();
+        void fetchSessions();
       }
+
+      if (!res.ok) throw new Error(data.error || "Сервер алдаа гарлаа");
+
       setMessages((prev) => [
         ...prev,
         { role: "model", content: data.response },
@@ -132,9 +141,10 @@ const TravelChatBot = () => {
         err instanceof Error ? err.message : "Холболтын алдаа гарлаа.";
       setMessages((prev) => [...prev, { role: "model", content: `⚠️ ${msg}` }]);
     } finally {
+      isSendingRef.current = false;
       setIsLoading(false);
     }
-  }, [fetchSessions, isLoading, sessionId]);
+  }, [fetchSessions, sessionId]);
 
   useEffect(() => {
     const prompt =
@@ -171,7 +181,7 @@ const TravelChatBot = () => {
 
   return (
     <div className="flex h-full overflow-hidden bg-slate-50 font-sans relative">
-      {/* Mobile overlay - styled inside the PhoneFrame absolute box */}
+   
       {sidebarOpen && (
         <div
           className="absolute inset-0 z-20 bg-black/40 backdrop-blur-sm transition-opacity duration-300"
@@ -190,12 +200,12 @@ const TravelChatBot = () => {
         onNewChat={startNewChat}
       />
 
-      {/* Main */}
+  
       <main className="flex min-w-0 flex-1 flex-col">
-        {/* Top bar - padded at the top to accommodate the notch */}
+   
         <div className="flex flex-shrink-0 items-center gap-3 border-b border-slate-100 bg-white px-4 pb-3 pt-10 shadow-sm z-10">
           <button
-            onClick={() => setSidebarOpen(true)}
+            onClick={openSidebar}
             aria-label="Түүх нээх"
             className="rounded-xl p-2 text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800"
           >
