@@ -225,7 +225,7 @@ export default function Input() {
       )}
 
       <button
-        className="relative z-10 mt-3 flex h-12 w-full items-center justify-center rounded-[17px] bg-lime-600 text-[20px] font-bold text-white shadow-lg shadow-lime-600/25 disabled:bg-zinc-400 disabled:shadow-none"
+        className="relative z-10 mt-3 flex h-12 w-full items-center justify-center rounded-[17px] bg-[#0A4429] text-[20px] font-bold text-white shadow-lg shadow-lime-600/25 disabled:bg-zinc-400 disabled:shadow-none"
         type="submit"
         disabled={isLoading}
       >
