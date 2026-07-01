@@ -5,8 +5,10 @@ import { Message, ChatSession } from "@/app/chat/types";
 import Sidebar from "./Sidebar";
 import MessageList from "./MessageList";
 import { Menu, Plus } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 const TravelChatBot = () => {
+  const searchParams = useSearchParams();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -17,6 +19,7 @@ const TravelChatBot = () => {
   const [historyLoading, setHistoryLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const initialPromptHandledRef = useRef(false);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -97,7 +100,7 @@ const TravelChatBot = () => {
     setSidebarOpen(false);
   };
 
-  const sendMessage = async (text: string) => {
+  const sendMessage = useCallback(async (text: string, targetSessionId = sessionId) => {
     const trimmed = text.trim();
     if (!trimmed || isLoading) return;
 
@@ -111,7 +114,7 @@ const TravelChatBot = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ message: trimmed, sessionId }),
+        body: JSON.stringify({ message: trimmed, sessionId: targetSessionId }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Сервер алдаа гарлаа");
@@ -131,7 +134,31 @@ const TravelChatBot = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [fetchSessions, isLoading, sessionId]);
+
+  useEffect(() => {
+    const prompt =
+      searchParams.get("prompt") ||
+      sessionStorage.getItem("montrip-initial-chat-prompt");
+
+    if (!prompt || initialPromptHandledRef.current) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      if (initialPromptHandledRef.current) {
+        return;
+      }
+
+      initialPromptHandledRef.current = true;
+      sessionStorage.removeItem("montrip-initial-chat-prompt");
+      setSessionId(null);
+      setMessages([]);
+      void sendMessage(prompt, null);
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [searchParams, sendMessage]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Footer from "@/components/home/Footer";
 import PhoneFrame from "@/components/home/PhoneFrame";
 import HomeBackdrop from "@/components/home/HomeBackdrop";
@@ -12,7 +12,9 @@ export const Chat = () => {
         <PhoneFrame>
           <div className="flex flex-col h-full bg-slate-50">
             <div className="flex-1 min-h-0 relative">
-              <TravelChatbot />
+              <Suspense fallback={null}>
+                <TravelChatbot />
+              </Suspense>
             </div>
             <Footer />
           </div>

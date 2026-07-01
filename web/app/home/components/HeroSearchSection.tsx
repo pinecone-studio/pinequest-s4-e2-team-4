@@ -2,8 +2,25 @@
 "use client";
 
 import { Search } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function HeroSearchSection() {
+  const router = useRouter();
+  const [query, setQuery] = useState("");
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const trimmedQuery = query.trim();
+
+    if (!trimmedQuery) {
+      return;
+    }
+
+    sessionStorage.setItem("montrip-initial-chat-prompt", trimmedQuery);
+    router.push(`/chat?prompt=${encodeURIComponent(trimmedQuery)}`);
+  };
+
   return (
     <div className="w-full px-5 pt-4 pb-2 text-left">
 
@@ -19,21 +36,29 @@ export default function HeroSearchSection() {
       </p>
 
 
-      <div className="mt-5 flex items-center justify-between bg-[#F5F7FA] rounded-full pl-4 pr-1.5 py-1.5 border border-gray-100 shadow-sm focus-within:ring-2 focus-within:ring-[#0A4429]/20 transition-all">
+      <form
+        onSubmit={handleSubmit}
+        className="mt-5 flex items-center justify-between bg-[#F5F7FA] rounded-full pl-4 pr-1.5 py-1.5 border border-gray-100 shadow-sm focus-within:ring-2 focus-within:ring-[#0A4429]/20 transition-all"
+      >
         <div className="flex items-center gap-2.5 w-full">
           <Search className="h-4 w-4 text-gray-400 shrink-0" />
           <input
             type="text"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
             placeholder="Хаашаа аялах вэ?"
             className="w-full bg-transparent text-sm text-gray-800 outline-none placeholder-gray-400"
           />
         </div>
         
 
-        <button className="h-8 w-8 rounded-full bg-[#0A4429] flex items-center justify-center text-white shadow-md hover:bg-[#083520] transition-colors shrink-0">
+        <button
+          type="submit"
+          className="h-8 w-8 rounded-full bg-[#0A4429] flex items-center justify-center text-white shadow-md hover:bg-[#083520] transition-colors shrink-0"
+        >
           <Search className="h-3.5 w-3.5" />
         </button>
-      </div>
+      </form>
     </div>
   );
 }
