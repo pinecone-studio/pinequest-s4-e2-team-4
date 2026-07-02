@@ -15,6 +15,7 @@ interface MessageListProps {
   input: string;
   messagesEndRef: RefObject<HTMLDivElement | null>;
   textareaRef: RefObject<HTMLTextAreaElement | null>;
+  quickReplies: { label: string; value: string }[];
   onInputChange: (value: string) => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   onSend: (text: string) => void;
@@ -26,6 +27,7 @@ const MessageList = ({
   input,
   messagesEndRef,
   textareaRef,
+  quickReplies,
   onInputChange,
   onKeyDown,
   onSend,
@@ -47,7 +49,7 @@ const MessageList = ({
         speak(lastMessage.content);
       }
     }
-  }, [messages, isLoading]);
+  }, [messages, isLoading, speak]);
 
   return (
     <>
@@ -94,8 +96,8 @@ const MessageList = ({
         isRecording={isRecording}
         sttLoading={sttLoading}
         isVoiceMode={isVoiceMode}
-        isPlaying={isPlaying}
         textareaRef={textareaRef}
+        quickReplies={quickReplies}
         onInputChange={onInputChange}
         onKeyDown={onKeyDown}
         onSend={onSend}
