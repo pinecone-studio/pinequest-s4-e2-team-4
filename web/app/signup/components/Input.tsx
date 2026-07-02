@@ -6,8 +6,66 @@ import Link from "next/link";
 import { useState } from "react";
 import { FieldIcon } from "./FIeldIcon";
 import { SigninLink } from "./SignInLinks";
+import { useLanguage } from "@/app/lib/language";
+
+const signupText = {
+  mn: {
+    title: "Бүртгүүлээрэй!",
+    name: "Нэр",
+    phone: "Утас",
+    email: "Таны имэйл хаяг",
+    password: "Нууц үг",
+    confirmPassword: "Нууц үг давтах",
+    showPassword: "Нууц үг харах",
+    showConfirmPassword: "Нууц үг давтах харах",
+    termsPrefix: "Үйлчилгээний",
+    terms: "нөхцөл",
+    privacy: "нууцлалын бодлогыг",
+    termsSuffix: "зөвшөөрч байна",
+    loading: "Уншиж байна...",
+    submit: "Бүртгүүлэх",
+    genericError: "Sign up failed",
+  },
+  en: {
+    title: "Create account",
+    name: "Name",
+    phone: "Phone",
+    email: "Your email address",
+    password: "Password",
+    confirmPassword: "Confirm password",
+    showPassword: "Show password",
+    showConfirmPassword: "Show confirm password",
+    termsPrefix: "I agree to the",
+    terms: "terms",
+    privacy: "privacy policy",
+    termsSuffix: "",
+    loading: "Loading...",
+    submit: "Sign up",
+    genericError: "Sign up failed",
+  },
+} as const;
+
+function translateSignupError(error: string | null, language: "mn" | "en") {
+  if (!error || language === "mn") return error;
+  const normalized = error.toLowerCase();
+
+  if (normalized.includes("нэр")) return "Enter your name";
+  if (normalized.includes("утас") || normalized.includes("нэвтрэх нэр")) {
+    return "Enter your phone number";
+  }
+  if (normalized.includes("имэйл")) return "Enter your email address";
+  if (normalized.includes("давтах") || normalized.includes("зөрүүтэй")) {
+    return "Passwords do not match";
+  }
+  if (normalized.includes("нууц үг")) return "Enter your password";
+  if (normalized.includes("бүртгүүлэх")) return "Sign up failed";
+
+  return "Sign up failed";
+}
 
 export default function Input() {
+  const { language } = useLanguage();
+  const t = signupText[language];
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const PasswordIcon = showPassword ? Eye : EyeOff;
@@ -35,6 +93,7 @@ export default function Input() {
     clearErrorOnChange,
     handleSubmit,
   } = useSignupForm();
+  const displayError = translateSignupError(error, language);
 
   return (
     <form
@@ -56,7 +115,7 @@ export default function Input() {
       <div className="relative z-10 mb-3 flex items-center gap-4">
         <div>
           <h2 className="text-[22px] font-black leading-tight text-zinc-950">
-            Бүртгүүлээрэй!
+            {t.title}
           </h2>
         </div>
       </div>
@@ -69,7 +128,7 @@ export default function Input() {
             </FieldIcon>
             <input
               className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-zinc-700 outline-none placeholder:text-zinc-400"
-              placeholder="Нэр"
+              placeholder={t.name}
               type="text"
               value={name}
               onChange={(e) => {
@@ -81,7 +140,7 @@ export default function Input() {
           </span>
           {isNameError && (
             <p className="mt-1 text-[11px] font-medium text-red-500 pl-1">
-              {error}
+              {displayError}
             </p>
           )}
         </label>
@@ -93,7 +152,7 @@ export default function Input() {
             </FieldIcon>
             <input
               className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-zinc-700 outline-none placeholder:text-zinc-400"
-              placeholder="Утас"
+              placeholder={t.phone}
               type="tel"
               value={username}
               onChange={(e) => {
@@ -105,7 +164,7 @@ export default function Input() {
           </span>
           {isUsernameError && (
             <p className="mt-1 text-[11px] font-medium text-red-500 pl-1">
-              {error}
+              {displayError}
             </p>
           )}
         </label>
@@ -117,7 +176,7 @@ export default function Input() {
             </FieldIcon>
             <input
               className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-zinc-700 outline-none placeholder:text-zinc-400"
-              placeholder="Таны имэйл хаяг"
+              placeholder={t.email}
               type="email"
               value={email}
               onChange={(e) => {
@@ -129,7 +188,7 @@ export default function Input() {
           </span>
           {isEmailError && (
             <p className="mt-1 text-[11px] font-medium text-red-500 pl-1">
-              {error}
+              {displayError}
             </p>
           )}
         </label>
@@ -141,7 +200,7 @@ export default function Input() {
             </FieldIcon>
             <input
               className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-zinc-700 outline-none placeholder:text-zinc-400"
-              placeholder="Нууц үг"
+              placeholder={t.password}
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => {
@@ -151,7 +210,7 @@ export default function Input() {
               disabled={isLoading}
             />
             <button
-              aria-label="Нууц үг харах"
+              aria-label={t.showPassword}
               className="text-lime-600"
               onClick={() => setShowPassword((value) => !value)}
               type="button"
@@ -161,7 +220,7 @@ export default function Input() {
           </span>
           {isPasswordError && (
             <p className="mt-1 text-[11px] font-medium text-red-500 pl-1">
-              {error}
+              {displayError}
             </p>
           )}
         </label>
@@ -173,7 +232,7 @@ export default function Input() {
             </FieldIcon>
             <input
               className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-zinc-700 outline-none placeholder:text-zinc-400"
-              placeholder="Нууц үг давтах"
+              placeholder={t.confirmPassword}
               type={showConfirmPassword ? "text" : "password"}
               value={confirmPassword}
               onChange={(e) => {
@@ -183,7 +242,7 @@ export default function Input() {
               disabled={isLoading}
             />
             <button
-              aria-label="Нууц үг давтах харах"
+              aria-label={t.showConfirmPassword}
               className="text-lime-600"
               onClick={() => setShowConfirmPassword((value) => !value)}
               type="button"
@@ -193,7 +252,7 @@ export default function Input() {
           </span>
           {isConfirmPasswordError && (
             <p className="mt-1 text-[11px] font-medium text-red-500 pl-1">
-              {error}
+              {displayError}
             </p>
           )}
         </label>
@@ -206,21 +265,21 @@ export default function Input() {
           required
         />
         <span>
-          Үйлчилгээний{" "}
+          {t.termsPrefix}{" "}
           <Link className="font-bold text-lime-600" href="/terms">
-            нөхцөл
+            {t.terms}
           </Link>
           ,{" "}
           <Link className="font-bold text-lime-600" href="/privacy">
-            нууцлалын бодлогыг
+            {t.privacy}
           </Link>{" "}
-          зөвшөөрч байна
+          {t.termsSuffix}
         </span>
       </label>
 
       {isGeneralError && (
         <p className="relative z-10 mt-2 text-left text-[11px] font-semibold text-red-500 pl-1">
-          {error}
+          {displayError}
         </p>
       )}
 
@@ -230,7 +289,7 @@ export default function Input() {
         disabled={isLoading}
       >
         <span className="flex-1 text-center">
-          {isLoading ? "Уншиж байна..." : "Бүртгүүлэх"}
+          {isLoading ? t.loading : t.submit}
         </span>
       </button>
 

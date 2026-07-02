@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import HomeBackdrop from "@/components/home/HomeBackdrop";
 import HomeFooter from "@/components/home/Footer";
 import Logo from "@/components/home/Logo";
@@ -9,9 +9,8 @@ import HeroChecklistCard from "./components/HeroChecklistCard";
 import HeroChecklistDrawer from "./components/HeroChecklistDrawer";
 import HeroWeatherPanel from "./components/HeroWeatherPanel";
 import HeroSearchSection from "./components/HeroSearchSection"; 
+import HeroNotificationButton from "./components/HeroNotificationButton";
 import { useHeroForecast } from "./components/useHeroForecast";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 
 type HeroPageShellProps = {
@@ -46,20 +45,6 @@ function HeroPhoneLayout({ children }: HeroPhoneLayoutProps) {
 }
 
 function HeroHeader() {
-  const [unreadCount, setUnreadCount] = useState(0);
-
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      const count = localStorage.getItem("montrip-unread-checklist");
-
-      if (count) {
-        setUnreadCount(parseInt(count, 10));
-      }
-    }, 0);
-
-    return () => window.clearTimeout(timer);
-  }, []);
-
   return (
     <header className="relative flex items-center  px-5 pb-2 pt-12">
       <div className="flex  gap-1">
@@ -73,18 +58,6 @@ function HeroHeader() {
         <Logo />
       </div>
 
-      <div className="absolute right-5 top-14 flex justify-end">
-        <button className="relative flex h-9 w-9 items-center justify-center rounded-full border border-gray-100 bg-white shadow-sm text-gray-600 hover:bg-gray-50 transition-colors">
-          <FontAwesomeIcon icon={faBell} className="h-4 w-4" />
-          
-          {unreadCount > 0 && (
-            <span className="absolute top-2 right-2.5 flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
-            </span>
-          )}
-        </button>
-      </div>
     </header>
   );
 }
@@ -112,6 +85,7 @@ function HeroContent() {
   return (
     <>
       <HeroHeader />
+      <HeroNotificationButton onOpenChecklist={() => setIsChecklistOpen(true)} />
 
       <HeroSearchSection />
 

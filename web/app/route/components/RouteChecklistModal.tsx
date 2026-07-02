@@ -3,32 +3,79 @@
 import { Check, CheckSquare, Loader2, Trash2, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useChecklist } from "@/hooks/userChecklist";
+import { useLanguage } from "@/app/lib/language";
+import { translateChecklistText } from "@/app/lib/checklistTranslations";
+
+const allCategory = "__all__";
 
 type RouteChecklistModalProps = {
   onClose: () => void;
 };
 
 export default function RouteChecklistModal({ onClose }: RouteChecklistModalProps) {
+  const { language } = useLanguage();
+  const t =
+    language === "en"
+      ? {
+          all: "All",
+          close: "Close checklist",
+          title: "Travel items",
+          subtitle: "Checklist created from Chat",
+          loading: "Loading checklist...",
+          emptyTitle: "Checklist is empty",
+          emptyText: "Create your trip prep from Chat.",
+          emptyCategory: "No items in this category",
+        }
+      : {
+          all: "Бүгд",
+          close: "Checklist хаах",
+          title: "Авч явах зүйлс",
+          subtitle: "Chat-аас үүссэн checklist",
+          loading: "Жагсаалт ачаалж байна...",
+          emptyTitle: "Checklist хоосон байна",
+          emptyText: "Chat хэсгээс аяллын бэлтгэлээ үүсгээрэй.",
+          emptyCategory: "Энэ ангилалд зүйл алга",
+        };
   const { checklistItems, deleteItem, loading, toggleItem } = useChecklist();
-  const [selectedCategory, setSelectedCategory] = useState("Бүгд");
+  const [selectedCategory, setSelectedCategory] = useState(allCategory);
 
   const categories = useMemo(() => {
     const uniqueCategories = checklistItems
       .map((item) => item.category?.trim())
       .filter((category): category is string => Boolean(category));
 
-    return ["Бүгд", ...Array.from(new Set(uniqueCategories))];
+    return Array.from(new Set(uniqueCategories));
   }, [checklistItems]);
 
-  const activeCategory = categories.includes(selectedCategory) ? selectedCategory : "Бүгд";
+  const activeCategory = categories.includes(selectedCategory)
+    ? selectedCategory
+    : allCategory;
 
   const filteredItems = useMemo(() => {
-    if (activeCategory === "Бүгд") {
+    if (activeCategory === allCategory) {
       return checklistItems;
     }
 
     return checklistItems.filter((item) => item.category === activeCategory);
   }, [activeCategory, checklistItems]);
+
+  const displayItems = useMemo(() => {
+    const seenTitles = new Set<string>();
+
+    return filteredItems.filter((item) => {
+      const translatedCategory = item.category
+        ? translateChecklistText(item.category, language, "category")
+        : "";
+      const translatedTitle = translateChecklistText(item.title, language);
+      const key = `${translatedCategory}::${translatedTitle}`
+        .trim()
+        .toLowerCase();
+
+      if (seenTitles.has(key)) return false;
+      seenTitles.add(key);
+      return true;
+    });
+  }, [filteredItems, language]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -43,7 +90,7 @@ export default function RouteChecklistModal({ onClose }: RouteChecklistModalProp
     <div className="absolute inset-0 z-40 flex items-center justify-center px-5">
       <button
         type="button"
-        aria-label="Checklist хаах"
+        aria-label={t.close}
         onClick={onClose}
         className="absolute inset-0 bg-slate-950/35 backdrop-blur-[3px]"
       />
@@ -55,8 +102,8 @@ export default function RouteChecklistModal({ onClose }: RouteChecklistModalProp
               <CheckSquare className="h-5 w-5" />
             </span>
             <div>
-              <h2 className="text-base font-black text-slate-900">Авч явах зүйлс</h2>
-              <p className="text-[11px] font-semibold text-slate-500">Chat-аас үүссэн checklist</p>
+              <h2 className="text-base font-black text-slate-900">{t.title}</h2>
+              <p className="text-[11px] font-semibold text-slate-500">{t.subtitle}</p>
             </div>
           </div>
 
@@ -71,7 +118,7 @@ export default function RouteChecklistModal({ onClose }: RouteChecklistModalProp
 
         {!loading && checklistItems.length > 0 && (
           <div className="scrollbar-invisible flex shrink-0 gap-2 overflow-x-auto border-b border-slate-100 bg-white/80 px-5 py-3">
-            {categories.map((category) => (
+            {[allCategory, ...categories].map((category) => (
               <button
                 key={category}
                 type="button"
@@ -82,7 +129,9 @@ export default function RouteChecklistModal({ onClose }: RouteChecklistModalProp
                     : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                 }`}
               >
-                {category}
+                {category === allCategory
+                  ? t.all
+                  : translateChecklistText(category, language, "category")}
               </button>
             ))}
           </div>
@@ -92,22 +141,22 @@ export default function RouteChecklistModal({ onClose }: RouteChecklistModalProp
           {loading ? (
             <div className="flex h-40 flex-col items-center justify-center gap-3 text-slate-500">
               <Loader2 className="h-6 w-6 animate-spin" />
-              <p className="text-xs font-semibold">Жагсаалт ачаалж байна...</p>
+              <p className="text-xs font-semibold">{t.loading}</p>
             </div>
           ) : checklistItems.length === 0 ? (
             <div className="flex h-40 flex-col items-center justify-center text-center text-slate-400">
               <CheckSquare className="mb-3 h-9 w-9 stroke-[1.7]" />
-              <p className="text-sm font-bold text-slate-500">Checklist хоосон байна</p>
-              <p className="mt-1 text-xs">Chat хэсгээс аяллын бэлтгэлээ үүсгээрэй.</p>
+              <p className="text-sm font-bold text-slate-500">{t.emptyTitle}</p>
+              <p className="mt-1 text-xs">{t.emptyText}</p>
             </div>
-          ) : filteredItems.length === 0 ? (
+          ) : displayItems.length === 0 ? (
             <div className="flex h-40 flex-col items-center justify-center text-center text-slate-400">
               <CheckSquare className="mb-3 h-9 w-9 stroke-[1.7]" />
-              <p className="text-sm font-bold text-slate-500">Энэ ангилалд зүйл алга</p>
+              <p className="text-sm font-bold text-slate-500">{t.emptyCategory}</p>
             </div>
           ) : (
             <div className="space-y-2.5">
-              {filteredItems.map((item) => (
+              {displayItems.map((item) => (
                 <div
                   key={item.id}
                   className={`flex items-center gap-3 rounded-2xl border p-3 shadow-sm transition ${
@@ -128,11 +177,15 @@ export default function RouteChecklistModal({ onClose }: RouteChecklistModalProp
 
                   <div className="min-w-0 flex-1">
                     <p className={`text-sm font-semibold ${item.isCompleted ? "text-slate-400 line-through" : "text-slate-700"}`}>
-                      {item.title}
+                      {translateChecklistText(item.title, language)}
                     </p>
                     {item.category && (
                       <p className="mt-0.5 text-[10px] font-bold uppercase tracking-wide text-emerald-700/70">
-                        {item.category}
+                        {translateChecklistText(
+                          item.category,
+                          language,
+                          "category",
+                        )}
                       </p>
                     )}
                   </div>

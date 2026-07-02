@@ -1,5 +1,6 @@
 import React from "react";
 import { ProfileFormState } from "./types";
+import { useLanguage } from "@/app/lib/language";
 
 interface ProfileFormProps {
   form: ProfileFormState;
@@ -22,10 +23,34 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
   onChange,
   onSubmit,
 }) => {
+  const { language } = useLanguage();
+  const t =
+    language === "en"
+      ? {
+          section: "Personal information",
+          name: "Name",
+          namePlaceholder: "Enter your name",
+          phone: "Phone number",
+          email: "Email",
+          saving: "Saving...",
+          save: "Save",
+          noChanges: "No changes",
+        }
+      : {
+          section: "Хувийн мэдээлэл",
+          name: "Нэр",
+          namePlaceholder: "Нэрээ оруулна уу",
+          phone: "Утасны дугаар",
+          email: "Имэйл",
+          saving: "Хадгалж байна…",
+          save: "Хадгалах",
+          noChanges: "Өөрчлөлт алга",
+        };
+
   return (
     <div className="-mt-8 flex-1 rounded-t-[2rem] bg-white px-5 pb-8 pt-20">
       <span className="px-1 pb-3 block text-[11px] font-semibold uppercase tracking-[0.14em] text-zinc-400">
-        Хувийн мэдээлэл
+        {t.section}
       </span>
 
       <form onSubmit={onSubmit} className="flex flex-col gap-1">
@@ -45,13 +70,13 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
               </svg>
             </span>
             <div className="flex min-w-0 flex-1 flex-col">
-              <span className="text-[11px] text-zinc-400">Нэр</span>
+              <span className="text-[11px] text-zinc-400">{t.name}</span>
               <input
                 type="text"
                 name="name"
                 value={form.name}
                 onChange={onChange}
-                placeholder="Нэрээ оруулна уу"
+                placeholder={t.namePlaceholder}
                 className="w-full bg-transparent py-0.5 text-sm text-zinc-900 outline-none placeholder-zinc-300"
               />
             </div>
@@ -73,7 +98,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
               </svg>
             </span>
             <div className="flex min-w-0 flex-1 flex-col">
-              <span className="text-[11px] text-zinc-400">Утасны дугаар</span>
+              <span className="text-[11px] text-zinc-400">{t.phone}</span>
               <input
                 type="tel"
                 name="phone"
@@ -102,7 +127,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
               </svg>
             </span>
             <div className="flex min-w-0 flex-1 flex-col">
-              <span className="text-[11px] text-zinc-400">Имэйл</span>
+              <span className="text-[11px] text-zinc-400">{t.email}</span>
               <span className="truncate py-0.5 text-sm text-zinc-600">
                 {email}
               </span>
@@ -136,7 +161,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({
           disabled={!isDirty || saving}
           className="mt-6 w-full rounded-2xl bg-[#233d2f] py-3.5 text-sm font-semibold text-white transition-all disabled:cursor-not-allowed disabled:bg-zinc-200 disabled:text-zinc-400"
         >
-          {saving ? "Хадгалж байна…" : isDirty ? "Хадгалах" : "Өөрчлөлт алга"}
+          {saving ? t.saving : isDirty ? t.save : t.noChanges}
         </button>
       </form>
     </div>

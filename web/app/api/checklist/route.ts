@@ -15,7 +15,28 @@ export async function GET(request: NextRequest) {
     const userId = decoded.id;
 
     const { searchParams } = new URL(request.url);
+    const sessionId = searchParams.get("sessionId");
     let tripId = searchParams.get("tripId");
+
+    if (sessionId && sessionId !== "undefined") {
+      const session = await prisma.chatSession.findFirst({
+        where: { id: sessionId, userId },
+      });
+
+      if (!session) {
+        return NextResponse.json(
+          { error: "Чатны session олдсонгүй эсвэл хандах эрхгүй" },
+          { status: 403 },
+        );
+      }
+
+      const checklistItems = await prisma.checklist.findMany({
+        where: { sessionId },
+        orderBy: { createdAt: "asc" },
+      });
+
+      return NextResponse.json(checklistItems);
+    }
 
     if (!tripId || tripId === "undefined") {
       const latestTrip = await prisma.trip.findFirst({
@@ -53,8 +74,21 @@ export async function POST(request: NextRequest) {
     };
     const userId = decoded.id;
 
-    const { title, category, tripId: providedTripId } = await request.json();
+    const { title, category, tripId: providedTripId, sessionId } = await request.json();
     let targetTripId = providedTripId;
+
+    if (sessionId) {
+      const session = await prisma.chatSession.findFirst({
+        where: { id: sessionId, userId },
+      });
+
+      if (!session) {
+        return NextResponse.json(
+          { error: "Чатны session олдсонгүй эсвэл хандах эрхгүй" },
+          { status: 403 },
+        );
+      }
+    }
 
     if (!targetTripId) {
       const latestTrip = await prisma.trip.findFirst({
@@ -77,6 +111,7 @@ export async function POST(request: NextRequest) {
         category,
         isCompleted: false,
         tripId: targetTripId,
+        sessionId: sessionId || null,
       },
     });
 

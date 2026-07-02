@@ -2,14 +2,31 @@
 
 import { useState, useEffect } from "react";
 import { CheckSquare, ArrowRight } from "lucide-react";
+import { useLanguage } from "@/app/lib/language";
 
 type HeroChecklistCardProps = {
   onOpenChecklist?: () => void;
 };
 
 const targetDate = new Date("2026-07-10T09:00:00");
+const text = {
+  mn: {
+    title: "Аяллын бэлтгэл",
+    subtitle: "чемоданаа бэлдэх",
+    body: "Замд гарахаас өмнө чемоданаа бэлдсэн үү? Авч явах зүйлсийн жагсаалтаа эндээс шалгаарай.",
+    action: "Жагсаалт үзэх",
+  },
+  en: {
+    title: "Trip prep",
+    subtitle: "pack your bag",
+    body: "Packed before you leave? Check your travel checklist here.",
+    action: "View checklist",
+  },
+} as const;
 
 export default function HeroChecklistCard({ onOpenChecklist }: HeroChecklistCardProps) {
+  const { language } = useLanguage();
+  const t = text[language];
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, mins: 0 });
 
   useEffect(() => {
@@ -45,10 +62,10 @@ export default function HeroChecklistCard({ onOpenChecklist }: HeroChecklistCard
             </div>
             <div>
               <h3 className="font-black text-[#0F2942] text-base tracking-tight">
-                Аяллын бэлтгэл
+                {t.title}
               </h3>
               <p className="text-[11px] font-bold text-emerald-700/80 uppercase tracking-wider">
-                чемоданаа бэлдэх
+                {t.subtitle}
               </p>
             </div>
           </div>
@@ -62,7 +79,7 @@ export default function HeroChecklistCard({ onOpenChecklist }: HeroChecklistCard
 
 
         <p className="text-xs font-medium text-slate-500 leading-relaxed pr-2">
-          Замд гарахаас өмнө чемоданаа бэлдсэн үү? Авч явах зүйлсийн жагсаалтаа эндээс шалгаарай.
+          {t.body}
         </p>
 
 
@@ -72,7 +89,7 @@ export default function HeroChecklistCard({ onOpenChecklist }: HeroChecklistCard
             onClick={onOpenChecklist}
             className="group inline-flex h-11 items-center justify-center gap-2 rounded-2xl bg-[#0A4429] px-6 text-xs font-black text-white shadow-md shadow-emerald-900/10 transition-all hover:bg-[#083520] hover:shadow-emerald-900/20 active:scale-95"
           >
-            <span>Жагсаалт үзэх</span>
+            <span>{t.action}</span>
             <ArrowRight className="h-4 w-4 stroke-[2.5] transition-transform group-hover:translate-x-1" />
           </button>
         </div>

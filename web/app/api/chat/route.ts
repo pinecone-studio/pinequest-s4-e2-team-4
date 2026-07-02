@@ -1,11 +1,38 @@
 import { prisma } from "@/lib/prisma";
+import { translateChecklistText } from "@/app/lib/checklistTranslations";
 import { GoogleGenAI } from "@google/genai";
 import jwt from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
+type ExtractedChecklistItem = {
+  title: string;
+  category?: string | null;
+};
+
+type ExtractedDestination = {
+  name: string;
+  description?: string | null;
+  order?: number | null;
+  latitude?: number | null;
+  longitude?: number | null;
+};
+
+type ExtractedTravelData = {
+  checklistItems?: ExtractedChecklistItem[];
+  destinations?: ExtractedDestination[];
+};
+
+type ChatLanguage = "mn" | "en";
+
+function getChatLanguage(value: unknown): ChatLanguage {
+  return value === "en" ? "en" : "mn";
+}
+
 export async function POST(request: NextRequest) {
+  let currentSessionId: string | null = null;
+
   try {
     const token = request.cookies.get("token")?.value;
     if (!token) {
@@ -27,7 +54,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { sessionId, message, tripId } = await request.json();
+    const { language: requestLanguage, sessionId, message, tripId } =
+      await request.json();
+    const language = getChatLanguage(requestLanguage);
 
     if (!message) {
       return NextResponse.json(
@@ -36,7 +65,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    let currentSessionId = sessionId;
+    currentSessionId = sessionId;
 
     if (!currentSessionId) {
       const userExists = await prisma.user.findUnique({
@@ -77,7 +106,45 @@ export async function POST(request: NextRequest) {
       parts: [{ text: msg.content }],
     }));
 
-    const systemInstruction = `
+    const systemInstruction =
+      language === "en"
+        ? `
+      You are an intelligent travel assistant AI. The user may type freely or send preset options from the frontend:
+      - "Road trip"
+      - "Hiking"
+      - "Resort stay"
+      - Mongolian equivalents may also appear: "Машинтай аялал", "Явган аялал", "Амралтын газар"
+
+      Tasks:
+      1. Always reply in friendly English and chat with the user in English.
+      2. If the user sends one of the preset travel options, or mentions a travel type, create a suitable baseline checklist and destinations.
+         - Road trip: spare tire, basic tools, road food, first route points.
+         - Hiking: backpack, warm clothes, water bottle, first aid, hiking direction.
+         - Resort stay: toiletries, warm clothes, resort/camp stay.
+      3. If the user mentions a new item or destination during the chat, also include it in the data section.
+      4. If the user mentions a specific place, provide real or approximate geographic coordinates (latitude, longitude). For Mongolian place names, estimate accurate coordinates as well as you can.
+      5. If you create any checklist items or destinations, append the data at the VERY END of the response in exactly this special format:
+
+      ===JSON_DATA_START===
+      {
+        "checklistItems": [
+          { "title": "Basic item 1", "category": "Gear" },
+          { "title": "Basic item 2", "category": "Food" }
+        ],
+        "destinations": [
+          { "name": "Destination 1", "description": "Description 1", "order": 1, "latitude": 49.1234, "longitude": 100.1234 }
+        ]
+      }
+
+      ===JSON_DATA_END===
+
+      Coordinates MUST be numeric values. If exact coordinates are unknown, use the approximate center point of the area. If coordinates cannot be found at all, set latitude and longitude to null.
+
+      All checklist titles, categories, destination names, descriptions, and the normal chat response must be in English when possible.
+
+      If there is no new checklist or destination to create, do NOT append the ===JSON_DATA_START=== section.
+    `
+        : `
       Чи бол аяллын ухаалаг туслах AI байна. Хэрэглэгч өөрөө текст бичихээс гадна фронт дээрх дараах бэлэн сонголтуудыг дарж мессеж илгээж болно:
       - "Машинтай аялал"
       - "Явган аялал" эсвэл "Hiking"
@@ -130,8 +197,7 @@ export async function POST(request: NextRequest) {
     }
 
     let aiResponse = rawAiResponse;
-    let extractedData: { checklistItems?: any[]; destinations?: any[] } | null =
-      null;
+    let extractedData: ExtractedTravelData | null = null;
 
     if (
       rawAiResponse.includes("===JSON_DATA_START===") &&
@@ -142,7 +208,7 @@ export async function POST(request: NextRequest) {
 
       const jsonPart = parts[1].split("===JSON_DATA_END===")[0].trim();
       try {
-        extractedData = JSON.parse(jsonPart);
+        extractedData = JSON.parse(jsonPart) as ExtractedTravelData;
       } catch (e) {
         console.error("Gemini JSON Parsing Error:", e);
       }
@@ -176,9 +242,13 @@ export async function POST(request: NextRequest) {
           extractedData.checklistItems.length > 0
         ) {
           await prisma.checklist.createMany({
-            data: extractedData.checklistItems.map((item: any) => ({
-              title: item.title,
-              category: item.category || "Бусад",
+            data: extractedData.checklistItems.map((item) => ({
+              title: translateChecklistText(item.title, language),
+              category: item.category
+                ? translateChecklistText(item.category, language, "category")
+                : language === "en"
+                  ? "Other"
+                  : "Бусад",
               tripId: targetTripId,
               sessionId: currentSessionId,
             })),
@@ -190,7 +260,7 @@ export async function POST(request: NextRequest) {
           extractedData.destinations.length > 0
         ) {
           await prisma.destination.createMany({
-            data: extractedData.destinations.map((dest: any) => ({
+            data: extractedData.destinations.map((dest) => ({
               name: dest.name,
               description: dest.description || "",
               order: dest.order || 0,
@@ -227,7 +297,7 @@ export async function POST(request: NextRequest) {
       );
     }
     return NextResponse.json(
-      { error: "Сервер дээр алдаа гарлаа" },
+      { error: "Сервер дээр алдаа гарлаа", sessionId: currentSessionId },
       { status: 500 },
     );
   }

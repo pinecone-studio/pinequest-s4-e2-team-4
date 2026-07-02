@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "mapbox-gl/dist/mapbox-gl.css";
+@import "mapbox-gl/dist/mapbox-gl.css";
 
 :root {
   --background: #ffffff;
@@ -223,6 +224,11 @@ button {
   width: 22px;
 }
 
+.montrip-ios-notification-toast {
+  animation: montrip-ios-notification 5.2s cubic-bezier(0.2, 0.9, 0.22, 1) both;
+  transform-origin: 50% 0;
+}
+
 @keyframes floaty {
   50% {
     transform: translateY(-4px) scale(1.04);
@@ -239,6 +245,25 @@ button {
   to {
     opacity: 0;
     transform: translateY(9px);
+  }
+}
+
+@keyframes montrip-ios-notification {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -34px, 0) scale(0.94);
+  }
+  9% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  88% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, -18px, 0) scale(0.98);
   }
 }
 

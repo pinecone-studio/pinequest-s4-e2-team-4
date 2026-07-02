@@ -8,6 +8,7 @@ import {
 } from "./routeMapLayers";
 import type { Coordinate, RouteLineGeometry } from "./routeMap.types";
 import { formatDistance } from "./routeMapUtils";
+import type { AppLanguage } from "@/app/lib/language";
 import {
   fetchNearbyRestaurants,
   fetchRestaurantDrivingRoute,
@@ -33,6 +34,7 @@ type MarkerRefs = {
 
 type SearchContext = {
   accessToken: string;
+  language: AppLanguage;
   map: mapboxgl.Map;
   markerRefs: MarkerRefs;
   origin: Coordinate;
@@ -50,12 +52,17 @@ export const clearAllRoutes = (map: mapboxgl.Map, markerRefs: MarkerRefs) => {
 
 export const findNearestGasStation = async ({
   accessToken,
+  language,
   map,
   markerRefs,
   origin,
   setStatus,
 }: SearchContext) => {
-  setStatus("Таны ойролцоох шатахуун түгээх станцуудыг хайж байна...");
+  setStatus(
+    language === "en"
+      ? "Searching for nearby gas stations..."
+      : "Таны ойролцоох шатахуун түгээх станцуудыг хайж байна...",
+  );
 
   const apiGasStations = await fetchNearbyGasStations(origin, 7000, accessToken);
   const renderedGasStations = getRenderedGasStations(map, origin);
@@ -73,11 +80,15 @@ export const findNearestGasStation = async ({
   clearAllRoutes(map, markerRefs);
 
   if (gasStations.length === 0) {
-    setStatus("7 км-ийн хүрээнд шатахуун түгээх станц олдсонгүй.");
+    setStatus(language === "en" ? "No gas stations found within 7 km." : "7 км-ийн хүрээнд шатахуун түгээх станц олдсонгүй.");
     return;
   }
 
-  setStatus(`${gasStations.length} шатахуун түгээх станц олдлоо. Замуудыг шалгаж байна...`);
+  setStatus(
+    language === "en"
+      ? `${gasStations.length} gas stations found. Checking routes...`
+      : `${gasStations.length} шатахуун түгээх станц олдлоо. Замуудыг шалгаж байна...`,
+  );
 
   const routeCandidates = await Promise.all(
     gasStations.slice(0, 15).map(async (station) => ({
@@ -100,28 +111,39 @@ export const findNearestGasStation = async ({
     drawNearestGasStationRoute(map, origin, nearestStation, routeGeometry),
   ];
   setStatus(
-    `Тантай хамгийн ойр шатахуун түгээх станц ${formatDistance(routeDistance)} зайд байна.`,
+    language === "en"
+      ? `The nearest gas station is ${formatDistance(routeDistance, language)} away.`
+      : `Тантай хамгийн ойр шатахуун түгээх станц ${formatDistance(routeDistance, language)} зайд байна.`,
   );
 };
 
 export const findNearestRestaurant = async ({
   accessToken,
+  language,
   map,
   markerRefs,
   origin,
   setStatus,
 }: SearchContext) => {
-  setStatus("Таны ойролцоох хоолны газруудыг хайж байна...");
+  setStatus(
+    language === "en"
+      ? "Searching for nearby restaurants..."
+      : "Таны ойролцоох хоолны газруудыг хайж байна...",
+  );
 
   const restaurants = await fetchNearbyRestaurants(origin, 5000, accessToken);
   clearAllRoutes(map, markerRefs);
 
   if (restaurants.length === 0) {
-    setStatus("5 км-ийн хүрээнд ойролцоох хоолны газар олдсонгүй.");
+    setStatus(language === "en" ? "No nearby restaurants found within 5 km." : "5 км-ийн хүрээнд ойролцоох хоолны газар олдсонгүй.");
     return;
   }
 
-  setStatus(`${restaurants.length} хоолны газар олдлоо. Замуудыг шалгаж байна...`);
+  setStatus(
+    language === "en"
+      ? `${restaurants.length} restaurants found. Checking routes...`
+      : `${restaurants.length} хоолны газар олдлоо. Замуудыг шалгаж байна...`,
+  );
 
   const routeCandidates = await Promise.all(
     restaurants.slice(0, 15).map(async (restaurant) => ({
@@ -143,27 +165,40 @@ export const findNearestRestaurant = async ({
   markerRefs.restaurant.current = [
     drawNearestRestaurantRoute(map, origin, nearestRestaurant, routeGeometry),
   ];
-  setStatus(`Тантай хамгийн ойр хоолны газар ${formatDistance(routeDistance)} зайд байна.`);
+  setStatus(
+    language === "en"
+      ? `The nearest restaurant is ${formatDistance(routeDistance, language)} away.`
+      : `Тантай хамгийн ойр хоолны газар ${formatDistance(routeDistance, language)} зайд байна.`,
+  );
 };
 
 export const findNearestTireRepair = async ({
   accessToken,
+  language,
   map,
   markerRefs,
   origin,
   setStatus,
 }: SearchContext) => {
-  setStatus("Таны ойролцоох дугуй засварыг хайж байна...");
+  setStatus(
+    language === "en"
+      ? "Searching for nearby tire repair shops..."
+      : "Таны ойролцоох дугуй засварыг хайж байна...",
+  );
 
   const tireRepairs = await fetchNearbyTireRepairs(origin, 5000, accessToken);
   clearAllRoutes(map, markerRefs);
 
   if (tireRepairs.length === 0) {
-    setStatus("5 км-ийн хүрээнд ойролцоох дугуй засвар олдсонгүй.");
+    setStatus(language === "en" ? "No nearby tire repair shops found within 5 km." : "5 км-ийн хүрээнд ойролцоох дугуй засвар олдсонгүй.");
     return;
   }
 
-  setStatus(`${tireRepairs.length} дугуй засвар олдлоо. Замуудыг шалгаж байна...`);
+  setStatus(
+    language === "en"
+      ? `${tireRepairs.length} tire repair shops found. Checking routes...`
+      : `${tireRepairs.length} дугуй засвар олдлоо. Замуудыг шалгаж байна...`,
+  );
 
   const routeCandidates = await Promise.all(
     tireRepairs.slice(0, 15).map(async (place) => ({
@@ -184,7 +219,11 @@ export const findNearestTireRepair = async ({
   markerRefs.tireRepair.current = [
     drawNearestTireRepairRoute(map, origin, nearestPlace, routeGeometry),
   ];
-  setStatus(`Тантай хамгийн ойр дугуй засвар ${formatDistance(routeDistance)} зайд байна.`);
+  setStatus(
+    language === "en"
+      ? `The nearest tire repair shop is ${formatDistance(routeDistance, language)} away.`
+      : `Тантай хамгийн ойр дугуй засвар ${formatDistance(routeDistance, language)} зайд байна.`,
+  );
 };
 
 const createFallbackRoute = (

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import HomeBackdrop from "@/components/home/HomeBackdrop";
@@ -8,9 +8,46 @@ import PhoneFrame from "@/components/home/PhoneFrame";
 import { ProfileData, ProfileFormState } from "./components/types";
 import { ProfileHeader } from "./components/ProfileHeader";
 import { ProfileForm } from "./components/ProfileForm";
+import { useLanguage } from "@/app/lib/language";
+
+type ProfileFetchResponse = ProfileData & {
+  error?: string;
+};
+
+type ProfileUpdateResponse = {
+  error?: string;
+  message?: string;
+  user?: Partial<ProfileData>;
+};
 
 export const MyProfile = () => {
   const router = useRouter();
+  const { language } = useLanguage();
+  const t = useMemo(
+    () =>
+      language === "en"
+        ? {
+            fetchError: (status: number) =>
+              `Failed to load profile (code: ${status})`,
+            networkError: "Could not connect to the server",
+            saveServerError:
+              "Server error. Your profile may not have been saved.",
+            saveError: (status: number) =>
+              `Failed to update profile (code: ${status})`,
+            saveSuccess: "Profile updated successfully",
+          }
+        : {
+            fetchError: (status: number) =>
+              `Мэдээлэл татахад алдаа гарлаа (код: ${status})`,
+            networkError: "Сервертэй холбогдоход алдаа гарлаа",
+            saveServerError:
+              "Серверт алдаа гарлаа. Мэдээлэл хадгалагдаагүй байж болзошгүй.",
+            saveError: (status: number) =>
+              `Шинэчлэхэд алдаа гарлаа (код: ${status})`,
+            saveSuccess: "Амжилттай шинэчлэгдлээ",
+          },
+    [language],
+  );
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [form, setForm] = useState<ProfileFormState>({ name: "", phone: "" });
 
@@ -27,29 +64,27 @@ export const MyProfile = () => {
           credentials: "include",
         });
 
-        let data: any = null;
+        let data: ProfileFetchResponse | null = null;
         try {
-          data = await res.json();
+          data = (await res.json()) as ProfileFetchResponse;
         } catch {}
 
         if (!res.ok) {
-          setError(
-            data?.error || `Мэдээлэл татахад алдаа гарлаа (код: ${res.status})`,
-          );
+          setError(language === "en" ? t.fetchError(res.status) : data?.error || t.fetchError(res.status));
           return;
         }
 
         setProfile(data);
         setForm({ name: data?.name ?? "", phone: data?.phone ?? "" });
       } catch {
-        setError("Сервертэй холбогдоход алдаа гарлаа");
+        setError(t.networkError);
       } finally {
         setLoading(false);
       }
     };
 
     fetchProfile();
-  }, []);
+  }, [language, t]);
 
   const isDirty =
     !!profile &&
@@ -83,25 +118,27 @@ export const MyProfile = () => {
         body: JSON.stringify(payload),
       });
 
-      let data: any = null;
+      let data: ProfileUpdateResponse | null = null;
       try {
-        data = await res.json();
+        data = (await res.json()) as ProfileUpdateResponse;
       } catch {}
 
       if (!res.ok) {
         setError(
           res.status === 500
-            ? "Серверт алдаа гарлаа. Мэдээлэл хадгалагдаагүй байж болзошгүй."
-            : data?.error || `Шинэчлэхэд алдаа гарлаа (код: ${res.status})`,
+            ? t.saveServerError
+            : language === "en"
+              ? t.saveError(res.status)
+              : data?.error || t.saveError(res.status),
         );
         return;
       }
 
-      setProfile((prev) => (prev ? { ...prev, ...data.user } : prev));
+      setProfile((prev) => (prev ? { ...prev, ...data?.user } : prev));
       setForm({ name: data?.user?.name ?? "", phone: data?.user?.phone ?? "" });
-      setSuccess(data?.message || "Амжилттай шинэчлэгдлээ");
+      setSuccess(language === "en" ? t.saveSuccess : data?.message || t.saveSuccess);
     } catch {
-      setError("Сервертэй холбогдоход алдаа гарлаа");
+      setError(t.networkError);
     } finally {
       setSaving(false);
     }
