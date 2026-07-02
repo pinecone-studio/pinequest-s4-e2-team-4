@@ -24,7 +24,7 @@ export default function proxy(request: NextRequest) {
     }
   }
 
-  const authRoutes = ["/login", "/register"];
+  const authRoutes = ["/signin", "/signup"];
   if (authRoutes.some((route) => pathname.startsWith(route))) {
     if (token) {
       return NextResponse.redirect(new URL("/chat", request.url));
