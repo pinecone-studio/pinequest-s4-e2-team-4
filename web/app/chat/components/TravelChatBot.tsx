@@ -23,6 +23,7 @@ const TravelChatBot = () => {
     textareaRef,
     activeSession,
     lastModelMessage,
+    quickReplies,
     loadSession,
     deleteSession,
     startNewChat,
@@ -92,6 +93,7 @@ const TravelChatBot = () => {
           input={input}
           messagesEndRef={messagesEndRef}
           textareaRef={textareaRef}
+          quickReplies={quickReplies}
           onInputChange={setInput}
           onKeyDown={handleKeyDown}
           onSend={sendMessage}

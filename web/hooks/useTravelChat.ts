@@ -1,6 +1,11 @@
 "use client";
 
 import { ChatSession, Message } from "@/app/chat/types";
+import {
+  destinationReplies,
+  getStepQuestionReplies,
+} from "@/app/chat/utils/chatQuickReplies";
+import { extractAllDestinationSuggestions } from "@/app/chat/utils/destinationSuggestions";
 import { useSearchParams } from "next/navigation";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
@@ -198,6 +203,17 @@ export function useTravelChat() {
   const activeSession = sessions.find((s) => s.id === sessionId);
   const lastModelMessage =
     [...messages].reverse().find((m) => m.role === "model")?.content ?? "";
+  const destinationSuggestions = extractAllDestinationSuggestions(
+    messages
+      .filter((message) => message.role === "model" && !message.content.startsWith("⚠️"))
+      .map((message) => message.content),
+  );
+  const stepReplies =
+    lastModelMessage && !lastModelMessage.startsWith("⚠️")
+      ? getStepQuestionReplies(lastModelMessage)
+      : [];
+  const quickReplies =
+    stepReplies.length > 0 ? stepReplies : destinationReplies(destinationSuggestions);
 
   return {
     messages,
@@ -214,6 +230,7 @@ export function useTravelChat() {
     textareaRef,
     activeSession,
     lastModelMessage,
+    quickReplies,
     loadSession,
     deleteSession,
     startNewChat,

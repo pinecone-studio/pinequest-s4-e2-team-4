@@ -8,8 +8,8 @@ interface InputBarProps {
   isRecording: boolean;
   sttLoading: boolean;
   isVoiceMode: boolean;
-  isPlaying: boolean;
   textareaRef: RefObject<HTMLTextAreaElement | null>;
+  quickReplies: { label: string; value: string }[];
   onInputChange: (value: string) => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   onSend: (text: string) => void;
@@ -24,8 +24,8 @@ export function InputBar({
   isRecording,
   sttLoading,
   isVoiceMode,
-  isPlaying,
   textareaRef,
+  quickReplies,
   onInputChange,
   onKeyDown,
   onSend,
@@ -33,6 +33,8 @@ export function InputBar({
   onToggleVoiceMode,
   onStopSpeaking,
 }: InputBarProps) {
+  const quickOptions = quickReplies.length > 0 ? quickReplies : QUICK_OPTIONS;
+
   const autoResize = () => {
     const ta = textareaRef.current;
     if (!ta) return;
@@ -44,7 +46,7 @@ export function InputBar({
     <>
       <div className="flex items-center justify-between px-4 pb-3 gap-2 overflow-x-auto">
         <div className="flex gap-2">
-          {QUICK_OPTIONS.map((opt) => (
+          {quickOptions.map((opt) => (
             <button
               key={opt.value}
               onClick={() => onSend(opt.value)}
