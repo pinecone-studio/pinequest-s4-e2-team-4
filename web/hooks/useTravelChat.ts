@@ -10,6 +10,7 @@ export function useTravelChat() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [currentTripId, setCurrentTripId] = useState<string | null>(null); // 🆕
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -42,30 +43,35 @@ export function useTravelChat() {
     return () => clearTimeout(timer);
   }, [fetchSessions]);
 
- const loadSession = async (sid: string) => {
+  const loadSession = async (sid: string) => {
     try {
       const res = await fetch(`/api/chat/history?sessionId=${sid}`, {
         credentials: "include",
       });
       const data = await res.json();
       if (data.success) {
-        setMessages(
-          data.messages.map(
-            (m: {
-              role: string;
-              content: string;
-              createdAt: string;
-              tripId?: string | null; 
-            }) => ({
-              role: m.role,
-              content: m.content,
-              createdAt: m.createdAt,
-              tripId: m.tripId ?? null, 
-            }),
-          ),
+        const loadedMessages = data.messages.map(
+          (m: {
+            role: string;
+            content: string;
+            createdAt: string;
+            tripId?: string | null;
+          }) => ({
+            role: m.role,
+            content: m.content,
+            createdAt: m.createdAt,
+            tripId: m.tripId ?? null,
+          }),
         );
+        setMessages(loadedMessages);
         setSessionId(sid);
         setSidebarOpen(false);
+
+
+        const lastTripMsg = [...loadedMessages]
+          .reverse()
+          .find((m: Message) => m.tripId);
+        setCurrentTripId(lastTripMsg?.tripId ?? null);
       }
     } catch {
       // FAIL
@@ -88,6 +94,7 @@ export function useTravelChat() {
         if (sessionId === chatId) {
           setSessionId(null);
           setMessages([]);
+          setCurrentTripId(null); // 🆕
         }
       }
     } catch {
@@ -100,6 +107,7 @@ export function useTravelChat() {
   const startNewChat = () => {
     setSessionId(null);
     setMessages([]);
+    setCurrentTripId(null); // 🆕 шинэ чат = шинэ trip-ээс эхэлнэ
     setSidebarOpen(false);
   };
 
@@ -121,6 +129,7 @@ export function useTravelChat() {
           body: JSON.stringify({
             message: trimmed,
             sessionId: targetSessionId,
+            tripId: currentTripId,
           }),
         });
         const data = await res.json();
@@ -130,6 +139,12 @@ export function useTravelChat() {
           setSessionId(data.sessionId);
           fetchSessions();
         }
+
+       
+        if (data.tripId) {
+          setCurrentTripId(data.tripId);
+        }
+
         setMessages((prev) => [
           ...prev,
           {
@@ -149,7 +164,7 @@ export function useTravelChat() {
         setIsLoading(false);
       }
     },
-    [fetchSessions, isLoading, sessionId],
+    [fetchSessions, isLoading, sessionId, currentTripId], // 🆕 currentTripId нэмэгдэв
   );
 
   useEffect(() => {
@@ -166,6 +181,7 @@ export function useTravelChat() {
       sessionStorage.removeItem("montrip-initial-chat-prompt");
       setSessionId(null);
       setMessages([]);
+      setCurrentTripId(null); // 🆕
       void sendMessage(prompt, null);
     }, 0);
 
