@@ -2,29 +2,6 @@ import { prisma } from "@/lib/prisma";
 import jwt from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
 
-async function getCoordinates(placeName: string) {
-  try {
-    const accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
-    if (!accessToken) return null;
-
-    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
-      placeName,
-    )}.json?access_token=${accessToken}&limit=1`;
-
-    const res = await fetch(url);
-    const data = await res.json();
-
-    if (data.features && data.features.length > 0) {
-      const [lng, lat] = data.features[0].center;
-      return { lng, lat };
-    }
-    return null;
-  } catch (error) {
-    console.error(`Geocoding error for ${placeName}:`, error);
-    return null;
-  }
-}
-
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ tripId: string }> },
@@ -67,26 +44,21 @@ export async function GET(
       );
     }
 
-    const marshrutWithCoordinates = await Promise.all(
-      destinations.map(async (dest) => {
-        const coords = await getCoordinates(dest.name);
-        return {
-          id: dest.id,
-          name: dest.name,
-          description: dest.description,
-          order: dest.order,
-          coordinates: coords,
-        };
-      }),
-    );
+    const formattedDestinations = destinations.map((d) => ({
+      id: d.id,
+      name: d.name,
+      latitude: d.latitude,
+      longitude: d.longitude,
+      order: d.order,
+    }));
 
     return NextResponse.json({
       success: true,
       tripId,
-      marshrut: marshrutWithCoordinates,
+      destinations: formattedDestinations,
     });
   } catch (error) {
-    console.error("Get Marshrut API Error:", error);
+    console.error("Get Trips API Error:", error);
     if (error instanceof jwt.JsonWebTokenError) {
       return NextResponse.json(
         { error: "Хүчингүй токен байна" },

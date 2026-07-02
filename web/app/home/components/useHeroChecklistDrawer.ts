@@ -2,7 +2,7 @@
 
 import axios from "axios";
 import { useParams } from "next/navigation";
-import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import type { ChecklistItem } from "./checklistTypes";
 
 type AudioWindow = Window &
@@ -33,8 +33,11 @@ function playBeepSound() {
 export function useHeroChecklistDrawer() {
   const params = useParams();
   const tripId = (params?.id || params?.tripId || "") as string;
+  const activeChatSessionStorageKey = "montrip-active-chat-session-id";
 
   const [items, setItems] = useState<ChecklistItem[]>([]);
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+  const [isSessionPreferenceLoaded, setIsSessionPreferenceLoaded] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [alarmDate, setAlarmDate] = useState("2026-07-01");
@@ -44,11 +47,17 @@ export function useHeroChecklistDrawer() {
   const [isLoaded, setIsLoaded] = useState(false);
   const audioIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const fetchChecklist = async () => {
+  const fetchChecklist = useCallback(async () => {
+    if (!tripId && !isSessionPreferenceLoaded) return;
+
     try {
       setIsLoaded(false);
-      const url = tripId ? `/api/checklist?tripId=${tripId}` : "/api/checklist";
-      const response = await axios.get(url);
+      const requestParams = tripId
+        ? { tripId }
+        : activeSessionId
+          ? { sessionId: activeSessionId }
+          : undefined;
+      const response = await axios.get("/api/checklist", { params: requestParams });
       setItems(response.data);
     } catch (error) {
       console.error("Checklist татахад алдаа гарлаа:", error);
@@ -56,19 +65,32 @@ export function useHeroChecklistDrawer() {
     } finally {
       setIsLoaded(true);
     }
-  };
+  }, [activeSessionId, isSessionPreferenceLoaded, tripId]);
 
   useEffect(() => {
-    const savedDate = localStorage.getItem("montrip-alarm-date");
-    const savedTime = localStorage.getItem("montrip-alarm-time");
-    const savedIsSet = localStorage.getItem("montrip-alarm-set");
+    const timer = window.setTimeout(() => {
+      const savedDate = localStorage.getItem("montrip-alarm-date");
+      const savedTime = localStorage.getItem("montrip-alarm-time");
+      const savedIsSet = localStorage.getItem("montrip-alarm-set");
+      const savedSessionId = localStorage.getItem(activeChatSessionStorageKey);
 
-    if (savedDate) setAlarmDate(savedDate);
-    if (savedTime) setAlarmTime(savedTime);
-    if (savedIsSet) setIsAlarmSet(savedIsSet === "true");
+      if (savedDate) setAlarmDate(savedDate);
+      if (savedTime) setAlarmTime(savedTime);
+      if (savedIsSet) setIsAlarmSet(savedIsSet === "true");
+      setActiveSessionId(savedSessionId);
+      setIsSessionPreferenceLoaded(true);
+    }, 0);
 
-    fetchChecklist();
-  }, [tripId]);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      void fetchChecklist();
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [fetchChecklist]);
 
   useEffect(() => {
     if (isAlarmTriggered) {
@@ -94,6 +116,7 @@ export function useHeroChecklistDrawer() {
         setIsAlarmTriggered(true);
         setIsAlarmSet(false);
         localStorage.setItem("montrip-alarm-set", "false");
+        localStorage.setItem("montrip-alarm-triggered-at", `${alarmDate}T${alarmTime}`);
       }
     };
 
@@ -114,26 +137,20 @@ export function useHeroChecklistDrawer() {
     return Array.from(new Set(items.map((item) => item.category || "Бусад")));
   }, [items]);
 
-
-  useEffect(() => {
-    if (categories.length === 0) {
-      setSelectedCategory("");
-      return;
-    }
-    if (!categories.includes(selectedCategory)) {
-      setSelectedCategory(categories[0]);
-    }
-  }, [categories, selectedCategory]);
+  const activeCategory = categories.includes(selectedCategory)
+    ? selectedCategory
+    : (categories[0] ?? "");
 
   const addItem = async (event: FormEvent) => {
     event.preventDefault();
-    if (!inputValue.trim() || !selectedCategory) return;
+    if (!inputValue.trim() || !activeCategory) return;
 
     try {
       const response = await axios.post("/api/checklist", {
         title: inputValue.trim(),
-        category: selectedCategory,
+        category: activeCategory,
         tripId: tripId || undefined,
+        sessionId: activeSessionId || undefined,
       });
 
       if (response.data) {
@@ -192,7 +209,7 @@ export function useHeroChecklistDrawer() {
     isAlarmSet,
     isAlarmTriggered,
     isLoaded,
-    selectedCategory,
+    selectedCategory: activeCategory,
     setAlarmDate,
     setAlarmTime,
     setInputValue,
@@ -200,6 +217,6 @@ export function useHeroChecklistDrawer() {
     setSelectedCategory,
     toggleAlarmSetting,
     toggleCheck,
-    visibleItems: items.filter((item) => item.category === selectedCategory),
+    visibleItems: items.filter((item) => item.category === activeCategory),
   };
 }

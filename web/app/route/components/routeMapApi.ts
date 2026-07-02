@@ -8,6 +8,46 @@ import type {
 } from "./routeMap.types";
 import { getDistanceMeters } from "./routeMapUtils";
 
+
+
+interface DestinationItem {
+  id: string;
+  name: string;
+  latitude: number | null;
+  longitude: number | null;
+  order: number;
+}
+
+
+export async function fetchTripDestinations(tripId: string): Promise<DestinationItem[]> {
+  const res = await fetch(`/api/trips/${tripId}`);
+  if (!res.ok) {
+    const errData = await res.json();
+    throw new Error(errData.error || "Аяллын өгөгдлийг баазаас татаж чадсангүй.");
+  }
+  const data = await res.json();
+  return data.destinations;
+}
+
+
+export async function fetchRouteCoordinates(destinations: DestinationItem[]): Promise<Coordinate[]> {
+  const res = await fetch("/api/trips/marshrut", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ destinations }),
+  });
+
+  if (!res.ok) {
+    const errData = await res.json();
+    throw new Error(errData.error || "Маршрутын замыг тооцоолж чадсангүй.");
+  }
+
+  const data = await res.json();
+  return data.coordinates; // [[lng, lat], [lng, lat], ...]
+}
+
+
+
 export const fetchNearbyGasStations = async (
   origin: Coordinate,
   radiusMeters = 7000,
@@ -97,8 +137,7 @@ const fetchMapboxGasStations = async (
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?${params.toString()}`,
       );
     }),
-  );
-  const payloads = await Promise.all(
+  );const payloads = await Promise.all(
     responses.filter((response) => response.ok).map((response) => response.json()),
   );
   const features = payloads.flatMap(
@@ -226,5 +265,5 @@ const dedupeGasStations = (stations: GasStation[]) => {
     }
   });
 
-  return uniqueStations;
+  return uniqueStations;  
 };

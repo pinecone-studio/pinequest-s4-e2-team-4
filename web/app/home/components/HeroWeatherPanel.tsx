@@ -1,12 +1,18 @@
 import WeatherIcon from "@/components/home/WeatherIcon";
 import type { Forecast } from "./heroTypes";
 import { getWeatherType } from "./heroWeather";
+import { useLanguage } from "@/app/lib/language";
 
 type HeroWeatherPanelProps = {
   forecast: Forecast | null;
 };
 
 export default function HeroWeatherPanel({ forecast }: HeroWeatherPanelProps) {
+  const { language } = useLanguage();
+  const t =
+    language === "en"
+      ? { label: "Weather", today: "Today" }
+      : { label: "Цаг агаар", today: "Өнөөдөр" };
   const todayCode = forecast?.daily?.weathercode?.[0] ?? 0;
   const todayTemperature = forecast?.daily?.temperature_2m_max?.[0];
 
@@ -22,9 +28,9 @@ export default function HeroWeatherPanel({ forecast }: HeroWeatherPanelProps) {
           </div>
           <div>
             <p className="text-[10px] font-black uppercase tracking-widest text-emerald-200/80 mb-0.5">
-              Цаг агаар
+              {t.label}
             </p>
-            <h2 className="text-base font-black text-white">Өнөөдөр</h2>
+            <h2 className="text-base font-black text-white">{t.today}</h2>
           </div>
         </div>
 

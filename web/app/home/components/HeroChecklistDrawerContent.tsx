@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import {
   Bell,
   BellOff,
@@ -11,9 +12,47 @@ import {
   Trash2,
 } from "lucide-react";
 import { useHeroChecklistDrawer } from "./useHeroChecklistDrawer";
+import { useLanguage } from "@/app/lib/language";
+import { translateChecklistText } from "@/app/lib/checklistTranslations";
+
+const text = {
+  mn: {
+    addToCategory: (category: string) => `"${category}" ангилалд нэмэх...`,
+    addItem: "Юм нэмэх...",
+    alarmReady: "ЦАГ БОЛЛОО: Юмаа бэлдээрэй!",
+    stop: "УНТРААХ",
+    enabled: "Асаалттай",
+    remind: "Сануулах",
+    empty: "Энэ ангилалд зүйл алга.",
+  },
+  en: {
+    addToCategory: (category: string) => `Add to "${category}"...`,
+    addItem: "Add an item...",
+    alarmReady: "TIME IS UP: Pack your things!",
+    stop: "STOP",
+    enabled: "On",
+    remind: "Remind",
+    empty: "No items in this category.",
+  },
+} as const;
 
 export default function HeroChecklistDrawerContent() {
+  const { language } = useLanguage();
+  const t = text[language];
   const checklist = useHeroChecklistDrawer();
+  const visibleItems = useMemo(() => {
+    const seenTitles = new Set<string>();
+
+    return checklist.visibleItems.filter((item) => {
+      const translatedTitle = translateChecklistText(item.title, language)
+        .trim()
+        .toLowerCase();
+
+      if (seenTitles.has(translatedTitle)) return false;
+      seenTitles.add(translatedTitle);
+      return true;
+    });
+  }, [checklist.visibleItems, language]);
 
   if (!checklist.isLoaded) return null;
 
@@ -32,7 +71,7 @@ export default function HeroChecklistDrawerContent() {
                   : "bg-gray-100 text-gray-500 hover:bg-gray-200"
               }`}
             >
-              {cat}
+              {translateChecklistText(cat, language, "category")}
             </button>
           ))}
         </div>
@@ -48,8 +87,14 @@ export default function HeroChecklistDrawerContent() {
           onChange={(event) => checklist.setInputValue(event.target.value)}
           placeholder={
             checklist.selectedCategory
-              ? `"${checklist.selectedCategory}" ангилалд нэмэх...`
-              : "Юм нэмэх..."
+              ? t.addToCategory(
+                  translateChecklistText(
+                    checklist.selectedCategory,
+                    language,
+                    "category",
+                  ),
+                )
+              : t.addItem
           }
           className="flex-1 rounded-xl border border-transparent bg-gray-50 px-4 py-2.5 text-xs outline-none transition-all placeholder:text-gray-400 focus:border-emerald-500"
         />
@@ -65,14 +110,14 @@ export default function HeroChecklistDrawerContent() {
         {checklist.isAlarmTriggered ? (
           <div className="flex animate-pulse items-center justify-between rounded-2xl border border-rose-100 bg-rose-50 p-3 shadow-sm">
             <span className="text-xs font-black tracking-tight text-rose-800">
-              ЦАГ БОЛЛОО: Юмаа бэлдээрэй!
+              {t.alarmReady}
             </span>
             <button
               type="button"
               onClick={() => checklist.setIsAlarmTriggered(false)}
               className="rounded-xl bg-rose-600 px-3 py-1.5 text-[10px] font-black text-white shadow-md hover:bg-rose-700"
             >
-              УНТРААХ
+              {t.stop}
             </button>
           </div>
         ) : (
@@ -118,21 +163,21 @@ export default function HeroChecklistDrawerContent() {
               ) : (
                 <BellOff className="h-3 w-3" />
               )}
-              {checklist.isAlarmSet ? "Асаалттай" : "Сануулах"}
+              {checklist.isAlarmSet ? t.enabled : t.remind}
             </button>
           </div>
         )}
       </div>
 
       <div className="scrollbar-invisible flex-1 overflow-y-auto px-5 pb-6 pt-4">
-        {checklist.visibleItems.length === 0 ? (
+        {visibleItems.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center text-gray-400">
             <CheckSquare className="mb-2 h-10 w-10 text-gray-300" />
-            <p className="text-xs">Энэ ангилалд зүйл алга.</p>
+            <p className="text-xs">{t.empty}</p>
           </div>
         ) : (
           <div className="space-y-2.5">
-            {checklist.visibleItems.map((item) => (
+            {visibleItems.map((item) => (
               <div
                 key={item.id}
                 className={`flex items-center justify-between rounded-2xl border p-3.5 transition-all ${
@@ -160,7 +205,7 @@ export default function HeroChecklistDrawerContent() {
                   <span
                     className={`text-xs font-medium transition-all ${item.isCompleted ? "text-gray-400 line-through" : "text-gray-700"}`}
                   >
-                    {item.title}
+                    {translateChecklistText(item.title, language)}
                   </span>
                 </button>
                 <button

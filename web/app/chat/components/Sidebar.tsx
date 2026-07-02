@@ -1,8 +1,8 @@
 "use client";
 
 import { ChatSession, cx } from "@/app/chat/types";
-import { Calendar, Compass, Plus, Trash2 } from "lucide-react";
-import React from "react";
+import { Compass, Plus, Trash2, Calendar } from "lucide-react";
+import { useLanguage } from "@/app/lib/language";
 
 interface SidebarProps {
   sessions: ChatSession[];
@@ -15,8 +15,8 @@ interface SidebarProps {
   onNewChat: () => void;
 }
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("mn-MN", {
+function formatDate(iso: string, language: "mn" | "en") {
+  return new Date(iso).toLocaleDateString(language === "en" ? "en-US" : "mn-MN", {
     month: "short",
     day: "numeric",
   });
@@ -31,19 +31,38 @@ const Sidebar = ({
   onLoadSession,
   onDeleteSession,
   onNewChat,
-}: SidebarProps) => (
-  <div
+}: SidebarProps) => {
+  const { language } = useLanguage();
+  const t =
+    language === "en"
+      ? {
+          history: "Trip history",
+          new: "New",
+          recent: "Recent chats",
+          empty: "Chat history is empty",
+          delete: "Delete",
+        }
+      : {
+          history: "Аяллын түүх",
+          new: "Шинэ",
+          recent: "Сүүлд хийсэн чатууд",
+          empty: "Чатны түүх хоосон байна",
+          delete: "Устгах",
+        };
+
+  return (
+    <div
     className={cx(
       "absolute inset-y-0 left-0 z-30 flex w-72 flex-col border-r border-slate-100 bg-white shadow-2xl transition-transform duration-300 ease-in-out",
       sidebarOpen ? "translate-x-0" : "-translate-x-full",
     )}
   >
-    {/* Header - padded for safety beneath device notch */}
+   
     <div className="flex items-center justify-between border-b border-slate-100 pb-4 pt-10 px-4">
       <div className="flex items-center gap-2">
         <Compass className="h-5 w-5 text-[#0A4429]" />
         <span className="text-sm font-bold text-slate-800 tracking-tight">
-          Аяллын түүх
+          {t.history}
         </span>
       </div>
       <button
@@ -51,14 +70,14 @@ const Sidebar = ({
         className="flex items-center gap-1 rounded-full bg-[#0A4429] hover:bg-[#09884c] px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-all active:scale-95"
       >
         <Plus className="h-3 w-3" />
-        <span>Шинэ</span>
+        <span>{t.new}</span>
       </button>
     </div>
 
-    {/* Session list */}
+
     <div className="flex-1 space-y-1 overflow-y-auto p-3">
       <p className="px-2 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-        Сүүлд хийсэн чатууд
+        {t.recent}
       </p>
 
       {historyLoading && (
@@ -71,7 +90,7 @@ const Sidebar = ({
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <span className="text-2xl mb-1 opacity-70">💬</span>
           <p className="text-xs font-medium text-slate-400">
-            Чатны түүх хоосон байна
+            {t.empty}
           </p>
         </div>
       )}
@@ -104,7 +123,7 @@ const Sidebar = ({
                 {s.title}
               </p>
               <p className="mt-0.5 text-[11px] font-medium text-slate-400">
-                {formatDate(s.createdAt)}
+                {formatDate(s.createdAt, language)}
               </p>
             </div>
           </div>
@@ -112,8 +131,8 @@ const Sidebar = ({
           <button
             onClick={(e) => onDeleteSession(s.id, e)}
             disabled={deletingId === s.id}
-            aria-label="Устгах"
-            className="flex shrink-0 items-center justify-center rounded-lg p-1.5 text-slate-400 opacity-0 transition-all hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 focus:opacity-100"
+            aria-label={t.delete}
+            className="flex flex-shrink-0 items-center justify-center rounded-lg p-1.5 text-slate-400 opacity-0 transition-all hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 focus:opacity-100"
           >
             {deletingId === s.id ? (
               <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-red-500 border-t-transparent" />
@@ -124,7 +143,8 @@ const Sidebar = ({
         </div>
       ))}
     </div>
-  </div>
-);
+    </div>
+  );
+};
 
 export default Sidebar;

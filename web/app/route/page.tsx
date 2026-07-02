@@ -3,14 +3,19 @@ import PhoneFrame from '@/components/home/PhoneFrame'
 import RouteMap from '@/app/route/components/RouteMap'
 import React from 'react'
 import Footer from '@/components/home/Footer'
+import "mapbox-gl/dist/mapbox-gl.css";
 
 interface PageProps {
   searchParams: Promise<{ tripId?: string }>;
 }
 
-export const page = async ({ searchParams }: PageProps) => {
+// Next.js-ийн стандартын дагуу Том үсгээр (RoutePage) нэрлэж, шууд default-оор экспортлов
+export default async function RoutePage({ searchParams }: PageProps) {
   
-  const { tripId } = await searchParams;
+  const resolvedParams = await searchParams;
+  const tripId = resolvedParams.tripId;
+
+  console.log("URL-аас амжилттай барьж авсан Trip ID:", tripId);
 
   return (
     <div className="relative flex min-h-screen items-center justify-center">
@@ -19,7 +24,7 @@ export const page = async ({ searchParams }: PageProps) => {
         <PhoneFrame>
           <div className="flex h-full flex-col">
             <div className="min-h-0 flex-1">
-           
+              {/* Барьж авсан tripId-ийг RouteMap руу зөв дамжуулна */}
               <RouteMap tripId={tripId} />
             </div>
             <Footer />
@@ -29,5 +34,3 @@ export const page = async ({ searchParams }: PageProps) => {
     </div>
   )
 }
-
-export default page

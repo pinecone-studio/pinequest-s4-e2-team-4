@@ -2,7 +2,13 @@ import { ChecklistItem } from "@/app/home/components/checklistTypes";
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 
-export const useChecklist = () => {
+type UseChecklistOptions = {
+  sessionId?: string | null;
+};
+
+const activeChatSessionStorageKey = "montrip-active-chat-session-id";
+
+export const useChecklist = (options: UseChecklistOptions = {}) => {
   const [checklistItems, setChecklistItems] = useState<ChecklistItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -10,14 +16,18 @@ export const useChecklist = () => {
     try {
       setLoading(true);
 
-      const response = await axios.get("/api/checklist");
+      const activeSessionId =
+        options.sessionId ?? localStorage.getItem(activeChatSessionStorageKey);
+      const response = await axios.get("/api/checklist", {
+        params: activeSessionId ? { sessionId: activeSessionId } : undefined,
+      });
       setChecklistItems(response.data);
     } catch (error) {
       console.error("Checklist татахад алдаа гарлаа:", error);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [options.sessionId]);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {

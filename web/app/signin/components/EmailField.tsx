@@ -1,4 +1,5 @@
 import { Mail } from "lucide-react";
+import { useLanguage } from "@/app/lib/language";
 
 interface EmailFieldProps {
   value: string;
@@ -13,16 +14,22 @@ export function EmailField({
   isLoading,
   onChange,
 }: EmailFieldProps) {
+  const { language } = useLanguage();
+  const t =
+    language === "en"
+      ? { label: "Username", placeholder: "Your phone or email address" }
+      : { label: "Нэвтрэх нэр", placeholder: "Таны утас эсвэл имэйл хаяг" };
+
   return (
     <label className="relative z-10 block text-[14px] font-bold text-zinc-950">
-      Нэвтрэх нэр
+      {t.label}
       <span className="mt-1 flex h-12 items-center gap-3 rounded-2xl border border-zinc-200 px-3">
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[13px] bg-lime-50">
           <Mail className="h-5 w-5 text-lime-600" />
         </span>
         <input
           className="min-w-0 flex-1 bg-transparent text-[15px] font-medium text-zinc-700 outline-none placeholder:text-zinc-400"
-          placeholder="Таны утас эсвэл имэйл хаяг"
+          placeholder={t.placeholder}
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}

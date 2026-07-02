@@ -4,8 +4,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { MouseEvent } from "react";
 import { useState } from "react";
+import { useLanguage } from "@/app/lib/language";
 
 export function SigninLink() {
+  const { language } = useLanguage();
+  const t =
+    language === "en"
+      ? { question: "Already have an account?", action: "Sign in" }
+      : { question: "Бүртгэлтэй юу?", action: "Нэвтрэх" };
   const router = useRouter();
   const [isSigninTransitioning, setIsSigninTransitioning] = useState(false);
 
@@ -22,7 +28,7 @@ export function SigninLink() {
 
   return (
     <p className="relative z-10 mt-3 text-center text-[15px] font-medium text-zinc-500">
-      Бүртгэлтэй юу?{" "}
+      {t.question}{" "}
       <Link
         aria-disabled={isSigninTransitioning}
         className={`relative inline-flex overflow-hidden rounded-full px-1 font-bold text-lime-600 transition-colors duration-300 ${
@@ -36,7 +42,7 @@ export function SigninLink() {
             isSigninTransitioning ? "scale-x-100" : "scale-x-0"
           } origin-left`}
         />
-        <span className="relative">Нэвтрэх</span>
+        <span className="relative">{t.action}</span>
       </Link>
     </p>
   );
