@@ -7,6 +7,7 @@ export default function proxy(request: NextRequest) {
     request.headers.get("authorization")?.split(" ")[1];
 
   const { pathname } = request.nextUrl;
+  const pathWithSearch = `${pathname}${request.nextUrl.search}`;
 
   if (pathname.startsWith("/api/user")) {
     if (!token) {
@@ -20,14 +21,20 @@ export default function proxy(request: NextRequest) {
   const protectedRoutes = ["/chat", "/profile", "/settings"];
   if (protectedRoutes.some((route) => pathname.startsWith(route))) {
     if (!token) {
-      return NextResponse.redirect(new URL("/signin", request.url));
+      const signInUrl = new URL("/signin", request.url);
+      signInUrl.searchParams.set("next", pathWithSearch);
+
+      return NextResponse.redirect(signInUrl);
     }
   }
 
-  const authRoutes = ["/signin", "/signup"];
+  const authRoutes = ["/signin", "/signup", "/login", "/register"];
   if (authRoutes.some((route) => pathname.startsWith(route))) {
     if (token) {
-      return NextResponse.redirect(new URL("/chat", request.url));
+      const next = request.nextUrl.searchParams.get("next");
+      const safeNext = next?.startsWith("/") && !next.startsWith("//") ? next : "/home";
+
+      return NextResponse.redirect(new URL(safeNext, request.url));
     }
   }
 
@@ -40,6 +47,8 @@ export const config = {
     "/chat/:path*",
     "/profile/:path*",
     "/settings/:path*",
+    "/signin/:path*",
+    "/signup/:path*",
     "/login",
     "/register",
   ],

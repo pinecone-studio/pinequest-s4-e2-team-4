@@ -2,13 +2,14 @@
 
 import { validateLoginForm } from "@/utils/validator";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import type { MouseEvent } from "react";
 import { useState } from "react";
 import { ErrorFlags } from "../utils/types";
 
 export function useLoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -59,10 +60,19 @@ export function useLoginForm() {
         { withCredentials: true },
       );
       if (res.status === 200 || res.status === 201) {
-        router.push("/home");
+        const next = searchParams.get("next");
+        const safeNext = next?.startsWith("/") && !next.startsWith("//") ? next : "/home";
+
+        router.refresh();
+        router.replace(safeNext);
       }
-    } catch (err: any) {
-      setError(err.response?.data?.error || "Нэвтрэхэд алдаа гарлаа");
+    } catch (err: unknown) {
+      const message =
+        axios.isAxiosError(err) && typeof err.response?.data?.error === "string"
+          ? err.response.data.error
+          : "Нэвтрэхэд алдаа гарлаа";
+
+      setError(message);
     } finally {
       setIsLoading(false);
     }
