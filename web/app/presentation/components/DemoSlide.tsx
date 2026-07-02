@@ -2,9 +2,12 @@
 
 import { motion } from "framer-motion";
 import { MousePointer2, Play } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { SlideShell } from "./slideComponents";
 
 export function DemoSlide() {
+  const router = useRouter();
+
   return (
     <SlideShell>
       <div className="grid h-full place-items-center px-16 text-center">
@@ -21,10 +24,14 @@ export function DemoSlide() {
           <p className="mt-6 max-w-3xl text-3xl font-semibold text-[#26331d]">
             AI travel recommendation, route, checklist болон profile flow-г танилцуулна.
           </p>
-          <div className="mt-10 flex items-center gap-3 rounded-full bg-white px-7 py-4 text-xl font-bold text-[#49630b] shadow-md">
+          <button
+            type="button"
+            onClick={() => router.push("/landing")}
+            className="mt-10 flex items-center gap-3 rounded-full bg-white px-7 py-4 text-xl font-bold text-[#49630b] shadow-md transition hover:-translate-y-0.5 hover:bg-[#f7fbe9] hover:shadow-lg active:scale-95"
+          >
             <MousePointer2 className="h-7 w-7" />
             Live product walkthrough
-          </div>
+          </button>
         </motion.div>
       </div>
     </SlideShell>
