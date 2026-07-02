@@ -2,6 +2,7 @@ export interface Message {
   role: "user" | "model";
   content: string;
   createdAt?: string;
+  tripId?: string | null; 
 }
 
 export interface ChatSession {

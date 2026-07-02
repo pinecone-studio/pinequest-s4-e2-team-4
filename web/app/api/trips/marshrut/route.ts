@@ -16,8 +16,8 @@ export async function POST(request: NextRequest) {
   try {
     const {
       destinations,
-      origin,        // 🆕 хэрэглэгчийн одоогийн байршил (заавал биш)
-      profile = "driving", // 🆕 "driving" | "walking" | "cycling"
+      origin,       
+      profile = "driving", 
     }: {
       destinations: DestinationItem[];
       origin?: OriginPoint | null;
@@ -46,8 +46,6 @@ export async function POST(request: NextRequest) {
 
     const coordinatePairs: string[] = [];
 
-    // 🆕 Хэрэв destination ганц бол, эсвэл origin өгөгдсөн бол,
-    // хэрэглэгчийн одоогийн байршлыг эхлэх цэг болгож эхэнд нь нэмнэ
     if (origin && origin.latitude !== null && origin.longitude !== null) {
       coordinatePairs.push(`${Number(origin.longitude)},${Number(origin.latitude)}`);
     }
@@ -73,7 +71,7 @@ export async function POST(request: NextRequest) {
     const coordsString = coordinatePairs.join(";");
     console.log("Mapbox руу илгээж буй координатууд:", coordsString, "| profile:", profile);
 
-    // 🆕 profile нь driving/walking/cycling байж болно
+    
     const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/${profile}/${coordsString}?geometries=geojson&overview=full&access_token=${token}`;
 
     const directionsRes = await fetch(directionsUrl);

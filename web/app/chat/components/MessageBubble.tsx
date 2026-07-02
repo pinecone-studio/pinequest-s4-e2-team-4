@@ -1,5 +1,8 @@
+"use client";
+
 import { cx, Message } from "@/app/chat/types";
-import { Compass, User } from "lucide-react";
+import { Compass, MapPin, User } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { SpeakButton } from "./ChatButton";
 
 interface MessageBubbleProps {
@@ -15,6 +18,8 @@ export function MessageBubble({
   onSpeak,
   onStopSpeaking,
 }: MessageBubbleProps) {
+  const router = useRouter(); // 🆕
+
   return (
     <div
       className={cx(
@@ -45,6 +50,16 @@ export function MessageBubble({
           />
         )}
         <p className="whitespace-pre-wrap">{msg.content}</p>
+
+        {msg.role === "model" && msg.tripId && (
+          <button
+            onClick={() => router.push(`/route?tripId=${msg.tripId}`)}
+            className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#0A4429] px-3.5 py-2 text-xs font-bold text-white shadow-sm transition-all hover:opacity-90 active:scale-95"
+          >
+            <MapPin className="h-3.5 w-3.5" />
+            <span>Маршрут харах</span>
+          </button>
+        )}
       </div>
 
       {msg.role === "user" && (

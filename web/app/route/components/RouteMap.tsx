@@ -66,15 +66,12 @@ export default function RouteMap({ tripId }: RouteMapProps) {
  
         const destinations = await fetchTripDestinations(tripId!);
 
-        // Хэрэглэгчийн одоогийн байршлыг эхлэх цэг (origin) болгож дамжуулна.
         const origin = {
           latitude: currentPointRef.current[1],
           longitude: currentPointRef.current[0],
         };
 
-        // Явган аялал тул "walking" profile ашиглав.
-        // Хэрэв "Машинтай аялал" бол "driving" болгож солиорой.
-        const coordinates = await fetchRouteCoordinates(destinations, origin, "walking");
+const coordinates = await fetchRouteCoordinates(destinations, origin, "driving");
 
         const map = mapRef.current;
 
@@ -101,11 +98,9 @@ export default function RouteMap({ tripId }: RouteMapProps) {
     }
 
   
-    // 🆕 2 давхаргат, цэвэрхэн харагдах маршрутын шугам зурах функц
     function renderRouteLine(map: mapboxgl.Map, coordinates: any) {
       if (!coordinates || coordinates.length === 0) return;
 
-      // Хуучин layer/source-уудыг цэвэрлэнэ (casing болон main хоёуланг нь)
       if (map.getLayer("route-layer")) map.removeLayer("route-layer");
       if (map.getLayer("route-casing-layer")) map.removeLayer("route-casing-layer");
       if (map.getSource("route-source")) map.removeSource("route-source");
@@ -122,7 +117,6 @@ export default function RouteMap({ tripId }: RouteMapProps) {
         },
       });
 
-      // 1-р давхарга: Гадна тал — цагаан "casing" хүрээ (шугамыг тод, цэвэрхэн харагдуулна)
       map.addLayer({
         id: "route-casing-layer",
         type: "line",
@@ -140,14 +134,14 @@ export default function RouteMap({ tripId }: RouteMapProps) {
         },
       });
 
-      // 2-р давхарга: Дотор тал — цэнхэр гол шугам (casing-ээс нарийн)
+   
       map.addLayer({
         id: "route-layer",
         type: "line",
         source: "route-source",
         layout: { "line-join": "round", "line-cap": "round" },
         paint: {
-          "line-color": "#2563eb", // цэвэрхэн, гүн цэнхэр (Apple/Google Maps шиг)
+          "line-color": "#2563eb", 
           "line-width": [
             "interpolate", ["linear"], ["zoom"],
             10, 3,
