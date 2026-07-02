@@ -1,6 +1,7 @@
 import HomeBackdrop from "@/components/home/HomeBackdrop";
 import PhoneFrame from "@/components/home/PhoneFrame";
 import LanguageSwitch from "@/app/components/LanguageSwitch";
+import { Suspense } from "react";
 import HeaderPhoto from "./components/HeaderPhoto";
 import Input from "./components/Input";
 
@@ -15,7 +16,9 @@ const SignIn = () => {
             <LanguageSwitch />
           </div>
           <HeaderPhoto />
-          <Input />
+          <Suspense fallback={null}>
+            <Input />
+          </Suspense>
         </div>
       </PhoneFrame>
     </div>
