@@ -192,6 +192,8 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    let responseTripId: string | null = null;
+
     if (extractedData) {
       let targetTripId = tripId;
 
@@ -249,6 +251,8 @@ export async function POST(request: NextRequest) {
               tripId: targetTripId,
             })),
           });
+
+          responseTripId = targetTripId;
         }
       }
     }
@@ -265,6 +269,7 @@ export async function POST(request: NextRequest) {
       success: true,
       sessionId: currentSessionId,
       response: aiResponse,
+      tripId: responseTripId, // 🆕
     });
   } catch (error) {
     console.error("Chat API Error:", error);

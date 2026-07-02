@@ -126,7 +126,11 @@ export function useTravelChat() {
         }
         setMessages((prev) => [
           ...prev,
-          { role: "model", content: data.response },
+          {
+            role: "model",
+            content: data.response,
+            tripId: data.tripId ?? null,
+          },
         ]);
       } catch (err: unknown) {
         const msg =
