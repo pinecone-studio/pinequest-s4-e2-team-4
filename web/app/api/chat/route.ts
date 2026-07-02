@@ -1,5 +1,5 @@
-import { prisma } from "@/lib/prisma";
 import { translateChecklistText } from "@/app/lib/checklistTranslations";
+import { prisma } from "@/lib/prisma";
 import { GoogleGenAI } from "@google/genai";
 import jwt from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
@@ -54,8 +54,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { language: requestLanguage, sessionId, message, tripId } =
-      await request.json();
+    const {
+      language: requestLanguage,
+      sessionId,
+      message,
+      tripId,
+    } = await request.json();
     const language = getChatLanguage(requestLanguage);
 
     if (!message) {
@@ -139,12 +143,20 @@ export async function POST(request: NextRequest) {
 
 ===JSON_DATA_START===
 {
+  "budgetBreakdown": {
+    "total": 1000000,
+    "fuel": 300000,
+    "food": 400000,
+    "accommodation": 200000,
+    "emergency": 100000
+  },
   "checklistItems": [
-    { "title": "Зүйл 1", "category": "Хэрэгсэл" },
-    { "title": "Зүйл 2", "category": "Хүнс" }
+    { "title": "Ус (Нийт 24 литр, хүн тутамд бодсон)", "category": "Хүнс" },
+    { "title": "Мах, борц (Аялалын хугацаанд тааруулсан)", "category": "Хүнс" },
+    { "title": "Дулаан хувцас, цув", "category": "Хэрэгсэл" }
   ],
   "destinations": [
-    { "name": "Газрын нэр", "description": "Тайлбар", "order": 1, "latitude": 49.1234, "longitude": 100.1234 }
+    { "name": "Хагийн хар нуур", "description": "Эхний өдрийн хоноглох цэг", "order": 1, "latitude": 48.0123, "longitude": 107.5678 }
   ]
 }
 ===JSON_DATA_END===
