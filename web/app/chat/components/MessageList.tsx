@@ -147,44 +147,21 @@ const MessageList = ({
         )}
 
         {messages.map((msg, i) => (
-          <div
+          <MessageBubble
             key={i}
-            className={cx(
-              "flex items-end gap-2.5",
-              msg.role === "user" ? "justify-end" : "justify-start",
-            )}
-          >
-            {msg.role === "model" && (
-              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#0A4429]/10 text-[#0A4429] border border-[#0A4429]/10">
-                <Compass className="h-4 w-4" />
-              </div>
-            )}
-
-            <div
-              className={cx(
-                "max-w-[75%] rounded-[20px] px-4 py-2.5 shadow-sm text-sm leading-relaxed",
-                msg.role === "user"
-                  ? "rounded-br-[4px] bg-gradient-to-r from-[#0A4429] to-[#0A4429] text-white font-medium"
-                  : "rounded-bl-[4px] border border-slate-100 bg-white text-slate-800",
-              )}
-            >
-              <p className="whitespace-pre-wrap">{msg.content}</p>
-            </div>
-
-            {msg.role === "user" && (
-              <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-slate-200 text-slate-600 border border-slate-300/30">
-                <User className="h-4 w-4" />
-              </div>
-            )}
-          </div>
+            msg={msg}
+            isPlaying={isPlaying}
+            onSpeak={speak}
+            onStopSpeaking={stopSpeaking}
+          />
         ))}
 
         {isLoading && (
           <div className="flex items-end gap-2.5">
-            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#0A4429]/10 text-[#0A4429] border border-[#0A4429]/10">
+            <div className="flex h-8 w-8 shrink items-center justify-center rounded-full bg-[#0A4429]/10 text-[#0A4429] border border-[#0A4429]/10">
               <Compass className="h-4 w-4" />
             </div>
-            <div className="rounded-[20px] rounded-bl-[4px] border border-slate-100 bg-white px-4 py-3.5 shadow-sm">
+            <div className="rounded-[20px] rounded-bl-sm border border-slate-100 bg-white px-4 py-3.5 shadow-sm">
               <div className="flex items-center gap-1.5 px-1 py-0.5">
                 {[0, 1, 2].map((n) => (
                   <span

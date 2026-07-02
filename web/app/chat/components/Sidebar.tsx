@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { ChatSession, cx } from "@/app/chat/types";
 import { Compass, Plus, Trash2, Calendar } from "lucide-react";
 import { useLanguage } from "@/app/lib/language";
@@ -110,7 +109,7 @@ const Sidebar = ({
           <div className="min-w-0 flex-1 flex gap-2.5 items-start">
             <Calendar
               className={cx(
-                "h-4 w-4 mt-0.5 flex-shrink-0",
+                "h-4 w-4 mt-0.5 shrink-0",
                 s.id === sessionId ? "text-[#1b9bd7]" : "text-slate-400",
               )}
             />
