@@ -7,9 +7,23 @@ interface DestinationItem {
   order?: number;
 }
 
+interface OriginPoint {
+  latitude: number;
+  longitude: number;
+}
+
 export async function POST(request: NextRequest) {
   try {
-    const { destinations }: { destinations: DestinationItem[] } = await request.json();
+    const {
+      destinations,
+      origin,        // 🆕 хэрэглэгчийн одоогийн байршил (заавал биш)
+      profile = "driving", // 🆕 "driving" | "walking" | "cycling"
+    }: {
+      destinations: DestinationItem[];
+      origin?: OriginPoint | null;
+      profile?: "driving" | "walking" | "cycling";
+    } = await request.json();
+
     const token = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
     if (!token) {
@@ -19,41 +33,48 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!destinations || !Array.isArray(destinations) || destinations.length < 2) {
+    if (!destinations || !Array.isArray(destinations) || destinations.length === 0) {
       return NextResponse.json(
-        { error: "Маршрут үүсгэхийн тулд хамгийн багадаа 2 очих газар шаардлагатай." },
+        { error: "Маршрут үүсгэхийн тулд хамгийн багадаа 1 очих газар шаардлагатай." },
         { status: 400 }
       );
     }
 
-   
     const sortedDestinations = [...destinations].sort(
       (a, b) => (a.order || 0) - (b.order || 0)
     );
 
     const coordinatePairs: string[] = [];
 
+    // 🆕 Хэрэв destination ганц бол, эсвэл origin өгөгдсөн бол,
+    // хэрэглэгчийн одоогийн байршлыг эхлэх цэг болгож эхэнд нь нэмнэ
+    if (origin && origin.latitude !== null && origin.longitude !== null) {
+      coordinatePairs.push(`${Number(origin.longitude)},${Number(origin.latitude)}`);
+    }
+
     for (const place of sortedDestinations) {
       if (place.longitude !== null && place.latitude !== null) {
-
         const lng = Number(place.longitude);
         const lat = Number(place.latitude);
-        
         coordinatePairs.push(`${lng},${lat}`);
       }
     }
 
     if (coordinatePairs.length < 2) {
       return NextResponse.json(
-        { error: "Маршрут үүсгэхийн тулд хамгийн багадаа 2 зөв координаттай цэг шаардлагатай." },
+        {
+          error:
+            "Маршрут үүсгэхийн тулд хамгийн багадаа 2 зөв координаттай цэг шаардлагатай (эхлэх цэг тодорхойгүй байна).",
+        },
         { status: 400 }
       );
     }
 
     const coordsString = coordinatePairs.join(";");
-    console.log("Mapbox руу илгээж буй координатууд:", coordsString);
+    console.log("Mapbox руу илгээж буй координатууд:", coordsString, "| profile:", profile);
 
-    const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/driving/${coordsString}?geometries=geojson&overview=full&access_token=${token}`;
+    // 🆕 profile нь driving/walking/cycling байж болно
+    const directionsUrl = `https://api.mapbox.com/directions/v5/mapbox/${profile}/${coordsString}?geometries=geojson&overview=full&access_token=${token}`;
 
     const directionsRes = await fetch(directionsUrl);
     const directionsData = await directionsRes.json();
@@ -72,7 +93,6 @@ export async function POST(request: NextRequest) {
       success: true,
       coordinates: routeCoordinates,
     });
-
   } catch (error) {
     console.error("Marshrut Generate Error:", error);
     return NextResponse.json(

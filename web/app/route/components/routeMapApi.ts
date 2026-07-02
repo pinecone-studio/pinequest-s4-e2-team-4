@@ -30,11 +30,16 @@ export async function fetchTripDestinations(tripId: string): Promise<Destination
 }
 
 
-export async function fetchRouteCoordinates(destinations: DestinationItem[]): Promise<Coordinate[]> {
+// 🆕 origin (эхлэх цэг) болон profile (driving/walking/cycling) parameter нэмэгдэв
+export async function fetchRouteCoordinates(
+  destinations: DestinationItem[],
+  origin?: { latitude: number; longitude: number } | null,
+  profile: "driving" | "walking" | "cycling" = "driving",
+): Promise<Coordinate[]> {
   const res = await fetch("/api/trips/marshrut", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ destinations }),
+    body: JSON.stringify({ destinations, origin, profile }), // 🆕 origin, profile-г бас илгээнэ
   });
 
   if (!res.ok) {

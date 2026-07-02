@@ -66,7 +66,15 @@ export default function RouteMap({ tripId }: RouteMapProps) {
  
         const destinations = await fetchTripDestinations(tripId!);
 
-        const coordinates = await fetchRouteCoordinates(destinations);
+        // Хэрэглэгчийн одоогийн байршлыг эхлэх цэг (origin) болгож дамжуулна.
+        const origin = {
+          latitude: currentPointRef.current[1],
+          longitude: currentPointRef.current[0],
+        };
+
+        // Явган аялал тул "walking" profile ашиглав.
+        // Хэрэв "Машинтай аялал" бол "driving" болгож солиорой.
+        const coordinates = await fetchRouteCoordinates(destinations, origin, "walking");
 
         const map = mapRef.current;
 
@@ -93,10 +101,13 @@ export default function RouteMap({ tripId }: RouteMapProps) {
     }
 
   
+    // 🆕 2 давхаргат, цэвэрхэн харагдах маршрутын шугам зурах функц
     function renderRouteLine(map: mapboxgl.Map, coordinates: any) {
       if (!coordinates || coordinates.length === 0) return;
 
+      // Хуучин layer/source-уудыг цэвэрлэнэ (casing болон main хоёуланг нь)
       if (map.getLayer("route-layer")) map.removeLayer("route-layer");
+      if (map.getLayer("route-casing-layer")) map.removeLayer("route-casing-layer");
       if (map.getSource("route-source")) map.removeSource("route-source");
 
       map.addSource("route-source", {
@@ -111,12 +122,39 @@ export default function RouteMap({ tripId }: RouteMapProps) {
         },
       });
 
+      // 1-р давхарга: Гадна тал — цагаан "casing" хүрээ (шугамыг тод, цэвэрхэн харагдуулна)
+      map.addLayer({
+        id: "route-casing-layer",
+        type: "line",
+        source: "route-source",
+        layout: { "line-join": "round", "line-cap": "round" },
+        paint: {
+          "line-color": "#ffffff",
+          "line-width": [
+            "interpolate", ["linear"], ["zoom"],
+            10, 6,
+            14, 10,
+            18, 14,
+          ],
+          "line-opacity": 0.9,
+        },
+      });
+
+      // 2-р давхарга: Дотор тал — цэнхэр гол шугам (casing-ээс нарийн)
       map.addLayer({
         id: "route-layer",
         type: "line",
         source: "route-source",
         layout: { "line-join": "round", "line-cap": "round" },
-        paint: { "line-color": "#38bdf8", "line-width": 6 }, // Аяллын цэнхэр шугам
+        paint: {
+          "line-color": "#2563eb", // цэвэрхэн, гүн цэнхэр (Apple/Google Maps шиг)
+          "line-width": [
+            "interpolate", ["linear"], ["zoom"],
+            10, 3,
+            14, 6,
+            18, 9,
+          ],
+        },
       });
 
       const bounds = new mapboxgl.LngLatBounds(
@@ -179,7 +217,7 @@ export default function RouteMap({ tripId }: RouteMapProps) {
       locationMarkerRef.current?.remove();
       map.remove();
       mapRef.current = null;
-      setIsMapReady(false); // 🆕 цэвэрлэхдээ мөн false болгоно
+      setIsMapReady(false);
     };
   }, []);
 
