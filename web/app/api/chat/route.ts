@@ -256,12 +256,12 @@ export async function POST(request: NextRequest) {
         }
       }
     }
-
     await prisma.message.create({
       data: {
         sessionId: currentSessionId,
         role: "model",
         content: aiResponse,
+        tripId: responseTripId, 
       },
     });
 
@@ -269,7 +269,7 @@ export async function POST(request: NextRequest) {
       success: true,
       sessionId: currentSessionId,
       response: aiResponse,
-      tripId: responseTripId, // 🆕
+      tripId: responseTripId,
     });
   } catch (error) {
     console.error("Chat API Error:", error);

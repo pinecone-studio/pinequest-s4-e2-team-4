@@ -42,7 +42,7 @@ export function useTravelChat() {
     return () => clearTimeout(timer);
   }, [fetchSessions]);
 
-  const loadSession = async (sid: string) => {
+ const loadSession = async (sid: string) => {
     try {
       const res = await fetch(`/api/chat/history?sessionId=${sid}`, {
         credentials: "include",
@@ -51,10 +51,16 @@ export function useTravelChat() {
       if (data.success) {
         setMessages(
           data.messages.map(
-            (m: { role: string; content: string; createdAt: string }) => ({
+            (m: {
+              role: string;
+              content: string;
+              createdAt: string;
+              tripId?: string | null; 
+            }) => ({
               role: m.role,
               content: m.content,
               createdAt: m.createdAt,
+              tripId: m.tripId ?? null, 
             }),
           ),
         );
