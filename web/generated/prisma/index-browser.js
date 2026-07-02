@@ -164,6 +164,7 @@ exports.Prisma.MessageScalarFieldEnum = {
   role: 'role',
   content: 'content',
   createdAt: 'createdAt',
+  tripId: 'tripId',
   sessionId: 'sessionId'
 };
 

@@ -6124,6 +6124,7 @@ export namespace Prisma {
     role: string | null
     content: string | null
     createdAt: Date | null
+    tripId: string | null
     sessionId: string | null
   }
 
@@ -6132,6 +6133,7 @@ export namespace Prisma {
     role: string | null
     content: string | null
     createdAt: Date | null
+    tripId: string | null
     sessionId: string | null
   }
 
@@ -6140,6 +6142,7 @@ export namespace Prisma {
     role: number
     content: number
     createdAt: number
+    tripId: number
     sessionId: number
     _all: number
   }
@@ -6150,6 +6153,7 @@ export namespace Prisma {
     role?: true
     content?: true
     createdAt?: true
+    tripId?: true
     sessionId?: true
   }
 
@@ -6158,6 +6162,7 @@ export namespace Prisma {
     role?: true
     content?: true
     createdAt?: true
+    tripId?: true
     sessionId?: true
   }
 
@@ -6166,6 +6171,7 @@ export namespace Prisma {
     role?: true
     content?: true
     createdAt?: true
+    tripId?: true
     sessionId?: true
     _all?: true
   }
@@ -6247,6 +6253,7 @@ export namespace Prisma {
     role: string
     content: string
     createdAt: Date
+    tripId: string | null
     sessionId: string
     _count: MessageCountAggregateOutputType | null
     _min: MessageMinAggregateOutputType | null
@@ -6272,6 +6279,7 @@ export namespace Prisma {
     role?: boolean
     content?: boolean
     createdAt?: boolean
+    tripId?: boolean
     sessionId?: boolean
     session?: boolean | ChatSessionDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["message"]>
@@ -6281,6 +6289,7 @@ export namespace Prisma {
     role?: boolean
     content?: boolean
     createdAt?: boolean
+    tripId?: boolean
     sessionId?: boolean
     session?: boolean | ChatSessionDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["message"]>
@@ -6290,6 +6299,7 @@ export namespace Prisma {
     role?: boolean
     content?: boolean
     createdAt?: boolean
+    tripId?: boolean
     sessionId?: boolean
     session?: boolean | ChatSessionDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["message"]>
@@ -6299,10 +6309,11 @@ export namespace Prisma {
     role?: boolean
     content?: boolean
     createdAt?: boolean
+    tripId?: boolean
     sessionId?: boolean
   }
 
-  export type MessageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "role" | "content" | "createdAt" | "sessionId", ExtArgs["result"]["message"]>
+  export type MessageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "role" | "content" | "createdAt" | "tripId" | "sessionId", ExtArgs["result"]["message"]>
   export type MessageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     session?: boolean | ChatSessionDefaultArgs<ExtArgs>
   }
@@ -6323,6 +6334,7 @@ export namespace Prisma {
       role: string
       content: string
       createdAt: Date
+      tripId: string | null
       sessionId: string
     }, ExtArgs["result"]["message"]>
     composites: {}
@@ -6752,6 +6764,7 @@ export namespace Prisma {
     readonly role: FieldRef<"Message", 'String'>
     readonly content: FieldRef<"Message", 'String'>
     readonly createdAt: FieldRef<"Message", 'DateTime'>
+    readonly tripId: FieldRef<"Message", 'String'>
     readonly sessionId: FieldRef<"Message", 'String'>
   }
     
@@ -9447,6 +9460,7 @@ export namespace Prisma {
     role: 'role',
     content: 'content',
     createdAt: 'createdAt',
+    tripId: 'tripId',
     sessionId: 'sessionId'
   };
 
@@ -9857,6 +9871,7 @@ export namespace Prisma {
     role?: StringFilter<"Message"> | string
     content?: StringFilter<"Message"> | string
     createdAt?: DateTimeFilter<"Message"> | Date | string
+    tripId?: StringNullableFilter<"Message"> | string | null
     sessionId?: StringFilter<"Message"> | string
     session?: XOR<ChatSessionScalarRelationFilter, ChatSessionWhereInput>
   }
@@ -9866,6 +9881,7 @@ export namespace Prisma {
     role?: SortOrder
     content?: SortOrder
     createdAt?: SortOrder
+    tripId?: SortOrderInput | SortOrder
     sessionId?: SortOrder
     session?: ChatSessionOrderByWithRelationInput
   }
@@ -9878,6 +9894,7 @@ export namespace Prisma {
     role?: StringFilter<"Message"> | string
     content?: StringFilter<"Message"> | string
     createdAt?: DateTimeFilter<"Message"> | Date | string
+    tripId?: StringNullableFilter<"Message"> | string | null
     sessionId?: StringFilter<"Message"> | string
     session?: XOR<ChatSessionScalarRelationFilter, ChatSessionWhereInput>
   }, "id">
@@ -9887,6 +9904,7 @@ export namespace Prisma {
     role?: SortOrder
     content?: SortOrder
     createdAt?: SortOrder
+    tripId?: SortOrderInput | SortOrder
     sessionId?: SortOrder
     _count?: MessageCountOrderByAggregateInput
     _max?: MessageMaxOrderByAggregateInput
@@ -9901,6 +9919,7 @@ export namespace Prisma {
     role?: StringWithAggregatesFilter<"Message"> | string
     content?: StringWithAggregatesFilter<"Message"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Message"> | Date | string
+    tripId?: StringNullableWithAggregatesFilter<"Message"> | string | null
     sessionId?: StringWithAggregatesFilter<"Message"> | string
   }
 
@@ -10340,6 +10359,7 @@ export namespace Prisma {
     role: string
     content: string
     createdAt?: Date | string
+    tripId?: string | null
     session: ChatSessionCreateNestedOneWithoutMessagesInput
   }
 
@@ -10348,6 +10368,7 @@ export namespace Prisma {
     role: string
     content: string
     createdAt?: Date | string
+    tripId?: string | null
     sessionId: string
   }
 
@@ -10356,6 +10377,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tripId?: NullableStringFieldUpdateOperationsInput | string | null
     session?: ChatSessionUpdateOneRequiredWithoutMessagesNestedInput
   }
 
@@ -10364,6 +10386,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tripId?: NullableStringFieldUpdateOperationsInput | string | null
     sessionId?: StringFieldUpdateOperationsInput | string
   }
 
@@ -10372,6 +10395,7 @@ export namespace Prisma {
     role: string
     content: string
     createdAt?: Date | string
+    tripId?: string | null
     sessionId: string
   }
 
@@ -10380,6 +10404,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tripId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type MessageUncheckedUpdateManyInput = {
@@ -10387,6 +10412,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tripId?: NullableStringFieldUpdateOperationsInput | string | null
     sessionId?: StringFieldUpdateOperationsInput | string
   }
 
@@ -10911,6 +10937,7 @@ export namespace Prisma {
     role?: SortOrder
     content?: SortOrder
     createdAt?: SortOrder
+    tripId?: SortOrder
     sessionId?: SortOrder
   }
 
@@ -10919,6 +10946,7 @@ export namespace Prisma {
     role?: SortOrder
     content?: SortOrder
     createdAt?: SortOrder
+    tripId?: SortOrder
     sessionId?: SortOrder
   }
 
@@ -10927,6 +10955,7 @@ export namespace Prisma {
     role?: SortOrder
     content?: SortOrder
     createdAt?: SortOrder
+    tripId?: SortOrder
     sessionId?: SortOrder
   }
 
@@ -12089,6 +12118,7 @@ export namespace Prisma {
     role: string
     content: string
     createdAt?: Date | string
+    tripId?: string | null
   }
 
   export type MessageUncheckedCreateWithoutSessionInput = {
@@ -12096,6 +12126,7 @@ export namespace Prisma {
     role: string
     content: string
     createdAt?: Date | string
+    tripId?: string | null
   }
 
   export type MessageCreateOrConnectWithoutSessionInput = {
@@ -12201,6 +12232,7 @@ export namespace Prisma {
     role?: StringFilter<"Message"> | string
     content?: StringFilter<"Message"> | string
     createdAt?: DateTimeFilter<"Message"> | Date | string
+    tripId?: StringNullableFilter<"Message"> | string | null
     sessionId?: StringFilter<"Message"> | string
   }
 
@@ -12625,6 +12657,7 @@ export namespace Prisma {
     role: string
     content: string
     createdAt?: Date | string
+    tripId?: string | null
   }
 
   export type ChecklistCreateManySessionInput = {
@@ -12642,6 +12675,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tripId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type MessageUncheckedUpdateWithoutSessionInput = {
@@ -12649,6 +12683,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tripId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type MessageUncheckedUpdateManyWithoutSessionInput = {
@@ -12656,6 +12691,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    tripId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type ChecklistUpdateWithoutSessionInput = {
